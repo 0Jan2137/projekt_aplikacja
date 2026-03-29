@@ -1,0 +1,87 @@
+{% extends "BASE_HTML.html" %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+
+    <div class="sidebar-quick-add">
+        <h2>Quick Add</h2>
+        
+        <form method="POST">
+            {% csrf_token %}
+
+            <label>Amount</label>
+            <input type="number" name="amount" placeholder="0.00" step="0.01">
+            <span>PLN</span>
+
+            <label>Category</label>
+            <select name="category">
+                <option value="food">Food</option>
+                <option value="transport">Transport</option>
+                <option value="groceries">Groceries</option>
+                <option value="bills">Bills</option>
+                <option value="entertainment">Entertainment</option>
+            </select>
+
+            <label>Description (Optional)</label>
+            <input type="text" name="description" placeholder="Enter description">
+
+            <label>Date</label>
+            <input type="date" name="date">
+
+            <button type="submit">Add Expense</button>
+        </form>
+    </div>
+
+    <div class="main-dashboard-content">
+
+        <div class="top-stats-cards">
+            <div class="card">
+                <p>Total Spent This Month</p>
+                <h3>{{ total_spent }} PLN</h3>
+            </div>
+            
+            <div class="card">
+                <p>Budget Remaining</p>
+                <h3>{{ budget_remaining }} PLN</h3>
+            </div>
+            
+            <div class="card">
+                <p>Top Category</p>
+                <h3>{{ top_category_name }}</h3>
+            </div>
+        </div>
+
+        <div class="chart-section">
+            <h2>Daily Spending Trends</h2>
+            <canvas id="dailySpendingChart"></canvas>
+        </div>
+
+        <div class="recent-transactions">
+            <h2>Recent Transactions</h2>
+
+            {% for transaction in recent_transactions %}
+                <div class="transaction-row">
+                    
+                    <div class="transaction-details">
+                        <h4>{{ transaction.category_name }}</h4>
+                        <p>{{ transaction.description }}</p>
+                    </div>
+                    
+                    <div class="transaction-date">
+                        <p>{{ transaction.date }}</p>
+                    </div>
+                    
+                    <div class="transaction-amount">
+                        <p>-{{ transaction.amount }} PLN</p>
+                    </div>
+
+                </div>
+            {% empty %}
+                <p>No recent transactions found.</p>
+            {% endfor %}
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}
