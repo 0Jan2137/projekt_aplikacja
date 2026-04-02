@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExpensePRO Test</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+</head>
+<body>
+
+    <div class="dashboard-wrapper">
+
+        <div class="sidebar-quick-add">
+            <h2>Quick Add</h2>
+            
+            <form method="POST">
+                <label>Amount</label>
+                <input type="number" name="amount" placeholder="0.00" step="0.01">
+                <span>PLN</span>
+
+                <label>Category</label>
+                <select name="category">
+                    <option value="food">Food</option>
+                    <option value="transport">Transport</option>
+                    <option value="groceries">Groceries</option>
+                    <option value="bills" selected>Bills</option>
+                    <option value="entertainment">Entertainment</option>
+                </select>
+
+                <label>Description (Optional)</label>
+                <input type="text" name="description" placeholder="Enter description">
+
+                <label>Date</label>
+                <input type="date" name="date" value="2026-03-22">
+
+                <button type="submit">Add Expense</button>
+            </form>
+        </div>
+
+        <div class="main-dashboard-content">
+
+            <div class="top-stats-cards">
+                <div class="card">
+                    <p>Total Spent This Month</p>
+                    <h3>4553.09 PLN</h3>
+                </div>
+                
+                <div class="card">
+                    <p>Budget Remaining</p>
+                    <h3>-553.09 PLN</h3>
+                </div>
+                
+                <div class="card">
+                    <p>Top Category</p>
+                    <h3>Bills</h3>
+                </div>
+            </div>
+
+            <div class="chart-section">
+                <h2>Daily Spending Trends</h2>
+                <canvas id="dailySpendingChart"></canvas>
+            </div>
+
+            <div class="recent-transactions">
+                <h2>Recent Transactions</h2>
+
+                <div class="transaction-row">
+                    <div class="transaction-details">
+                        <h4>Bills</h4>
+                        <p>Bills expense</p>
+                    </div>
+                    <div class="transaction-date">
+                        <p>Mar 22</p>
+                    </div>
+                    <div class="transaction-amount">
+                        <p>-3100.00 PLN</p>
+                    </div>
+                </div>
+
+                <div class="transaction-row">
+                    <div class="transaction-details">
+                        <h4>Food</h4>
+                        <p>Dinner at MoaBurgers</p>
+                    </div>
+                    <div class="transaction-date">
+                        <p>Mar 21</p>
+                    </div>
+                    <div class="transaction-amount">
+                        <p>-54.90 PLN</p>
+                    </div>
+                </div>
+
+                <div class="transaction-row">
+                    <div class="transaction-details">
+                        <h4>Groceries</h4>
+                        <p>Weekly shopping</p>
+                    </div>
+                    <div class="transaction-date">
+                        <p>Mar 19</p>
+                    </div>
+                    <div class="transaction-amount">
+                        <p>-230.50 PLN</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
