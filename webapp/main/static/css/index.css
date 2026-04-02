@@ -1,0 +1,160 @@
+/* --- BAZOWE USTAWIENIA (KOLORY I CZCIONKI) --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f7f6; /* Jasnoszare tło z Figmy */
+    color: #333;
+    padding: 30px;
+}
+
+/* --- WSPÓLNE STYLE DLA KART (BIAŁE TŁO, CIEŃ) --- */
+.sidebar-quick-add, .card, .chart-section, .recent-transactions {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); /* Delikatny nowoczesny cień */
+}
+
+h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #1a1a1a;
+}
+
+/* --- GŁÓWNY UKŁAD (SPLIT LAYOUT) --- */
+.dashboard-wrapper {
+    display: grid;
+    grid-template-columns: 320px 1fr; /* Lewa kolumna stała 320px, prawa zajmuje resztę */
+    gap: 30px;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+/* --- LEWA KOLUMNA (QUICK ADD FORM) --- */
+.sidebar-quick-add form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sidebar-quick-add label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    margin-top: 5px;
+}
+
+.sidebar-quick-add input, 
+.sidebar-quick-add select {
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.sidebar-quick-add input:focus, 
+.sidebar-quick-add select:focus {
+    border-color: #3b82f6; /* Niebieski akcent przy kliknięciu */
+}
+
+/* Przycisk "Add Expense" */
+.sidebar-quick-add button {
+    margin-top: 15px;
+    padding: 14px;
+    background-color: #1d4ed8; /* Wyraźny niebieski z Figmy */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.sidebar-quick-add button:hover {
+    background-color: #1e40af;
+}
+
+/* --- PRAWA KOLUMNA (MAIN DASHBOARD) --- */
+.main-dashboard-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* KARTY PODSUMOWUJĄCE (GÓRA) */
+.top-stats-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 równe karty w rzędzie */
+    gap: 20px;
+}
+
+.card p {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 8px;
+}
+
+.card h3 {
+    font-size: 24px;
+    color: #111827;
+}
+
+/* WYKRES (MIEJSCE NA CANVAS) */
+.chart-section {
+    min-height: 300px; /* Minimalna wysokość, żeby to dobrze wyglądało zanim dodadzą skrypt */
+}
+
+#dailySpendingChart {
+    width: 100%;
+    height: 100%;
+}
+
+/* LISTA OSTATNICH TRANSAKCJI */
+.transaction-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid #f3f4f6; /* Liniowy podział między wierszami */
+}
+
+/* Usuwamy linię pod ostatnią transakcją */
+.transaction-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.transaction-details h4 {
+    font-size: 16px;
+    color: #1f2937;
+    margin-bottom: 4px;
+}
+
+.transaction-details p, .transaction-date p {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+/* Podstawowy styl dla kwoty */
+.transaction-amount p {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* Klasa dla wydatków (na minusie) */
+.transaction-amount p.expense {
+    color: #dc2626; /* Czerwony */
+}
+
+/* Klasa dla wpływów/zwrotów (na plusie) */
+.transaction-amount p.income {
+    color: #16a34a; /* Ładny, wyraźny zielony */
+}
