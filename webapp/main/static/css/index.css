@@ -158,3 +158,66 @@ h2 {
 .transaction-amount p.income {
     color: #16a34a; /* Ładny, wyraźny zielony */
 }
+
+/* Reset i tło headera */
+.main-header {
+    background-color: #24292e; /* Ciemny szary, jak na GitHubie */
+    padding: 10px 0;
+    color: white;
+}
+
+/* GŁÓWNY MECHANIZM: Flexbox */
+.navbar-container {
+    display: flex;
+    justify-content: space-between; /* To rozpycha .nav-left i .nav-right na końce */
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto; /* Centruje cały pasek na środku ekranu */
+    padding: 0 20px;
+}
+
+/* Stylizacja lewej strony */
+.nav-left {
+    display: flex;
+    gap: 20px; /* Odstępy między linkami */
+    align-items: center;
+}
+
+.nav-logo {
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-decoration: none;
+    color: white;
+    margin-right: 10px;
+}
+
+/* Stylizacja prawej strony */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Wspólny styl dla linków */
+.nav-item, .auth-btn {
+    text-decoration: none;
+    color: #adb5bd;
+    transition: color 0.2s;
+}
+
+.nav-item:hover {
+    color: white;
+}
+
+/* Styl "przycisku" dla Logowania/Wylogowania */
+.auth-btn {
+    border: 1px solid #444;
+    padding: 5px 15px;
+    border-radius: 6px;
+    color: white;
+    background-color: #2f363d;
+}
+
+.auth-btn:hover {
+    background-color: #444d56;
+}
