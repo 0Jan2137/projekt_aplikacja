@@ -1,14 +1,13 @@
 # Plik do zarządzania ścieżkami w aplikacji. Zawiera listę ścieżek powiązanych z widokami.
 
 from django.urls import path
-from . import views
+from main.views.auth.auth import login_user, register, logout_user
+from main.views.main.index import index
 
 urlpatterns = [
-    path('', views.index, name='home'),
-    path('about', views.about, name='about'),
-    path('cars', views.cars, name='cars'),
+    path('', index, name='home'),
 
-    path('login', views.login_user, name='login_user'),
-    path('register', views.register, name='register_user'),
-    path('logout', views.logout_user, name='logout_user')
+    path('login', login_user, name='login_user'),
+    path('register', register, name='register_user'),
+    path('logout', logout_user, name='logout_user')
 ]

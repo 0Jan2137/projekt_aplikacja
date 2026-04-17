@@ -26,9 +26,9 @@ class Transaction(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='transactions')
 	created_at = models.DateTimeField(auto_now_add=True)
 
-	@property
-	def category_name(self):
-		return self.get_category_display()
+	# @property
+	# def category_name(self):
+	# 	return self.get_category_display()
 
-	def __str__(self):
-		return f'{self.get_category_display()} - {self.amount} PLN ({self.date})'
+	# def __str__(self):
+	# 	return f'{self.get_category_display()} - {self.amount} PLN ({self.date})'
