@@ -40,7 +40,7 @@
                     <input type="text" name="description" placeholder="Enter description">
 
                     <label>Date</label>
-                    <input type="date" name="date">
+                    <input type="date" name="date" value="{% now 'Y-m-d' %}">
 
                     <button type="submit">Add Expense</button>
                 </form>
@@ -68,7 +68,7 @@
                     <input type="text" name="income_description" placeholder="Enter description">
 
                     <label>Date</label>
-                    <input type="date" name="income_date">
+                    <input type="date" name="income_date" value="{% now 'Y-m-d' %}">
 
                     <button type="submit">Add Income</button>
                 </form>
