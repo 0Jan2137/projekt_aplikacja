@@ -6,13 +6,7 @@
         <div class="card-body p-5">
             <h2 class="card-title text-center mb-4">Log in</h2>
 
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-info show" role="alert">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
+            {% include 'messages/auth_messages.html' %}
 
             <form method="POST" action="/login">
                 {% csrf_token %}

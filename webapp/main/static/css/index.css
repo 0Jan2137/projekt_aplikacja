@@ -201,8 +201,8 @@ h2 {
 /* Stylizacja prawej strony */
 .nav-right {
     display: flex;
-    align-items: center;
     gap: 15px;
+    margin-left: auto;
 }
 
 /* Wspólny styl dla linków */

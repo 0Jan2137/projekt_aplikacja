@@ -1,8 +1,6 @@
 # Plik do definiowania widoków, które są renderowane za pomocą szablonizatora Jinja oraz wyświetlane w przeglądarce
 from django.shortcuts import redirect, render
-from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages #to show message back for errors
-from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.utils import timezone
 from decimal import Decimal, InvalidOperation
@@ -11,6 +9,9 @@ from main.models import Transaction
 
 # Create your views here.
 def index(request):
+    if not request.user.is_authenticated:
+        return redirect('login_user')
+    
     if request.method == 'POST':
         amount_raw = request.POST.get('amount', '').strip()
         category = request.POST.get('category', '').strip()
@@ -73,3 +74,6 @@ def index(request):
         'recent_transactions': recent_transactions,
     }
     return render(request, 'index.html', context)
+
+def terms_of_use(request):
+    return render(request, 'footer/terms-of-use.html')
