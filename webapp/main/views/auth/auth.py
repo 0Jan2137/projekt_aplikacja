@@ -26,7 +26,7 @@ def login_user(request):
     if request.GET.get('next'):
         request.session['next'] = request.GET['next']
 
-    return render(request, 'main/users/login.html')
+    return render(request, 'auth/login.html')
 
 def register(request):
     if request.user.is_authenticated:
@@ -37,7 +37,7 @@ def register(request):
         login(request, user)
         return redirect('home')
     
-    return render(request, 'main/users/register.html')
+    return render(request, 'auth/register.html')
 
 def logout_user(request):
     logout(request)
