@@ -6,30 +6,74 @@
     <div class="sidebar-quick-add">
         <h2>Quick Add</h2>
         
-        <form method="POST">
-            {% csrf_token %}
+        <!-- Bootstrap Tab Navigation -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="expense-tab" data-bs-toggle="tab" data-bs-target="#expense-content" type="button" role="tab" aria-controls="expense-content" aria-selected="true">Expense</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="income-tab" data-bs-toggle="tab" data-bs-target="#income-content" type="button" role="tab" aria-controls="income-content" aria-selected="false">Income</button>
+            </li>
+        </ul>
+        
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Expense Tab -->
+            <div class="tab-pane fade show active" id="expense-content" role="tabpanel" aria-labelledby="expense-tab">
+                <form method="POST">
+                    {% csrf_token %}
 
-            <label>Amount</label>
-            <input type="number" name="amount" placeholder="0.00" step="0.01">
-            <span>PLN</span>
+                    <label>Amount</label>
+                    <input type="number" name="amount" placeholder="0.00" step="0.01">
+                    <span>PLN</span>
 
-            <label>Category</label>
-            <select name="category">
-                <option value="food">Food</option>
-                <option value="transport">Transport</option>
-                <option value="groceries">Groceries</option>
-                <option value="bills">Bills</option>
-                <option value="entertainment">Entertainment</option>
-            </select>
+                    <label>Category</label>
+                    <select name="category">
+                        <option value="food">Food</option>
+                        <option value="transport">Transport</option>
+                        <option value="groceries">Groceries</option>
+                        <option value="bills">Bills</option>
+                        <option value="entertainment">Entertainment</option>
+                    </select>
 
-            <label>Description (Optional)</label>
-            <input type="text" name="description" placeholder="Enter description">
+                    <label>Description (Optional)</label>
+                    <input type="text" name="description" placeholder="Enter description">
 
-            <label>Date</label>
-            <input type="date" name="date">
+                    <label>Date</label>
+                    <input type="date" name="date">
 
-            <button type="submit">Add Expense</button>
-        </form>
+                    <button type="submit">Add Expense</button>
+                </form>
+            </div>
+            
+            <!-- Income Tab -->
+            <div class="tab-pane fade" id="income-content" role="tabpanel" aria-labelledby="income-tab">
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <label>Amount</label>
+                    <input type="number" name="income_amount" placeholder="0.00" step="0.01">
+                    <span>PLN</span>
+
+                    <label>Source</label>
+                    <select name="income_source">
+                        <option value="salary">Salary</option>
+                        <option value="freelance">Freelance</option>
+                        <option value="investment">Investment</option>
+                        <option value="bonus">Bonus</option>
+                        <option value="other">Other</option>
+                    </select>
+
+                    <label>Description (Optional)</label>
+                    <input type="text" name="income_description" placeholder="Enter description">
+
+                    <label>Date</label>
+                    <input type="date" name="income_date">
+
+                    <button type="submit">Add Income</button>
+                </form>
+            </div>
+        </div>
     </div>
 
     <div class="main-dashboard-content">

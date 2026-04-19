@@ -9,11 +9,10 @@
 body {
     background-color: #f4f7f6; /* Jasnoszare tło z Figmy */
     color: #333;
-    padding: 30px;
 }
 
 /* --- WSPÓLNE STYLE DLA KART (BIAŁE TŁO, CIEŃ) --- */
-.sidebar-quick-add, .card, .chart-section, .recent-transactions {
+.card, .chart-section, .recent-transactions {
     background-color: #ffffff;
     border-radius: 12px;
     padding: 25px;
@@ -31,8 +30,15 @@ h2 {
     display: grid;
     grid-template-columns: 320px 1fr; /* Lewa kolumna stała 320px, prawa zajmuje resztę */
     gap: 30px;
-    max-width: 1300px;
+    max-width: 95%;
     margin: 0 auto;
+}
+
+/* --- STICKY QUICK ADD PANEL --- */
+.sidebar-quick-add {
+    position: sticky;
+    top: 10px; /* Dajemy 80px zamiast 20px, żeby zrobić miejsce na nowy czarny navbar, który dodał Maciek */
+    align-self: start; /* To jest kluczowe w CSS Grid, inaczej panel rozciągnie się na całą wysokość i nie będzie się "ślizgał" */
 }
 
 /* --- LEWA KOLUMNA (QUICK ADD FORM) --- */
@@ -162,7 +168,8 @@ h2 {
 /* Reset i tło headera */
 .main-header {
     background-color: #24292e; /* Ciemny szary, jak na GitHubie */
-    padding: 10px 0;
+    margin-bottom: 15px;
+    padding: 10px;
     color: white;
 }
 
@@ -171,7 +178,7 @@ h2 {
     display: flex;
     justify-content: space-between; /* To rozpycha .nav-left i .nav-right na końce */
     align-items: center;
-    max-width: 1200px;
+    max-width: 100%;
     margin: 0 auto; /* Centruje cały pasek na środku ekranu */
     padding: 0 20px;
 }
@@ -194,8 +201,8 @@ h2 {
 /* Stylizacja prawej strony */
 .nav-right {
     display: flex;
-    align-items: center;
     gap: 15px;
+    margin-left: auto;
 }
 
 /* Wspólny styl dla linków */

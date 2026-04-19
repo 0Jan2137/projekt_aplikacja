@@ -13,7 +13,7 @@ def seed_transactions(apps, schema_editor):
     if user is None:
         user = User.objects.create_user(
             username='admin',
-            password='!',
+            password='admin',
         )
 
     if Transaction.objects.exists():
