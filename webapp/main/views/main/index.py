@@ -35,6 +35,7 @@ def index(request):
             return redirect('home')
 
         Transaction.objects.create(
+            user=request.user,
             amount=amount,
             category=category,
             description=description,
