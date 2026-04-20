@@ -101,31 +101,64 @@
         </div>
 
         <div class="recent-transactions">
-            <h2>Recent Transactions</h2>
+    <h2>Recent Transactions</h2>
+    
+    <div class="transaction-headers" style="display: flex; justify-content: space-between; padding: 10px; font-weight: bold; border-bottom: 2px solid #eee;">
+        <div onclick="sortTransactions(0, 'text')" style="cursor:pointer; flex: 2;">Category/Desc <span id="sort-0"></span></div>
+        <div onclick="sortTransactions(1, 'date')" style="cursor:pointer; flex: 1;">Date <span id="sort-1"></span></div>
+        <div onclick="sortTransactions(2, 'number')" style="cursor:pointer; flex: 1; text-align: right;">Amount <span id="sort-2"></span></div>
+    </div>
 
-            {% for transaction in recent_transactions %}
-                <div class="transaction-row">
-                    
-                    <div class="transaction-details">
-                        <h4>{{ transaction.category_name }}</h4>
-                        <p>{{ transaction.description }}</p>
-                    </div>
-                    
-                    <div class="transaction-date">
-                        <p>{{ transaction.date }}</p>
-                    </div>
-                    
-                    <div class="transaction-amount">
-                        <p>-{{ transaction.amount }} PLN</p>
-                    </div>
-
-                </div>
-            {% empty %}
-                <p>No recent transactions found.</p>
-            {% endfor %}
-
+    <div id="transactions-container">
+        {% for transaction in recent_transactions %}
+        <div class="transaction-row" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="transaction-details" style="flex: 2;">
+                <h4 data-val="{{ transaction.category_name }}">{{ transaction.category_name }}</h4>
+                <p>{{ transaction.description }}</p>
+            </div>
+            
+            <div class="transaction-date" style="flex: 1;" data-val="{{ transaction.date|date:'Y-m-d' }}">
+                <p>{{ transaction.date }}</p>
+            </div>
+            
+            <div class="transaction-amount" style="flex: 1; text-align: right;" data-val="{{ transaction.amount }}">
+                <p>-{{ transaction.amount }} PLN</p>
+            </div>
         </div>
+        {% empty %}
+        <p>No recent transactions found.</p>
+        {% endfor %}
+    </div>
+    </div>
 
     </div>
 </div>
+
+<script>
+    let directions = [true, true, true];
+
+    function sortTransactions(colIdx, type) {
+        const container = document.getElementById("transactions-container");
+        const rows = Array.from(container.getElementsByClassName("transaction-row"));
+        const isAsc = directions[colIdx];
+
+        rows.sort((a, b) => {
+            let valA = a.children[colIdx].getAttribute("data-val") || a.children[colIdx].innerText;
+            let valB = b.children[colIdx].getAttribute("data-val") || b.children[colIdx].innerText;
+
+            if (type === 'number') return isAsc ? parseFloat(valA) - parseFloat(valB) : parseFloat(valB) - parseFloat(valA);
+            if (type === 'date') return isAsc ? new Date(valA) - new Date(valB) : new Date(valB) - new Date(valA);
+            return isAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        });
+
+        directions[colIdx] = !isAsc;
+        rows.forEach(row => container.appendChild(row));
+        
+        // Ikony
+        for(let i=0; i<3; i++) {
+            document.getElementById(`sort-${i}`).innerHTML = (i === colIdx) ? (isAsc ? "↑" : "↓") : "";
+        }
+    }
+</script>
+
 {% endblock %}
