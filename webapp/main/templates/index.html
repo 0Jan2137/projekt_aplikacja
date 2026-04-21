@@ -6,7 +6,6 @@
     <div class="sidebar-quick-add">
         <h2>Quick Add</h2>
         
-        <!-- Bootstrap Tab Navigation -->
         <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="expense-tab" data-bs-toggle="tab" data-bs-target="#expense-content" type="button" role="tab" aria-controls="expense-content" aria-selected="true">Expense</button>
@@ -16,13 +15,10 @@
             </li>
         </ul>
         
-        <!-- Tab Content -->
         <div class="tab-content">
-            <!-- Expense Tab -->
             <div class="tab-pane fade show active" id="expense-content" role="tabpanel" aria-labelledby="expense-tab">
                 <form method="POST">
                     {% csrf_token %}
-
                     <label>Amount</label>
                     <input type="number" name="amount" placeholder="0.00" step="0.01">
                     <span>PLN</span>
@@ -46,11 +42,9 @@
                 </form>
             </div>
             
-            <!-- Income Tab -->
             <div class="tab-pane fade" id="income-content" role="tabpanel" aria-labelledby="income-tab">
                 <form method="POST">
                     {% csrf_token %}
-
                     <label>Amount</label>
                     <input type="number" name="income_amount" placeholder="0.00" step="0.01">
                     <span>PLN</span>
@@ -83,12 +77,10 @@
                 <p>Total Spent This Month</p>
                 <h3>{{ total_spent }} PLN</h3>
             </div>
-            
             <div class="card">
                 <p>Budget Remaining</p>
                 <h3>{{ budget_remaining }} PLN</h3>
             </div>
-            
             <div class="card">
                 <p>Top Category</p>
                 <h3>{{ top_category_name }}</h3>
@@ -97,35 +89,84 @@
 
         <div class="chart-section">
             <h2>Daily Spending Trends</h2>
-            <canvas id="dailySpendingChart"></canvas>
+            <div style="height: 300px; width: 100%; position: relative;">
+                <canvas id="dailySpendingChart"></canvas>
+            </div>
         </div>
 
         <div class="recent-transactions">
             <h2>Recent Transactions</h2>
-
             {% for transaction in recent_transactions %}
                 <div class="transaction-row">
-                    
                     <div class="transaction-details">
                         <h4>{{ transaction.category_name }}</h4>
                         <p>{{ transaction.description }}</p>
                     </div>
-                    
                     <div class="transaction-date">
                         <p>{{ transaction.date }}</p>
                     </div>
-                    
                     <div class="transaction-amount">
                         <p>-{{ transaction.amount }} PLN</p>
                     </div>
-
                 </div>
             {% empty %}
                 <p>No recent transactions found.</p>
             {% endfor %}
-
         </div>
 
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('dailySpendingChart').getContext('2d');
+        
+        // Dane przekazane bezpiecznie z Django
+        const labels = {{ chart_labels|safe }};
+        const dataValues = {{ chart_data|safe }};
+
+        // Obsługa braku danych, żeby nie straszyć pustym polem
+        if (labels.length === 0) {
+            ctx.font = "16px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillStyle = "#666";
+            ctx.fillText("Dodaj pierwszą transakcję, aby zobaczyć wykres", ctx.canvas.width/2, ctx.canvas.height/2);
+            return;
+        }
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Daily Spending (PLN)',
+                    data: dataValues,
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#3b82f6'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) { return value + ' PLN'; }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    });
+</script>
 {% endblock %}

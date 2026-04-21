@@ -1,0 +1,26 @@
+{% extends 'layout/main.html' %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 800px; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+    <h1>Polityka Prywatności</h1>
+    <p class="text-muted">Ostatnia aktualizacja: 19 kwietnia 2026 r.</p>
+    
+    <hr>
+
+    <h3>1. Gromadzenie Danych</h3>
+    <p>Nasza aplikacja zbiera surowe <strong>dane</strong>, takie jak kwoty wydatków, kategorie oraz daty transakcji, które stanowią zapis Twojej rzeczywistości finansowej [cite: 2026-01-10].</p>
+
+    <h3>2. Przetwarzanie Informacji</h3>
+    <p>Wprowadzone dane są przetwarzane, analizowane i grupowane, aby stały się czytelną <strong>informacją</strong> w postaci wykresów i statystyk miesięcznych [cite: 2026-01-10].</p>
+
+    <h3>3. Twoja Wiedza</h3>
+    <p>Wierzymy, że <strong>wiedza</strong> powstaje w Twoim umyśle w procesie interpretacji otrzymanych informacji. Naszym celem jest dostarczenie Ci narzędzi, które ten proces ułatwią [cite: 2026-01-10].</p>
+
+    <h3>4. Bezpieczeństwo</h3>
+    <p>Twoje dane są przechowywane lokalnie i nie są udostępniane podmiotom trzecim bez Twojej wyraźnej zgody.</p>
+
+    <div class="mt-4">
+        <a href="{% url 'home' %}" class="btn btn-primary">Powrót do Dashboardu</a>
+    </div>
+</div>
+{% endblock %}
