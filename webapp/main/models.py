@@ -4,7 +4,7 @@ from django.db import models
 # Create your models here.
 
 
-class Transaction(models.Model):
+class Expense(models.Model):
 	CATEGORY_FOOD = 'food'
 	CATEGORY_TRANSPORT = 'transport'
 	CATEGORY_GROCERIES = 'groceries'
