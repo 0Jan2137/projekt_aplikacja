@@ -5,7 +5,7 @@ from django.db.models import Sum
 from django.utils import timezone
 from decimal import Decimal, InvalidOperation
 
-from main.models import Transaction
+from main.models import Expense
 
 # Create your views here.
 def index(request):
@@ -26,7 +26,7 @@ def index(request):
             messages.error(request, 'Amount must be a positive number.')
             return redirect('home')
 
-        if category not in dict(Transaction.CATEGORY_CHOICES):
+        if category not in dict(Expense.CATEGORY_CHOICES):
             messages.error(request, 'Please select a valid category.')
             return redirect('home')
 
@@ -34,7 +34,7 @@ def index(request):
             messages.error(request, 'Please select a date.')
             return redirect('home')
 
-        Transaction.objects.create(
+        Expense.objects.create(
             user=request.user,
             amount=amount,
             category=category,
@@ -45,7 +45,7 @@ def index(request):
 
     today = timezone.localdate()
     monthly_total = (
-        Transaction.objects
+        Expense.objects
         .filter(date__year=today.year, date__month=today.month)
         .aggregate(total=Sum('amount'))['total']
         or Decimal('0.00')
@@ -53,20 +53,22 @@ def index(request):
 
     monthly_budget = Decimal('3000.00')
     budget_remaining = monthly_budget - monthly_total
-    if budget_remaining < 0:
-        budget_remaining = Decimal('0.00')
 
     top_category = (
-        Transaction.objects
+        Expense.objects
         .values('category')
         .annotate(total=Sum('amount'))
         .order_by('-total')
         .first()
     )
-    category_choices = dict(Transaction.CATEGORY_CHOICES)
+    category_choices = dict(Expense.CATEGORY_CHOICES)
     top_category_name = category_choices.get(top_category['category'], '—') if top_category else '—'
 
-    recent_transactions = Transaction.objects.order_by('-date', '-id')[:10]
+    recent_transactions = (
+        Expense.objects
+        .filter(date__range=(today - timezone.timedelta(days=30), today))
+        .order_by('-date', '-id')
+    )
 
     context = {
         'total_spent': monthly_total,
