@@ -36,7 +36,7 @@
                     <input type="text" name="description" placeholder="Enter description">
 
                     <label>Date</label>
-                    <input type="date" name="date">
+                    <input type="date" name="date" id="default-date">
 
                     <button type="submit">Add Expense</button>
                 </form>
@@ -62,7 +62,7 @@
                     <input type="text" name="income_description" placeholder="Enter description">
 
                     <label>Date</label>
-                    <input type="date" name="income_date">
+                    <input type="date" name="date" id="default-date">
 
                     <button type="submit">Add Income</button>
                 </form>
@@ -122,9 +122,22 @@
     document.addEventListener('DOMContentLoaded', function() {
         const ctx = document.getElementById('dailySpendingChart').getContext('2d');
         
-        // Dane przekazane bezpiecznie z Django
-        const labels = {{ chart_labels|safe }};
-        const dataValues = {{ chart_data|safe }};
+                
+        const rawTransactions = [
+            {% for t in recent_transactions %}
+            { date: "{{ t.date|date:'d-m' }}", amount: parseFloat("{{ t.amount }}") },
+            {% endfor %}
+        ];
+
+        const grouped = rawTransactions.reduce((acc, curr) => {
+            acc[curr.date] = (acc[curr.date] || 0) + curr.amount;
+            return acc;
+        }, {});
+
+        const labels = Object.keys(grouped);
+        const dataValues = Object.values(grouped);
+
+        document.getElementById('default-date').valueAsDate = new Date();
 
         // Obsługa braku danych, żeby nie straszyć pustym polem
         if (labels.length === 0) {

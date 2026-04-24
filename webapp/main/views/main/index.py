@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.db.models import Sum
 from django.utils import timezone
 from decimal import Decimal, InvalidOperation
-from collections import defaultdict # Dodany import do grupowania
+from datetime import timedelta
 
 from main.models import Transaction
 
@@ -65,34 +65,18 @@ def index(request):
     )
     category_choices = dict(Transaction.CATEGORY_CHOICES)
     top_category_name = category_choices.get(top_category['category'], '—') if top_category else '—'
+  
 
-    # 3. Ostatnie transakcje
-    recent_transactions = Transaction.objects.order_by('-date', '-id')[:10]
-
-    # --- BEZPIECZNA LOGIKA WYKRESU (Grupowanie w Pythonie) ---
-    # Pobieramy wszystkie transakcje z tego miesiąca
-    monthly_transactions = Transaction.objects.filter(
-        date__year=today.year, 
-        date__month=today.month
-    ).order_by('date')
-
-    daily_map = defaultdict(Decimal)
-    for t in monthly_transactions:
-        if t.date:
-            daily_map[t.date] += t.amount
-    
-    # Sortujemy daty i przygotowujemy listy dla Chart.js
-    sorted_days = sorted(daily_map.keys())
-    chart_labels = [d.strftime('%d-%m') for d in sorted_days]
-    chart_data = [float(daily_map[d]) for d in sorted_days]
-
+    # 3. Pobieramy transakcje z ostatnich 30 dni 
+    start_date = today - timedelta(days=30)
+    recent_transactions = Transaction.objects.filter(date__gte=start_date).order_by('date')
+  
     context = {
         'total_spent': monthly_total,
         'budget_remaining': budget_remaining,
         'top_category_name': top_category_name,
         'recent_transactions': recent_transactions,
-        'chart_labels': chart_labels,
-        'chart_data': chart_data,
+        
     }
     return render(request, 'index.html', context)
 
