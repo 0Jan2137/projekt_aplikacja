@@ -6,6 +6,7 @@
     <div class="sidebar-quick-add">
         <h2>Quick Add</h2>
         
+        <!-- Bootstrap Tab Navigation-->
         <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="expense-tab" data-bs-toggle="tab" data-bs-target="#expense-content" type="button" role="tab" aria-controls="expense-content" aria-selected="true">Expense</button>
@@ -15,7 +16,9 @@
             </li>
         </ul>
         
+        <!-- Tab Content -->
         <div class="tab-content">
+            <!-- Expense Tab -->
             <div class="tab-pane fade show active" id="expense-content" role="tabpanel" aria-labelledby="expense-tab">
                 <form method="POST">
                     {% csrf_token %}
@@ -42,9 +45,11 @@
                 </form>
             </div>
             
+            <!-- Income Tab -->
             <div class="tab-pane fade" id="income-content" role="tabpanel" aria-labelledby="income-tab">
                 <form method="POST">
                     {% csrf_token %}
+
                     <label>Amount</label>
                     <input type="number" name="income_amount" placeholder="0.00" step="0.01">
                     <span>PLN</span>
@@ -77,10 +82,12 @@
                 <p>Total Spent This Month</p>
                 <h3>{{ total_spent }} PLN</h3>
             </div>
+            
             <div class="card">
                 <p>Budget Remaining</p>
                 <h3>{{ budget_remaining }} PLN</h3>
             </div>
+           
             <div class="card">
                 <p>Top Category</p>
                 <h3>{{ top_category_name }}</h3>
@@ -96,6 +103,7 @@
 
         <div class="recent-transactions">
             <h2>Recent Transactions</h2>
+
             {% for transaction in recent_transactions %}
                 <div class="transaction-row">
                     <div class="transaction-details">
