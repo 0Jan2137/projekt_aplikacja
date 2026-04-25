@@ -52,7 +52,7 @@ def index(request):
     )
 
     monthly_budget = Decimal('3000.00')
-    budget_remaining = monthly_budget - monthly_total
+    budget_remaining = max(Decimal('0.00'), monthly_budget - monthly_total)
 
     top_category = (
         Expense.objects
@@ -67,7 +67,7 @@ def index(request):
     recent_transactions = (
         Expense.objects
         .filter(date__range=(today - timezone.timedelta(days=30), today))
-        .order_by('-date', '-id')
+        .order_by('date')
     )
 
     context = {
@@ -80,3 +80,6 @@ def index(request):
 
 def terms_of_use(request):
     return render(request, 'footer/terms-of-use.html')
+
+def privacy_policy(request):
+    return render(request, 'footer/privacy-policy.html')
