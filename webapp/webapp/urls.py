@@ -16,13 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
+from django.views.i18n import set_language
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls), # default, part of django
     path('', include('main.urls')),
+    path('i18n/setlang/', set_language, name='set_language'),
     # path('news/', include('news.urls')), 
     # path('forum/', include('forum.urls')) #delegating authority to an internal application to forum.urls that is needed to be created
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

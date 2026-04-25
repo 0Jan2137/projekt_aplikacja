@@ -4,7 +4,7 @@ from django.contrib import messages #to show message back for errors
 from django.db.models import Sum
 from django.utils import timezone
 from decimal import Decimal, InvalidOperation
-
+from django.utils.translation import gettext as _
 from main.models import Expense
 
 # Create your views here.
@@ -61,8 +61,17 @@ def index(request):
         .order_by('-total')
         .first()
     )
-    category_choices = dict(Expense.CATEGORY_CHOICES)
-    top_category_name = category_choices.get(top_category['category'], '—') if top_category else '—'
+    CATEGORY_MAP = {
+    'food': _('Food'),
+    'transport': _('Transport'),
+    'groceries': _('Groceries'),
+    'bills': _('Bills'),
+    'entertainment': _('Entertainment'),
+}
+    if top_category:
+        top_category_name = CATEGORY_MAP.get(top_category['category'], '—')
+    else:
+        top_category_name = '—'
 
     recent_transactions = (
         Expense.objects

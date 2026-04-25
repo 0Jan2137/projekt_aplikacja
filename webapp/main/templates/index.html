@@ -1,5 +1,6 @@
 {% extends 'layout/main.html' %}
 
+{% load i18n %}
 {% block content %}
 <div class="container-fluid py-4">
     <div class="row g-4">
@@ -8,124 +9,121 @@
                 <div class="card-body">
                     <h2 class="h5 mb-4">Quick Add</h2>
 
-                    <ul class="nav nav-tabs mb-4" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="expense-tab" data-bs-toggle="tab" data-bs-target="#expense-content" type="button" role="tab" aria-controls="expense-content" aria-selected="true">Expense</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="income-tab" data-bs-toggle="tab" data-bs-target="#income-content" type="button" role="tab" aria-controls="income-content" aria-selected="false">Income</button>
-                        </li>
-                    </ul>
+    <div class="sidebar-quick-add">
+        <h2>{% trans "Quick Add" %}</h2>
+        
+        <!-- Bootstrap Tab Navigation -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="expense-tab" data-bs-toggle="tab" data-bs-target="#expense-content" type="button" role="tab" aria-controls="expense-content" aria-selected="true">{% trans "Expense" %}</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="income-tab" data-bs-toggle="tab" data-bs-target="#income-content" type="button" role="tab" aria-controls="income-content" aria-selected="false">{% trans "Income" %}</button>
+            </li>
+        </ul>
+        
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Expense Tab -->
+            <div class="tab-pane fade show active" id="expense-content" role="tabpanel" aria-labelledby="expense-tab">
+                <form method="POST">
+                    {% csrf_token %}
 
-                    <div class="tab-content">
-                        <div class="tab-pane fade show active" id="expense-content" role="tabpanel" aria-labelledby="expense-tab">
-                            <form method="POST" class="row g-3">
-                                {% csrf_token %}
+                    <label>{% trans "Amount" %}</label>
+                    <input type="number" name="amount" placeholder="0.00" step="0.01">
+                    <span>{% trans "PLN" %}</span>
 
-                                <div class="col-12">
-                                    <label class="form-label">Amount</label>
-                                    <div class="input-group">
-                                        <input type="number" name="amount" class="form-control" placeholder="0.00" step="0.01">
-                                        <span class="input-group-text">PLN</span>
-                                    </div>
-                                </div>
+                    <label>{% trans "Category" %}</label>
+                    <select name="category">
+                        <option value="food">{% trans "Food" %}</option>
+                        <option value="transport">{% trans "Transport" %}</option>
+                        <option value="groceries">{% trans "Groceries" %}</option>
+                        <option value="bills">{% trans "Bills" %}</option>
+                        <option value="entertainment">{% trans "Entertainment" %}</option>
+                    </select>
 
-                                <div class="col-12">
-                                    <label class="form-label">Category</label>
-                                    <select name="category" class="form-select">
-                                        <option value="food">Food</option>
-                                        <option value="transport">Transport</option>
-                                        <option value="groceries">Groceries</option>
-                                        <option value="bills">Bills</option>
-                                        <option value="entertainment">Entertainment</option>
-                                    </select>
-                                </div>
+                    <label>{% trans "Description (Optional)" %}</label>
+                    <input type="text" name="description" placeholder='{% trans "Enter description" %}'>
 
-                                <div class="col-12">
-                                    <label class="form-label">Description (Optional)</label>
-                                    <input type="text" name="description" class="form-control" placeholder="Enter description">
-                                </div>
+                    <label>{% trans "Date" %}</label>
+                    <input type="date" name="date" value="{% now 'Y-m-d' %}">
 
-                                <div class="col-12">
-                                    <label class="form-label">Date</label>
-                                    <input type="date" name="date" class="form-control" value="{% now 'Y-m-d' %}">
-                                </div>
+                    <button type="submit">{% trans "Add Expense" %}</button>
+                </form>
+            </div>
+            
+            <!-- Income Tab -->
+            <div class="tab-pane fade" id="income-content" role="tabpanel" aria-labelledby="income-tab">
+                <form method="POST">
+                    {% csrf_token %}
 
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-primary w-100">Add Expense</button>
-                                </div>
-                            </form>
-                        </div>
+                    <label>{% trans "Amount" %}</label>
+                    <input type="number" name="income_amount" placeholder="0.00" step="0.01">
+                    <span>{% trans "PLN" %}</span>
 
-                        <div class="tab-pane fade" id="income-content" role="tabpanel" aria-labelledby="income-tab">
-                            <form method="POST" class="row g-3">
-                                {% csrf_token %}
+                    <label>{% trans "Source" %}</label>
+                    <select name="income_source">
+                        <option value="salary">{% trans "Salary" %}</option>
+                        <option value="freelance">{% trans "Freelance" %}</option>
+                        <option value="investment">{% trans "Investment" %}</option>
+                        <option value="bonus">{% trans "Bonus" %}</option>
+                        <option value="other">{% trans "Other" %}</option>
+                    </select>
 
-                                <div class="col-12">
-                                    <label class="form-label">Amount</label>
-                                    <div class="input-group">
-                                        <input type="number" name="income_amount" class="form-control" placeholder="0.00" step="0.01">
-                                        <span class="input-group-text">PLN</span>
-                                    </div>
-                                </div>
+                    <label>{% trans "Description (Optional)" %}</label>
+                    <input type="text" name="income_description" placeholder='{% trans "Enter description" %}'>
 
-                                <div class="col-12">
-                                    <label class="form-label">Source</label>
-                                    <select name="income_source" class="form-select">
-                                        <option value="salary">Salary</option>
-                                        <option value="freelance">Freelance</option>
-                                        <option value="investment">Investment</option>
-                                        <option value="bonus">Bonus</option>
-                                        <option value="other">Other</option>
-                                    </select>
-                                </div>
+                    <label>{% trans "Date" %}</label>
+                    <input type="date" name="income_date" value="{% now 'Y-m-d' %}">
 
-                                <div class="col-12">
-                                    <label class="form-label">Description (Optional)</label>
-                                    <input type="text" name="income_description" class="form-control" placeholder="Enter description">
-                                </div>
+                    <button type="submit">{% trans "Add Income" %}</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
                                 <div class="col-12">
                                     <label class="form-label">Date</label>
                                     <input type="date" name="income_date" class="form-control" value="{% now 'Y-m-d' %}">
                                 </div>
 
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-primary w-100">Add Income</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+        <div class="top-stats-cards">
+            <div class="card">
+                <p>{% trans "Total Spent This Month" %}</p>
+                <h3>{{ total_spent }} {% trans "PLN" %}</h3>
+            </div>
+            
+            <div class="card">
+                <p>{% trans "Budget Remaining" %}</p>
+                <h3>{{ budget_remaining }} {% trans "PLN" %}</h3>
+            </div>
+            
+            <div class="card">
+                <p>{% trans "Top Category" %}</p>
+                <h3>{{ top_category_name }}</h3>
             </div>
         </div>
 
-        <div class="col-xl-8">
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body">
-                            <p class="text-muted mb-2">Total Spent This Month</p>
-                            <h3 class="mb-0">{{ total_spent }} PLN</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body">
-                            <p class="text-muted mb-2">Budget Remaining</p>
-                            <h3 class="mb-0">{{ budget_remaining }} PLN</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body">
-                            <p class="text-muted mb-2">Top Category</p>
-                            <h3 class="mb-0">{{ top_category_name }}</h3>
-                        </div>
-                    </div>
-                </div>
+        <div class="chart-section">
+            <h2>{% trans "Daily Spending Trends" %}</h2>
+            <canvas id="dailySpendingChart"></canvas>
+        </div>
+
+        <div class="recent-transactions">
+    <h2>{% trans "Recent Transactions" %}</h2>
+    
+    <div class="transaction-headers" style="display: flex; justify-content: space-between; padding: 10px; font-weight: bold; border-bottom: 2px solid #eee;">
+        <div onclick="sortTransactions(0, 'text')" style="cursor:pointer; flex: 2;">{% trans "Category/Desc" %} <span id="sort-0"></span></div>
+        <div onclick="sortTransactions(1, 'date')" style="cursor:pointer; flex: 1;">{% trans "Date" %} <span id="sort-1"></span></div>
+        <div onclick="sortTransactions(2, 'number')" style="cursor:pointer; flex: 1; text-align: right;">{% trans "Amount" %} <span id="sort-2"></span></div>
+    </div>
+
+    <div id="transactions-container">
+        {% for transaction in recent_transactions %}
+        <div class="transaction-row" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="transaction-details" style="flex: 2;">
+                <h4 data-val="{{ transaction.category_name }}">{{ transaction.category_name }}</h4>
+                <p>{{ transaction.description }}</p>
             </div>
 
             <div class="card shadow-sm mt-4">
@@ -134,40 +132,17 @@
                     <canvas id="dailySpendingChart" class="w-100" style="min-height: 300px;"></canvas>
                 </div>
             </div>
-
-            <div class="card shadow-sm mt-4">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h2 class="h5 mb-0">Recent Transactions</h2>
-                    </div>
-
-                    <div class="row fw-semibold text-secondary border-bottom pb-2 mb-3">
-                        <div class="col-5" onclick="sortTransactions(0, 'text')" style="cursor: pointer;">Category / Desc <span id="sort-0"></span></div>
-                        <div class="col-3 text-center" onclick="sortTransactions(1, 'date')" style="cursor: pointer;">Date <span id="sort-1"></span></div>
-                        <div class="col-4 text-end" onclick="sortTransactions(2, 'number')" style="cursor: pointer;">Amount <span id="sort-2"></span></div>
-                    </div>
-
-                    <div id="transactions-container">
-                        {% for transaction in recent_transactions %}
-                            <div class="row align-items-center py-3 border-bottom transaction-row" data-val="{{ transaction.amount }}">
-                                <div class="col-5">
-                                    <h4 class="h6 mb-1" data-val="{{ transaction.category_name }}">{{ transaction.category_name }}</h4>
-                                    <p class="mb-0 text-muted">{{ transaction.description }}</p>
-                                </div>
-                                <div class="col-3 text-center" data-val="{{ transaction.date|date:'Y-m-d' }}">
-                                    <p class="mb-0 text-muted">{{ transaction.date }}</p>
-                                </div>
-                                <div class="col-4 text-end">
-                                    <p class="mb-0 fw-bold {% if transaction.amount < 0 %}text-danger{% else %}text-success{% endif %}">{{ transaction.amount|floatformat:2 }} PLN</p>
-                                </div>
-                            </div>
-                        {% empty %}
-                            <p class="text-muted">No recent transactions found.</p>
-                        {% endfor %}
-                    </div>
-                </div>
+            
+            <div class="transaction-amount" style="flex: 1; text-align: right;" data-val="{{ transaction.amount }}">
+                <p>-{{ transaction.amount }} {% trans "PLN" %}</p>
             </div>
         </div>
+        {% empty %}
+        <p>{% trans "No recent transactions found." %}</p>
+        {% endfor %}
+    </div>
+    </div>
+
     </div>
 </div>
 
