@@ -171,6 +171,71 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('dailySpendingChart').getContext('2d');
+        
+        // Zbieramy surowe fakty przesłane przez Django
+        const rawTransactions = [
+            {% for t in recent_transactions %}
+            { date: "{{ t.date|date:'d-m' }}", amount: parseFloat("{{ t.amount }}") },
+            {% endfor %}
+        ];
+
+        // Interpretacja na froncie (grupowanie po dacie)
+        const grouped = rawTransactions.reduce((acc, curr) => {
+            acc[curr.date] = (acc[curr.date] || 0) + curr.amount;
+            return acc;
+        }, {});
+
+        const labels = Object.keys(grouped);
+        const dataValues = Object.values(grouped);
+
+        // Wyśrodkowany tekst dla pustego konta
+        if (labels.length === 0) {
+            ctx.font = "16px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillStyle = "#666";
+            ctx.fillText("Dodaj pierwszą transakcję, aby zobaczyć wykres", ctx.canvas.width/2, ctx.canvas.height/2);
+            return;
+        }
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Daily Spending (PLN)',
+                    data: dataValues,
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#3b82f6'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) { return value + ' PLN'; }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    });
+</script>
+
 <script>
     let directions = [true, true, true];
 
