@@ -1,9 +1,102 @@
 {% extends 'layout/main.html' %}
 
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('dailySpendingChart').getContext('2d');
+        
+        // Zbieramy surowe fakty przesłane przez Django
+        const rawTransactions = [
+            {% for t in recent_transactions %}
+            { date: "{{ t.date|date:'d-m' }}", amount: parseFloat("{{ t.amount }}") },
+            {% endfor %}
+        ];
+
+        // Interpretacja na froncie (grupowanie po dacie)
+        const grouped = rawTransactions.reduce((acc, curr) => {
+            acc[curr.date] = (acc[curr.date] || 0) + curr.amount;
+            return acc;
+        }, {});
+
+        const labels = Object.keys(grouped);
+        const dataValues = Object.values(grouped);
+
+        // Wyśrodkowany tekst dla pustego konta
+        if (labels.length === 0) {
+            ctx.font = "16px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillStyle = "#666";
+            ctx.fillText("Dodaj pierwszą transakcję, aby zobaczyć wykres", ctx.canvas.width/2, ctx.canvas.height/2);
+            return;
+        }
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Daily Spending (PLN)',
+                    data: dataValues,
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#3b82f6'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) { return value + ' PLN'; }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    });
+</script>
+
+<script>
+    let directions = [true, true, true];
+
+    function sortTransactions(colIdx, type) {
+        const container = document.getElementById("transactions-container");
+        const rows = Array.from(container.getElementsByClassName("transaction-row"));
+        const isAsc = directions[colIdx];
+
+        rows.sort((a, b) => {
+            let valA = a.children[colIdx].getAttribute("data-val") || a.children[colIdx].innerText;
+            let valB = b.children[colIdx].getAttribute("data-val") || b.children[colIdx].innerText;
+
+            if (type === 'number') return isAsc ? parseFloat(valA) - parseFloat(valB) : parseFloat(valB) - parseFloat(valA);
+            if (type === 'date') return isAsc ? new Date(valA) - new Date(valB) : new Date(valB) - new Date(valA);
+            return isAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        });
+
+        directions[colIdx] = !isAsc;
+        rows.forEach(row => container.appendChild(row));
+
+        for (let i = 0; i < 3; i++) {
+            document.getElementById(`sort-${i}`).innerHTML = (i === colIdx) ? (isAsc ? "↑" : "↓") : "";
+        }
+    }
+</script>
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid py-4">
     <div class="row g-4">
-        <div class="col-xl-4">
+        <div class="col-xl-2">
             <div class="card shadow-sm align-self-start position-sticky" style="top: 1rem;">
                 <div class="card-body">
                     <h2 class="h5 mb-4">Quick Add</h2>
@@ -100,7 +193,7 @@
             </div>
         </div>
 
-        <div class="col-xl-8">
+        <div class="col-xl-10">
             <div class="row g-4">
                 <div class="col-md-4">
                     <div class="card shadow-sm h-100">
@@ -131,7 +224,7 @@
             <div class="card shadow-sm mt-4">
                 <div class="card-body">
                     <h2 class="h5 mb-3">Daily Spending Trends</h2>
-                    <canvas id="dailySpendingChart" class="w-100" style="min-height: 300px;"></canvas>
+                    <canvas id="dailySpendingChart" class="w-100" style="min-height: 200px; max-height: 600px;"></canvas>
                 </div>
             </div>
 
@@ -170,95 +263,4 @@
         </div>
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const ctx = document.getElementById('dailySpendingChart').getContext('2d');
-        
-        // Zbieramy surowe fakty przesłane przez Django
-        const rawTransactions = [
-            {% for t in recent_transactions %}
-            { date: "{{ t.date|date:'d-m' }}", amount: parseFloat("{{ t.amount }}") },
-            {% endfor %}
-        ];
-
-        // Interpretacja na froncie (grupowanie po dacie)
-        const grouped = rawTransactions.reduce((acc, curr) => {
-            acc[curr.date] = (acc[curr.date] || 0) + curr.amount;
-            return acc;
-        }, {});
-
-        const labels = Object.keys(grouped);
-        const dataValues = Object.values(grouped);
-
-        // Wyśrodkowany tekst dla pustego konta
-        if (labels.length === 0) {
-            ctx.font = "16px sans-serif";
-            ctx.textAlign = "center";
-            ctx.fillStyle = "#666";
-            ctx.fillText("Dodaj pierwszą transakcję, aby zobaczyć wykres", ctx.canvas.width/2, ctx.canvas.height/2);
-            return;
-        }
-
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Daily Spending (PLN)',
-                    data: dataValues,
-                    borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.3,
-                    pointRadius: 4,
-                    pointBackgroundColor: '#3b82f6'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) { return value + ' PLN'; }
-                        }
-                    }
-                },
-                plugins: {
-                    legend: { display: false }
-                }
-            }
-        });
-    });
-</script>
-
-<script>
-    let directions = [true, true, true];
-
-    function sortTransactions(colIdx, type) {
-        const container = document.getElementById("transactions-container");
-        const rows = Array.from(container.getElementsByClassName("transaction-row"));
-        const isAsc = directions[colIdx];
-
-        rows.sort((a, b) => {
-            let valA = a.children[colIdx].getAttribute("data-val") || a.children[colIdx].innerText;
-            let valB = b.children[colIdx].getAttribute("data-val") || b.children[colIdx].innerText;
-
-            if (type === 'number') return isAsc ? parseFloat(valA) - parseFloat(valB) : parseFloat(valB) - parseFloat(valA);
-            if (type === 'date') return isAsc ? new Date(valA) - new Date(valB) : new Date(valB) - new Date(valA);
-            return isAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
-        });
-
-        directions[colIdx] = !isAsc;
-        rows.forEach(row => container.appendChild(row));
-
-        for (let i = 0; i < 3; i++) {
-            document.getElementById(`sort-${i}`).innerHTML = (i === colIdx) ? (isAsc ? "↑" : "↓") : "";
-        }
-    }
-</script>
 {% endblock %}

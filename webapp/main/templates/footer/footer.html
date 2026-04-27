@@ -1,33 +1,44 @@
-<footer class="main-footer">
-    <div class="footer-container">
-        <div class="footer-section about">
-            <h4>ExpensePRO</h4>
-            <p>We help turn raw numbers into financial peace of mind</p>
-        </div>
-        <div class="footer-links">
-            <div class="footer-section">
-                <h4>Navigation</h4>
-                <ul>
-                    <li><a href="{% url 'home' %}">Dashboard</a></li>
-                    <li><a href="#">History</a></li>
+<footer class="bg-dark text-white py-2 mt-1">
+
+    <div class="container-fluid px-4">
+        
+        <div class="row g-5 align-items-start">
+
+            <div class="col-6">
+                <h5 class="fw-bold mb-3">ExpensePRO</h5>
+                <p class="text-secondary">We help turn raw numbers into financial peace of mind</p>
+            </div>
+
+            <div class="col-2 ms-auto text-end">
+                <h5 class="fw-bold mb-3">Navigation</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'home' %}" class="text-secondary text-decoration-none">Dashboard</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none">History</a></li>
                 </ul>
             </div>
-            <div class="footer-section">
-                <h4>Privacy</h4>
-                <ul>
-                    <li><a href="{% url 'terms_of_use' %}">Terms of Use</a></li>
-                    <li><a href="{% url 'privacy_policy' %}">Privacy Policy</a></li>
+
+            <div class="col-2 text-end">
+                <h5 class="fw-bold mb-3">Privacy</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'terms_of_use' %}" class="text-secondary text-decoration-none">Terms of Use</a></li>
+                    <li><a href="{% url 'privacy_policy' %}" class="text-secondary text-decoration-none">Privacy Policy</a></li>
                 </ul>
             </div>
-            <div class="footer-section">
-                <h4>Contact</h4>
-                <ul>
-                    <li><a href="mailto:support@expensepro.com">Email</a></li>
+
+            <div class="col-2 text-end">
+                <h5 class="fw-bold mb-3">Contact</h5>
+                <ul class="list-unstyled">
+                    <li><a href="mailto:support@expensepro.com" class="text-secondary text-decoration-none">Email</a></li>
                 </ul>
             </div>
+
         </div>
     </div>
-    <div class="footer-bottom">
-        <p>&copy; 2026 ExpensePRO. Record reality, build knowledge</p>
+
+    <div class="border-top border-secondary pt-2">
+        <div class="container-fluid px-4 d-flex justify-content-end">
+            <p class="mb-0 text-secondary small">&copy; 2026 ExpensePRO. Record reality, build knowledge</p>
+        </div>
     </div>
+
 </footer>
