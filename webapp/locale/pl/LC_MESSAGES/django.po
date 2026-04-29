@@ -1,0 +1,187 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-29 12:09+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: pl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
+"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+
+#: .\main\models.py:16 .\main\templates\index.html:135
+msgid "Food"
+msgstr "Jedzenie"
+
+#: .\main\models.py:17 .\main\templates\index.html:136
+msgid "Transport"
+msgstr "Transport"
+
+#: .\main\models.py:18 .\main\templates\index.html:137
+msgid "Groceries"
+msgstr "Zakupy"
+
+#: .\main\models.py:19 .\main\templates\index.html:138
+msgid "Bills"
+msgstr "Rachunki"
+
+#: .\main\models.py:20 .\main\templates\index.html:139
+msgid "Entertainment"
+msgstr "Rozrywka"
+
+#: .\main\templates\auth\login.html:7 .\main\templates\auth\login.html:24
+msgid "Log in"
+msgstr "Zaloguj się"
+
+#: .\main\templates\auth\login.html:15 .\main\templates\auth\register.html:15
+msgid "Username"
+msgstr "Nazwa użytkownika"
+
+#: .\main\templates\auth\login.html:20 .\main\templates\auth\register.html:25
+msgid "Password"
+msgstr "Hasło"
+
+#: .\main\templates\auth\login.html:29
+msgid "Don't have an account?"
+msgstr "Nie masz konta?"
+
+#: .\main\templates\auth\login.html:29
+msgid "Register here"
+msgstr "Zarejestruj się"
+
+#: .\main\templates\auth\register.html:7 .\main\templates\auth\register.html:29
+msgid "Register"
+msgstr "Zarejestruj się"
+
+#: .\main\templates\auth\register.html:20
+msgid "Email"
+msgstr "Email"
+
+#: .\main\templates\auth\register.html:34
+msgid "Already have an account?"
+msgstr "Masz już konto?"
+
+#: .\main\templates\auth\register.html:34
+msgid "Login here"
+msgstr "Zaloguj się"
+
+#: .\main\templates\index.html:102
+msgid "Quick Add"
+msgstr "Szybkie dodawanie"
+
+#: .\main\templates\index.html:108
+msgid "Expense"
+msgstr "Wydatek"
+
+#: .\main\templates\index.html:113
+msgid "Income"
+msgstr "Przychód"
+
+#: .\main\templates\index.html:124 .\main\templates\index.html:165
+#: .\main\templates\index.html:253
+msgid "Amount"
+msgstr "Kwota"
+
+#: .\main\templates\index.html:133
+msgid "Category"
+msgstr "Kategoria"
+
+#: .\main\templates\index.html:144 .\main\templates\index.html:185
+msgid "Description (optional)"
+msgstr "Opis (opcjonalnie)"
+
+#: .\main\templates\index.html:146 .\main\templates\index.html:187
+msgid "Enter description"
+msgstr "Dodaj opis"
+
+#: .\main\templates\index.html:150 .\main\templates\index.html:191
+#: .\main\templates\index.html:252
+msgid "Date"
+msgstr "Data"
+
+#: .\main\templates\index.html:155
+msgid "Add Expense"
+msgstr "Dodaj wydatek"
+
+#: .\main\templates\index.html:174
+msgid "Source"
+msgstr "Źródło"
+
+#: .\main\templates\index.html:176
+msgid "Salary"
+msgstr "Wynagrodzenie"
+
+#: .\main\templates\index.html:177
+msgid "Freelance"
+msgstr "Freelance"
+
+#: .\main\templates\index.html:178
+msgid "Investment"
+msgstr "Inwestycje"
+
+#: .\main\templates\index.html:179
+msgid "Bonus"
+msgstr "Premia"
+
+#: .\main\templates\index.html:180
+msgid "Other"
+msgstr "Inne"
+
+#: .\main\templates\index.html:197
+msgid "Add Income"
+msgstr "Dodaj przychód"
+
+#: .\main\templates\index.html:211
+msgid "Total Spent This Month"
+msgstr "Łączne wydatki w tym miesiącu"
+
+#: .\main\templates\index.html:219
+msgid "Budget Remaining"
+msgstr "Pozostały budżet"
+
+#: .\main\templates\index.html:227
+msgid "Top Category"
+msgstr "Największa kategoria wydatków"
+
+#: .\main\templates\index.html:238
+msgid "Daily Spending Trends"
+msgstr "Dzienne trendy wydatków"
+
+#: .\main\templates\index.html:247
+msgid "Recent Transactions"
+msgstr "Ostatnie transakcje"
+
+#: .\main\templates\index.html:251
+msgid "Category / Desc"
+msgstr "Kategoria"
+
+#: .\main\templates\layout\main.html:27
+msgid "Dashboard"
+msgstr "Panel"
+
+#: .\main\templates\layout\main.html:29
+msgid "History"
+msgstr "Historia"
+
+#: .\main\templates\layout\main.html:51
+#, python-format
+msgid "Welcome, %(username)s!"
+msgstr "Witaj, %(username)s!"
+
+#: .\main\templates\layout\main.html:55
+msgid "Logout"
+msgstr "Wyloguj się"
+
+#: .\main\templates\layout\main.html:57
+msgid "Login"
+msgstr "Zaloguj się"

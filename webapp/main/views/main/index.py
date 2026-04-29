@@ -4,8 +4,8 @@ from django.contrib import messages #to show message back for errors
 from django.db.models import Sum
 from django.utils import timezone
 from decimal import Decimal, InvalidOperation
-
-from main.models import Expense
+from django.utils.translation import gettext as _
+from main.models import Expense, Income
 
 # Create your views here.
 def index(request):
@@ -13,6 +13,30 @@ def index(request):
         return redirect('login_user')
     
     if request.method == 'POST':
+        if request.POST.get('income_amount'):
+            amount_raw = request.POST.get('income_amount', '').strip()
+            source = request.POST.get('income_source', '').strip()
+            description = request.POST.get('income_description', '').strip()
+            date = request.POST.get('income_date', '').strip()
+
+            try:
+                amount = Decimal(amount_raw)
+                if amount <= 0:
+                    raise InvalidOperation
+            except InvalidOperation:
+                messages.error(request, 'Income must be positive.')
+                return redirect('home')
+
+            Income.objects.create(
+                user=request.user,
+                amount=amount,
+                source=source,
+                description=description,
+                date=date,
+            )
+
+            return redirect('home')
+    
         amount_raw = request.POST.get('amount', '').strip()
         category = request.POST.get('category', '').strip()
         description = request.POST.get('description', '').strip()
@@ -46,35 +70,53 @@ def index(request):
     today = timezone.localdate()
     monthly_total = (
         Expense.objects
+        .filter(user=request.user)
         .filter(date__year=today.year, date__month=today.month)
         .aggregate(total=Sum('amount'))['total']
         or Decimal('0.00')
     )
 
-    monthly_budget = Decimal('3000.00')
-    budget_remaining = max(Decimal('0.00'), monthly_budget - monthly_total)
+    monthly_income = (
+    Income.objects
+    .filter(user=request.user)
+    .filter(date__year=today.year, date__month=today.month)
+    .aggregate(total=Sum('amount'))['total']
+    or Decimal('0.00')
+    )
+
+    budget_remaining = monthly_income - monthly_total
 
     top_category = (
         Expense.objects
+        .filter(user=request.user)
+        .filter(date__year=today.year, date__month=today.month)
         .values('category')
         .annotate(total=Sum('amount'))
         .order_by('-total')
         .first()
     )
-    category_choices = dict(Expense.CATEGORY_CHOICES)
-    top_category_name = category_choices.get(top_category['category'], '—') if top_category else '—'
+
+    top_category_name = '—'
+
+    if top_category:
+        category_code = top_category['category']
+        top_category_name = _(
+            dict(Expense.CATEGORY_CHOICES).get(category_code, '—')
+        )
 
     recent_transactions = (
         Expense.objects
+        .filter(user=request.user)
         .filter(date__range=(today - timezone.timedelta(days=30), today))
         .order_by('date')
     )
-
+    
     context = {
         'total_spent': monthly_total,
         'budget_remaining': budget_remaining,
         'top_category_name': top_category_name,
         'recent_transactions': recent_transactions,
+        
     }
     return render(request, 'index.html', context)
 
@@ -83,3 +125,6 @@ def terms_of_use(request):
 
 def privacy_policy(request):
     return render(request, 'footer/privacy-policy.html')
+
+def history(request):
+    return render(request, "history.html")
