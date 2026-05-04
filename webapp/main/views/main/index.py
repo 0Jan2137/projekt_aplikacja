@@ -1,11 +1,12 @@
 # Plik do definiowania widoków, które są renderowane za pomocą szablonizatora Jinja oraz wyświetlane w przeglądarce
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib import messages #to show message back for errors
 from django.db.models import Sum
 from django.utils import timezone
 from decimal import Decimal, InvalidOperation
 from django.utils.translation import gettext as _
 from main.models import Expense, Income
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def index(request):
@@ -128,3 +129,15 @@ def privacy_policy(request):
 
 def history(request):
     return render(request, "history.html")
+
+@login_required
+def delete_expense(request, pk):
+    expense = get_object_or_404(Expense, pk=pk, user=request.user)
+    expense.delete()
+    return redirect('home')
+
+@login_required
+def delete_income(request, pk):
+    income = get_object_or_404(Income, pk=pk, user=request.user)
+    income.delete()
+    return redirect('home')
