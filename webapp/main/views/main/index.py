@@ -3,70 +3,17 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib import messages #to show message back for errors
 from django.db.models import Sum
 from django.utils import timezone
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal
 from django.utils.translation import gettext as _
 from main.models import Expense, Income
+from main.forms import ExpenseForm, IncomeForm
 from django.contrib.auth.decorators import login_required
 
-# Create your views here.
-def index(request):
-    if not request.user.is_authenticated:
-        return redirect('login_user')
-    
-    if request.method == 'POST':
-        if request.POST.get('income_amount'):
-            amount_raw = request.POST.get('income_amount', '').strip()
-            source = request.POST.get('income_source', '').strip()
-            description = request.POST.get('income_description', '').strip()
-            date = request.POST.get('income_date', '').strip()
-
-            try:
-                amount = Decimal(amount_raw)
-                if amount <= 0:
-                    raise InvalidOperation
-            except InvalidOperation:
-                messages.error(request, 'Income must be positive.')
-                return redirect('home')
-
-            Income.objects.create(
-                user=request.user,
-                amount=amount,
-                source=source,
-                description=description,
-                date=date,
-            )
-
-            return redirect('home')
-    
-        amount_raw = request.POST.get('amount', '').strip()
-        category = request.POST.get('category', '').strip()
-        description = request.POST.get('description', '').strip()
-        date = request.POST.get('date', '').strip()
-
-        try:
-            amount = Decimal(amount_raw)
-            if amount <= 0:
-                raise InvalidOperation
-        except InvalidOperation:
-            messages.error(request, 'Amount must be a positive number.')
-            return redirect('home')
-
-        if category not in dict(Expense.CATEGORY_CHOICES):
-            messages.error(request, 'Please select a valid category.')
-            return redirect('home')
-
-        if not date:
-            messages.error(request, 'Please select a date.')
-            return redirect('home')
-
-        Expense.objects.create(
-            user=request.user,
-            amount=amount,
-            category=category,
-            description=description,
-            date=date,
-        )
-        return redirect('home')
+def _build_index_context(request, expense_form=None, income_form=None, active_tab='expense'):
+    if expense_form is None:
+        expense_form = ExpenseForm(prefix='expense')
+    if income_form is None:
+        income_form = IncomeForm(prefix='income')
 
     today = timezone.localdate()
     monthly_total = (
@@ -78,11 +25,11 @@ def index(request):
     )
 
     monthly_income = (
-    Income.objects
-    .filter(user=request.user)
-    .filter(date__year=today.year, date__month=today.month)
-    .aggregate(total=Sum('amount'))['total']
-    or Decimal('0.00')
+        Income.objects
+        .filter(user=request.user)
+        .filter(date__year=today.year, date__month=today.month)
+        .aggregate(total=Sum('amount'))['total']
+        or Decimal('0.00')
     )
 
     budget_remaining = monthly_income - monthly_total
@@ -111,22 +58,54 @@ def index(request):
         .filter(date__range=(today - timezone.timedelta(days=30), today))
         .order_by('date')
     )
-    
-    context = {
+
+    return {
         'total_spent': monthly_total,
         'budget_remaining': budget_remaining,
         'top_category_name': top_category_name,
         'recent_transactions': recent_transactions,
-        
+        'expense_form': expense_form,
+        'income_form': income_form,
+        'active_tab': active_tab,
     }
+
+
+def index(request):
+    if not request.user.is_authenticated:
+        return redirect('login_user')
+
+    context = _build_index_context(request)
     return render(request, 'index.html', context)
 
-def terms_of_use(request):
-    return render(request, 'footer/terms-of-use.html')
+@login_required
+def post_expense(request):
+    if request.method != 'POST':
+        return redirect('home')
 
-def privacy_policy(request):
-    return render(request, 'footer/privacy-policy.html')
+    expense_form = ExpenseForm(request.POST, prefix='expense')
+    if expense_form.is_valid():
+        Expense.objects.create(user=request.user, **expense_form.cleaned_data)
+        return redirect('home')
 
+    messages.error(request, _('Please fix the errors in the expense form.'))
+    context = _build_index_context(request, expense_form=expense_form, active_tab='expense')
+    return render(request, 'index.html', context)
+
+@login_required
+def post_income(request):
+    if request.method != 'POST':
+        return redirect('home')
+
+    income_form = IncomeForm(request.POST, prefix='income')
+    if income_form.is_valid():
+        Income.objects.create(user=request.user, **income_form.cleaned_data)
+        return redirect('home')
+
+    messages.error(request, _('Please fix the errors in the income form.'))
+    context = _build_index_context(request, income_form=income_form, active_tab='income')
+    return render(request, 'index.html', context)
+
+@login_required
 def history(request):
     return render(request, "history.html")
 
@@ -141,3 +120,10 @@ def delete_income(request, pk):
     income = get_object_or_404(Income, pk=pk, user=request.user)
     income.delete()
     return redirect('home')
+
+def terms_of_use(request):
+    return render(request, 'footer/terms-of-use.html')
+
+def privacy_policy(request):
+    return render(request, 'footer/privacy-policy.html')
+
