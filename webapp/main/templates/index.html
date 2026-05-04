@@ -68,11 +68,29 @@
 
 <script>
     let directions = [true, true, true];
+    const SORT_STORAGE_KEY = 'recent-transactions-sort';
 
-    function sortTransactions(colIdx, type) {
+    function saveSortState(colIdx, type, asc) {
+        localStorage.setItem(SORT_STORAGE_KEY, JSON.stringify({ colIdx, type, asc }));
+    }
+
+    function loadSortState() {
+        const saved = localStorage.getItem(SORT_STORAGE_KEY);
+        if (!saved) {
+            return { colIdx: 1, type: 'date', asc: false };
+        }
+
+        try {
+            return JSON.parse(saved);
+        } catch (error) {
+            return { colIdx: 1, type: 'date', asc: false };
+        }
+    }
+
+    function sortTransactions(colIdx, type, asc=undefined) {
         const container = document.getElementById("transactions-container");
         const rows = Array.from(container.getElementsByClassName("transaction-row"));
-        const isAsc = directions[colIdx];
+        const isAsc = asc !== undefined ? asc : directions[colIdx];
 
         rows.sort((a, b) => {
             let valA = a.children[colIdx].getAttribute("data-val") || a.children[colIdx].innerText;
@@ -84,6 +102,7 @@
         });
 
         directions[colIdx] = !isAsc;
+        saveSortState(colIdx, type, isAsc);
         rows.forEach(row => container.appendChild(row));
 
         for (let i = 0; i < 3; i++) {
@@ -91,6 +110,14 @@
         }
     }
 </script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const savedSort = loadSortState();
+    sortTransactions(savedSort.colIdx, savedSort.type, savedSort.asc);
+});
+</script>
+
 {% endblock %}
 
 {% block content %}
