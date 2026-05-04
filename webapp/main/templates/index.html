@@ -68,11 +68,29 @@
 
 <script>
     let directions = [true, true, true];
+    const SORT_STORAGE_KEY = 'recent-transactions-sort';
 
-    function sortTransactions(colIdx, type) {
+    function saveSortState(colIdx, type, asc) {
+        localStorage.setItem(SORT_STORAGE_KEY, JSON.stringify({ colIdx, type, asc }));
+    }
+
+    function loadSortState() {
+        const saved = localStorage.getItem(SORT_STORAGE_KEY);
+        if (!saved) {
+            return { colIdx: 1, type: 'date', asc: false };
+        }
+
+        try {
+            return JSON.parse(saved);
+        } catch (error) {
+            return { colIdx: 1, type: 'date', asc: false };
+        }
+    }
+
+    function sortTransactions(colIdx, type, asc=undefined) {
         const container = document.getElementById("transactions-container");
         const rows = Array.from(container.getElementsByClassName("transaction-row"));
-        const isAsc = directions[colIdx];
+        const isAsc = asc !== undefined ? asc : directions[colIdx];
 
         rows.sort((a, b) => {
             let valA = a.children[colIdx].getAttribute("data-val") || a.children[colIdx].innerText;
@@ -84,6 +102,7 @@
         });
 
         directions[colIdx] = !isAsc;
+        saveSortState(colIdx, type, isAsc);
         rows.forEach(row => container.appendChild(row));
 
         for (let i = 0; i < 3; i++) {
@@ -91,6 +110,14 @@
         }
     }
 </script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const savedSort = loadSortState();
+    sortTransactions(savedSort.colIdx, savedSort.type, savedSort.asc);
+});
+</script>
+
 {% endblock %}
 
 {% block content %}
@@ -103,100 +130,25 @@
 
                     <ul class="nav nav-tabs mb-4" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="expense-tab" data-bs-toggle="tab"
+                            <button class="nav-link {% if active_tab == 'expense' %}active{% endif %}" id="expense-tab" data-bs-toggle="tab"
                                 data-bs-target="#expense-content" type="button" role="tab"
                                 aria-controls="expense-content" aria-selected="true">{% trans "Expense" %}</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="income-tab" data-bs-toggle="tab"
+                            <button class="nav-link {% if active_tab == 'income' %}active{% endif %}" id="income-tab" data-bs-toggle="tab"
                                 data-bs-target="#income-content" type="button" role="tab" aria-controls="income-content"
                                 aria-selected="false">{% trans "Income" %}</button>
                         </li>
                     </ul>
 
                     <div class="tab-content">
-                        <div class="tab-pane fade show active" id="expense-content" role="tabpanel"
+                        <div class="tab-pane fade {% if active_tab == 'expense' %}show active{% endif %}" id="expense-content" role="tabpanel"
                             aria-labelledby="expense-tab">
-                            <form method="POST" class="row g-3">
-                                {% csrf_token %}
-
-                                <div class="col-12">
-                                    <label class="form-label">{% trans "Amount" %}</label>
-                                    <div class="input-group">
-                                        <input type="number" name="amount" class="form-control" placeholder="0.00"
-                                            step="0.01">
-                                        <span class="input-group-text">PLN</span>
-                                    </div>
-                                </div>
-
-                                <div class="col-12">
-                                    <label class="form-label">{% trans "Category" %}</label>
-                                    <select name="category" class="form-select">
-                                        <option value="food">{% trans "Food" %}</option>
-                                        <option value="transport">{% trans "Transport" %}</option>
-                                        <option value="groceries">{% trans "Groceries" %}</option>
-                                        <option value="bills">{% trans "Bills" %}</option>
-                                        <option value="entertainment">{% trans "Entertainment" %}</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-12">
-                                    <label class="form-label">{% trans "Description (optional)" %}</label>
-                                    <input type="text" name="description" class="form-control"
-                                        placeholder="{% trans 'Enter description' %}">
-                                </div>
-
-                                <div class="col-12">
-                                    <label class="form-label">{% trans "Date" %}</label>
-                                    <input type="date" name="date" class="form-control" value="{% now 'Y-m-d' %}">
-                                </div>
-
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-primary w-100">{% trans "Add Expense" %}</button>
-                                </div>
-                            </form>
+                            {% include 'forms/expense_form.html' with form=expense_form %}
                         </div>
 
-                        <div class="tab-pane fade" id="income-content" role="tabpanel" aria-labelledby="income-tab">
-                            <form method="POST" class="row g-3">
-                                {% csrf_token %}
-
-                                <div class="col-12">
-                                    <label class="form-label">{% trans "Amount" %}</label>
-                                    <div class="input-group">
-                                        <input type="number" name="income_amount" class="form-control"
-                                            placeholder="0.00" step="0.01">
-                                        <span class="input-group-text">PLN</span>
-                                    </div>
-                                </div>
-
-                                <div class="col-12">
-                                    <label class="form-label">{% trans "Source" %}</label>
-                                    <select name="income_source" class="form-select">
-                                        <option value="salary">{% trans "Salary" %}</option>
-                                        <option value="freelance">{% trans "Freelance" %}</option>
-                                        <option value="investment">{% trans "Investment" %}</option>
-                                        <option value="bonus">{% trans "Bonus" %}</option>
-                                        <option value="other">{% trans "Other" %}</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-12">
-                                    <label class="form-label">{% trans "Description (optional)" %}</label>
-                                    <input type="text" name="income_description" class="form-control"
-                                        placeholder="{% trans 'Enter description' %}">
-                                </div>
-
-                                <div class="col-12">
-                                    <label class="form-label">{% trans "Date" %}</label>
-                                    <input type="date" name="income_date" class="form-control"
-                                        value="{% now 'Y-m-d' %}">
-                                </div>
-
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-primary w-100">{% trans "Add Income" %}</button>
-                                </div>
-                            </form>
+                        <div class="tab-pane fade {% if active_tab == 'income' %}show active{% endif %}" id="income-content" role="tabpanel" aria-labelledby="income-tab">
+                            {% include 'forms/income_form.html' with form=income_form %}
                         </div>
                     </div>
                 </div>

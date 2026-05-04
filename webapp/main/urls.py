@@ -2,7 +2,7 @@
 
 from django.urls import path
 from main.views.auth.auth import login_user, register, logout_user
-from main.views.main.index import index, terms_of_use , privacy_policy, history, delete_expense, delete_income
+from main.views.main.index import index, terms_of_use , privacy_policy, history, delete_expense, delete_income, post_expense, post_income
 from django.conf.urls.i18n import set_language
 
 urlpatterns = [
@@ -14,6 +14,8 @@ urlpatterns = [
     path('terms', terms_of_use, name='terms_of_use'),
     path('privacy-policy/', privacy_policy, name='privacy_policy'),
     path('history/', history, name='history'),
+    path('expense/', post_expense, name='post_expense'),
+    path('income/', post_income, name='post_income'),
     path('delete-expense/<int:pk>/', delete_expense, name='delete_expense' ),
     path('delete-income/<int:pk>/', delete_income, name ='delete_income')
 ]
