@@ -107,7 +107,8 @@ def post_income(request):
 
 @login_required
 def history(request):
-    return render(request, "history.html")
+    transactions = Expense.objects.filter(user=request.user).order_by('-date')
+    return render(request, "history.html", {'transactions': transactions})
 
 @login_required
 def delete_expense(request, pk):

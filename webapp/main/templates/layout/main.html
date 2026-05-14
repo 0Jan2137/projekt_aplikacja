@@ -12,7 +12,7 @@
     {% block extra_head %}{% endblock %}
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
@@ -24,14 +24,15 @@
                 <div class="collapse navbar-collapse" id="mainNavbar">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         {% if user.is_authenticated %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">{% trans "Dashboard" %}</a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'home' %}">{% trans "Dashboard" %}</a>
                         </li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'history' %}">{% trans "History" %}</a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'history' %}">{% trans "History" %}</a>
                         </li>
                         {% endif %}
                     </ul>
                     <div class="d-flex align-items-center">
-                        <!-- LANGUAGE SWITCH -->
                         <form action="{% url 'set_language' %}" method="post" class="d-flex align-items-center me-2">
                             {% csrf_token %}
                             <input name="next" type="hidden" value="{{ request.path }}">
@@ -62,10 +63,12 @@
         </nav>
     </header>
 
-    {% block content %}
-    {% endblock%}
+    <main class="flex-grow-1">
+        {% block content %}
+        {% endblock %}
+    </main>
+
     {% include 'footer/footer.html' %}
 
 </body>
-
 </html>

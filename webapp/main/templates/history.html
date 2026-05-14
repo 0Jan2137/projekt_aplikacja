@@ -1,0 +1,54 @@
+{% extends 'layout/main.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0">
+                    {% if request.LANGUAGE_CODE == 'pl' %}Historia transakcji{% else %}Transaction History{% endif %}
+                </h1>
+                <a href="{% url 'home' %}" class="btn btn-outline-primary btn-sm">
+                    {% if request.LANGUAGE_CODE == 'pl' %}Powrót do panelu{% else %}Back to Dashboard{% endif %}
+                </a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>{% if request.LANGUAGE_CODE == 'pl' %}Kategoria / Opis{% else %}Category / Description{% endif %}</th>
+                            <th class="text-center">{% if request.LANGUAGE_CODE == 'pl' %}Data{% else %}Date{% endif %}</th>
+                            <th class="text-end">{% if request.LANGUAGE_CODE == 'pl' %}Kwota{% else %}Amount{% endif %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {# Здесь мы предполагаем, что из View приходят транзакции в переменной 'transactions' #}
+                        {% for transaction in transactions %}
+                        <tr>
+                            <td>
+                                <div class="fw-bold">{{ transaction.get_category_display }}</div>
+                                {% if transaction.description %}
+                                    <div class="text-muted small">{{ transaction.description }}</div>
+                                {% endif %}
+                            </td>
+                            <td class="text-center text-muted">{{ transaction.date|date:"d.m.Y" }}</td>
+                            <td class="text-end fw-bold {% if transaction.category %}text-danger{% else %}text-success{% endif %}">
+                                {% if transaction.category %}-{% endif %}{{ transaction.amount|floatformat:2 }} PLN
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center py-5 text-muted">
+                                {% if request.LANGUAGE_CODE == 'pl' %}Brak transakcji do wyświetlenia.{% else %}No transactions to display.{% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
