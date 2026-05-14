@@ -3,55 +3,92 @@
 {% block content %}
 <div class="container my-5" style="max-width: 900px; line-height: 1.6;">
     <div class="privacy-header text-center mb-5">
-        <h1 class="display-5 fw-bold">ExpensePRO Privacy Policy</h1>
-        <p class="text-muted">Last updated: April 22, 2026</p>
+        <h1 class="display-5 fw-bold">
+            {% if request.LANGUAGE_CODE == 'pl' %}Polityka prywatności ExpensePRO{% else %}ExpensePRO Privacy Policy{% endif %}
+        </h1>
+        <p class="text-muted">
+            {% if request.LANGUAGE_CODE == 'pl' %}Ostatnia aktualizacja: 22 kwietnia 2026{% else %}Last updated: April 22, 2026{% endif %}
+        </p>
     </div>
 
     <div class="card shadow-sm border-0 mb-5 bg-light">
         <div class="card-body p-4">
-            <h2 class="h4 mb-3">Our Processing Philosophy</h2>
-            <p>At ExpensePRO, we believe that privacy is not just a legal requirement, but the foundation of conscious financial management. Your interaction with the application is based on three pillars:</p>
+            <h2 class="h4 mb-3">
+                {% if request.LANGUAGE_CODE == 'pl' %}Nasza filozofia przetwarzania{% else %}Our Processing Philosophy{% endif %}
+            </h2>
+            <p>
+                {% if request.LANGUAGE_CODE == 'pl' %}
+                    W ExpensePRO wierzymy, że prywatność to nie tylko wymóg prawny, ale fundament świadomego zarządzania finansami. Twoja interakcja z aplikacją opiera się na trzech filarach:
+                {% else %}
+                    At ExpensePRO, we believe that privacy is not just a legal requirement, but the foundation of conscious financial management. Your interaction with the application is based on three pillars:
+                {% endif %}
+            </p>
             <ul class="list-group list-group-flush bg-transparent">
                 <li class="list-group-item bg-transparent">
-                    <strong>Data:</strong> These are the raw facts and numbers you enter into the system (e.g., an expense amount). They are securely stored with us as a record of your financial reality.
+                    <strong>{% if request.LANGUAGE_CODE == 'pl' %}Dane{% else %}Data{% endif %}:</strong> 
+                    {% if request.LANGUAGE_CODE == 'pl' %}To surowe fakty i liczby wprowadzane do systemu (np. kwota wydatku). Są one u nas bezpiecznie przechowywane jako zapis Twojej rzeczywistości finansowej.{% else %}These are the raw facts and numbers you enter into the system (e.g., an expense amount). They are securely stored with us as a record of your financial reality.{% endif %}
                 </li>
                 <li class="list-group-item bg-transparent">
-                    <strong>Information:</strong> This is the data processed by our algorithms. We present it in the form of charts and analyses to help you understand it.
+                    <strong>{% if request.LANGUAGE_CODE == 'pl' %}Informacja{% else %}Information{% endif %}:</strong> 
+                    {% if request.LANGUAGE_CODE == 'pl' %}To dane przetworzone przez nasze algorytmy. Prezentujemy je w formie wykresów i analiz, aby pomóc Ci je zrozumieć.{% else %}This is the data processed by our algorithms. We present it in the form of charts and analyses to help you understand it.{% endif %}
                 </li>
                 <li class="list-group-item bg-transparent">
-                    <strong>Knowledge:</strong> This is created exclusively in your mind through the process of interpreting the information received from us. We provide the tools; you build the financial wisdom.
+                    <strong>{% if request.LANGUAGE_CODE == 'pl' %}Wiedza{% else %}Knowledge{% endif %}:</strong> 
+                    {% if request.LANGUAGE_CODE == 'pl' %}Powstaje ona wyłącznie w Twoim umyśle w procesie interpretacji informacji otrzymanych od nas. My dostarczamy narzędzia; Ty budujesz mądrość finansową.{% else %}This is created exclusively in your mind through the process of interpreting the information received from us. We provide the tools; you build the financial wisdom.{% endif %}
                 </li>
             </ul>
         </div>
     </div>
 
     <section class="mb-4">
-        <h3>1. Data Collection</h3>
-        <p>We collect only the data necessary for your personal dashboard to function:</p>
+        <h3>1. {% if request.LANGUAGE_CODE == 'pl' %}Kolekcjonowanie danych{% else %}Data Collection{% endif %}</h3>
+        <p>{% if request.LANGUAGE_CODE == 'pl' %}Zbieramy tylko dane niezbędne do funkcjonowania Twojego osobistego panelu:{% else %}We collect only the data necessary for your personal dashboard to function:{% endif %}</p>
         <ul>
-            <li>Account data (username, email, password).</li>
-            <li>Transactional data (amounts, categories, descriptions of expenses and income).</li>
+            <li>{% if request.LANGUAGE_CODE == 'pl' %}Dane konta (nazwa użytkownika, e-mail, hasło).{% else %}Account data (username, email, password).{% endif %}</li>
+            <li>{% if request.LANGUAGE_CODE == 'pl' %}Dane transakcyjne (kwoty, kategorie, opisy wydatków i dochodów).{% else %}Transactional data (amounts, categories, descriptions of expenses and income).{% endif %}</li>
         </ul>
     </section>
 
     <section class="mb-4">
-        <h3>2. Use of Information</h3>
-        <p>Your data is processed solely to generate visual information (charts, statistics) that assists you in the process of interpreting the state of your finances. We do not sell or share your data with third parties.</p>
+        <h3>2. {% if request.LANGUAGE_CODE == 'pl' %}Wykorzystanie informacji{% else %}Use of Information{% endif %}</h3>
+        <p>
+            {% if request.LANGUAGE_CODE == 'pl' %}
+                Twoje dane są przetwarzane wyłącznie w celu generowania wizualnych informacji (wykresy, statystyki), które wspierają Cię w procesie interpretacji stanu Twoich finansów. Nie sprzedajemy ani nie udostępniamy Twoich danych stronom trzecim.
+            {% else %}
+                Your data is processed solely to generate visual information (charts, statistics) that assists you in the process of interpreting the state of your finances. We do not sell or share your data with third parties.
+            {% endif %}
+        </p>
     </section>
 
     <section class="mb-4">
-        <h3>3. Security</h3>
-        <p>We use advanced data protection mechanisms to ensure that the record of your financial reality remains confidential. Every piece of information generated in the system is available only to the logged-in account owner.</p>
+        <h3>3. {% if request.LANGUAGE_CODE == 'pl' %}Bezpieczeństwo{% else %}Security{% endif %}</h3>
+        <p>
+            {% if request.LANGUAGE_CODE == 'pl' %}
+                Stosujemy zaawansowane mechanizmy ochrony danych, aby zapis Twojej rzeczywistości finansowej pozostał poufny. Każda informacja wygenerowana w systemie jest dostępna wyłącznie dla zalogowanego właściciela konta.
+            {% else %}
+                We use advanced data protection mechanisms to ensure that the record of your financial reality remains confidential. Every piece of information generated in the system is available only to the logged-in account owner.
+            {% endif %}
+        </p>
     </section>
 
     <section class="mb-5">
-        <h3>4. Your Rights</h3>
-        <p>In accordance with data protection regulations, you have the right to access your data, correct it, and completely delete your account along with all collected financial facts.</p>
+        <h3>4. {% if request.LANGUAGE_CODE == 'pl' %}Twoje prawa{% else %}Your Rights{% endif %}</h3>
+        <p>
+            {% if request.LANGUAGE_CODE == 'pl' %}
+                Zgodnie z przepisami o ochronie danych, masz prawo do dostępu do swoich danych, ich poprawiania oraz całkowitego usunięcia konta wraz ze wszystkimi zebranymi faktami finansowymi.
+            {% else %}
+                In accordance with data protection regulations, you have the right to access your data, correct it, and completely delete your account along with all collected financial facts.
+            {% endif %}
+        </p>
     </section>
 
-    <div class="alert alert-secondary text-center">
-        If you have any questions regarding your data, please contact us: 
-        <a href="mailto:privacy@expensepro.com" class="fw-bold text-decoration-none">privacy@expensepro.com</a>
-    </div>
+    <div class="alert alert-secondary text-center p-4 mt-5">
+        {% if request.LANGUAGE_CODE == 'pl' %}
+            Jeśli masz jakiekolwiek pytania dotyczące Twoich danych, skontaktuj się z nami: 
+        {% else %}
+            If you have any questions regarding your data, please contact us: 
+        {% endif %}
+        <a href="mailto:privacy@expensepro.com" class="fw-bold text-primary text-decoration-none">privacy@expensepro.com</a>
+</div>
 </div>
 {% endblock %}

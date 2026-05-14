@@ -3,65 +3,149 @@
 {% block content %}
 <div class="container py-5">
     <div class="card shadow-sm">
-        <div class="card-body">
-            <h1 class="mb-4">Terms of Use</h1>
+        <div class="card-body p-4 p-md-5">
+            <h1 class="mb-4 fw-bold">
+                {% if request.LANGUAGE_CODE == 'pl' %}Regulamin korzystania{% else %}Terms of Use{% endif %}
+            </h1>
             
-            <h3 class="mt-4">1. Agreement to Terms</h3>
-            <p>By accessing and using ExpensePRO, you agree to be bound by these Terms of Use. If you do not agree to abide by the above, please do not use this service.</p>
+            <h3 class="mt-4 h5 fw-bold">1. {% if request.LANGUAGE_CODE == 'pl' %}Akceptacja regulaminu{% else %}Agreement to Terms{% endif %}</h3>
+            <p>
+                {% if request.LANGUAGE_CODE == 'pl' %}
+                    Uzyskując dostęp do ExpensePRO i korzystając z aplikacji, użytkownik zgadza się przestrzegać niniejszego Regulaminu. W przypadku braku zgody na powyższe warunki, prosimy o zaprzestanie korzystania z serwisu.
+                {% else %}
+                    By accessing and using ExpensePRO, you agree to be bound by these Terms of Use. If you do not agree to abide by the above, please do not use this service.
+                {% endif %}
+            </p>
             
-            <h3 class="mt-4">2. Use License</h3>
-            <p>Permission is granted to temporarily download one copy of the materials (information or software) on ExpensePRO for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:</p>
+            <h3 class="mt-4 h5 fw-bold">2. {% if request.LANGUAGE_CODE == 'pl' %}Licencja na użytkowanie{% else %}Use License{% endif %}</h3>
+            <p>
+                {% if request.LANGUAGE_CODE == 'pl' %}
+                    Udziela się zgody na tymczasowe pobranie jednej kopii materiałów (informacji lub oprogramowania) z ExpensePRO wyłącznie do osobistego, niekomercyjnego i tymczasowego przeglądania. Jest to udzielenie licencji, a nie przeniesienie tytułu własności. W ramach tej licencji zabrania się:
+                {% else %}
+                    Permission is granted to temporarily download one copy of the materials (information or software) on ExpensePRO for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:
+                {% endif %}
+            </p>
             <ul>
-                <li>Modify or copy the materials</li>
-                <li>Use the materials for any commercial purpose or for any public display</li>
-                <li>Attempt to decompile or reverse engineer any software contained on ExpensePRO</li>
-                <li>Remove any copyright or other proprietary notations from the materials</li>
-                <li>Transfer the materials to another person or "mirror" the materials on any other server</li>
+                <li>{% if request.LANGUAGE_CODE == 'pl' %}Modyfikowania lub kopiowania materiałów{% else %}Modify or copy the materials{% endif %}</li>
+                <li>{% if request.LANGUAGE_CODE == 'pl' %}Wykorzystywania materiałów do celów komercyjnych lub publicznych pokazów{% else %}Use the materials for any commercial purpose or for any public display{% endif %}</li>
+                <li>{% if request.LANGUAGE_CODE == 'pl' %}Prób dekompilacji lub inżynierii wstecznej oprogramowania ExpensePRO{% else %}Attempt to decompile or reverse engineer any software contained on ExpensePRO{% endif %}</li>
+                <li>{% if request.LANGUAGE_CODE == 'pl' %}Usuwania oznaczeń praw autorskich lub innych zastrzeżonych oznaczeń z materiałów{% else %}Remove any copyright or other proprietary notations from the materials{% endif %}</li>
+                <li>{% if request.LANGUAGE_CODE == 'pl' %}Przesyłania materiałów innej osobie lub tworzenia kopii lustrzanych ("mirror") na innym serwerze{% else %}Transfer the materials to another person or "mirror" the materials on any other server{% endif %}</li>
             </ul>
             
-            <h3 class="mt-4">3. Disclaimer</h3>
-            <p>The materials on ExpensePRO are provided on an 'as is' basis. ExpensePRO makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.</p>
+            <h3 class="mt-4 h5 fw-bold">3. {% if request.LANGUAGE_CODE == 'pl' %}Wyłączenie odpowiedzialności{% else %}Disclaimer{% endif %}</h3>
+            <p>
+                {% if request.LANGUAGE_CODE == 'pl' %}
+                    Materiały w serwisie ExpensePRO są dostarczane w stanie, w jakim się znajdują ("as is"). ExpensePRO nie udziela żadnych gwarancji, wyraźnych ani dorozumianych, i niniejszym zrzeka się wszelkich innych gwarancji, w tym m.in. dorozumianych gwarancji przydatności handlowej lub przydatności do określonego celu.
+                {% else %}
+                    The materials on ExpensePRO are provided on an 'as is' basis. ExpensePRO makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.
+                {% endif %}
+            </p>
             
-            <h3 class="mt-4">4. Limitations of Liability</h3>
-            <p>In no event shall ExpensePRO or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on ExpensePRO, even if ExpensePRO or an authorized representative has been notified orally or in writing of the possibility of such damage.</p>
+            <h3 class="mt-4 h5 fw-bold">4. {% if request.LANGUAGE_CODE == 'pl' %}Ograniczenie odpowiedzialności{% else %}Limitations of Liability{% endif %}</h3>
+            <p>
+                {% if request.LANGUAGE_CODE == 'pl' %}
+                    W żadnym wypadku ExpensePRO ani jego dostawcy nie ponoszą odpowiedzialności za jakiekolwiek szkody (w tym m.in. szkody z tytułu utraty danych, zysków lub przerw w działalności) wynikające z korzystania lub braku możliwości korzystania z materiałów ExpensePRO.
+                {% else %}
+                    In no event shall ExpensePRO or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on ExpensePRO, even if ExpensePRO or an authorized representative has been notified orally or in writing of the possibility of such damage.
+                {% endif %}
+            </p>
             
-            <h3 class="mt-4">5. Accuracy of Materials</h3>
-            <p>The materials appearing on ExpensePRO could include technical, typographical, or photographic errors. ExpensePRO does not warrant that any of the materials on its website are accurate, complete, or current. ExpensePRO may make changes to the materials contained on its website at any time without notice.</p>
+            <h3 class="mt-4 h5 fw-bold">5. {% if request.LANGUAGE_CODE == 'pl' %}Dokładność materiałów{% else %}Accuracy of Materials{% endif %}</h3>
+            <p>
+                {% if request.LANGUAGE_CODE == 'pl' %}
+                    Materiały pojawiające się w serwisie ExpensePRO mogą zawierać błędy techniczne, typograficzne lub fotograficzne. ExpensePRO nie gwarantuje, że jakiekolwiek materiały są dokładne, kompletne lub aktualne.
+                {% else %}
+                    The materials appearing on ExpensePRO could include technical, typographical, or photographic errors. ExpensePRO does not warrant that any of the materials on its website are accurate, complete, or current.
+                {% endif %}
+            </p>
             
-            <h3 class="mt-4">6. Links</h3>
-            <p>ExpensePRO has not reviewed all of the sites linked to its website and is not responsible for the contents of any such linked site. The inclusion of any link does not imply endorsement by ExpensePRO of the site. Use of any such linked website is at the user's own risk.</p>
+            <h3 class="mt-4 h5 fw-bold">6. {% if request.LANGUAGE_CODE == 'pl' %}Linki{% else %}Links{% endif %}</h3>
+            <p>
+                {% if request.LANGUAGE_CODE == 'pl' %}
+                    ExpensePRO nie przegląda wszystkich stron, do których prowadzą linki w aplikacji i nie ponosi odpowiedzialności za ich treść. Korzystanie z takich witryn odbywa się na własne ryzyko użytkownika.
+                {% else %}
+                    ExpensePRO has not reviewed all of the sites linked to its website and is not responsible for the contents of any such linked site. Use of any such linked website is at the user's own risk.
+                {% endif %}
+            </p>
             
-            <h3 class="mt-4">7. Modifications</h3>
-            <p>ExpensePRO may revise these terms of use for its website at any time without notice. By using this website, you are agreeing to be bound by the then current version of these terms of use.</p>
+            <h3 class="mt-4 h5 fw-bold">7. {% if request.LANGUAGE_CODE == 'pl' %}Zmiany regulaminu{% else %}Modifications{% endif %}</h3>
+            <p>
+                {% if request.LANGUAGE_CODE == 'pl' %}
+                    ExpensePRO może zmienić niniejszy regulamin w dowolnym momencie bez powiadomienia. Korzystając z aplikacji, zgadzasz się na przestrzeganie aktualnej wersji warunków użytkowania.
+                {% else %}
+                    ExpensePRO may revise these terms of use for its website at any time without notice. By using this website, you are agreeing to be bound by the then current version of these terms of use.
+                {% endif %}
+            </p>
             
-            <h3 class="mt-4">8. Governing Law</h3>
-            <p>These terms and conditions are governed by and construed in accordance with the laws of Poland, and you irrevocably submit to the exclusive jurisdiction of the courts in that location.</p>
+            <h3 class="mt-4 h5 fw-bold">8. {% if request.LANGUAGE_CODE == 'pl' %}Prawo właściwe{% else %}Governing Law{% endif %}</h3>
+            <p>
+                {% if request.LANGUAGE_CODE == 'pl' %}
+                    Niniejsze warunki podlegają prawu polskiemu i są interpretowane zgodnie z nim, a użytkownik nieodwołalnie poddaje się wyłącznej jurysdykcji sądów w tej lokalizacji.
+                {% else %}
+                    These terms and conditions are governed by and construed in accordance with the laws of Poland, and you irrevocably submit to the exclusive jurisdiction of the courts in that location.
+                {% endif %}
+            </p>
             
-            <h3 class="mt-4">9. User Account</h3>
-            <p>If you create an account on ExpensePRO, you are responsible for maintaining the confidentiality of your account and password and for restricting access to your computer. You agree to accept responsibility for all activities that occur under your account or password. You agree to notify ExpensePRO immediately of any unauthorized use of your account or any other breaches of security.</p>
+            <h3 class="mt-4 h5 fw-bold">9. {% if request.LANGUAGE_CODE == 'pl' %}Konto użytkownika{% else %}User Account{% endif %}</h3>
+            <p>
+                {% if request.LANGUAGE_CODE == 'pl' %}
+                    Użytkownik jest odpowiedzialny za zachowanie poufności swojego konta i hasła. Zgadzasz się przyjąć odpowiedzialność za wszystkie działania, które mają miejsce w ramach Twojego konta.
+                {% else %}
+                    If you create an account on ExpensePRO, you are responsible for maintaining the confidentiality of your account and password. You agree to accept responsibility for all activities that occur under your account or password.
+                {% endif %}
+            </p>
             
-            <h3 class="mt-4">10. Data Privacy</h3>
-            <p>Your financial data on ExpensePRO is treated with the utmost confidentiality. We do not sell, share, or disclose your personal financial information to third parties without your explicit consent, except as required by law.</p>
+            <h3 class="mt-4 h5 fw-bold">10. {% if request.LANGUAGE_CODE == 'pl' %}Prywatność danych{% else %}Data Privacy{% endif %}</h3>
+            <p>
+                {% if request.LANGUAGE_CODE == 'pl' %}
+                    Twoje dane finansowe są traktowane z najwyższą poufnością. Nie sprzedajemy ani nie udostępniamy danych osobom trzecim bez wyraźnej zgody, chyba że wymaga tego prawo.
+                {% else %}
+                    Your financial data on ExpensePRO is treated with the utmost confidentiality. We do not sell, share, or disclose your personal financial information to third parties without your explicit consent, except as required by law.
+                {% endif %}
+            </p>
             
-            <h3 class="mt-4">11. Financial Data Accuracy</h3>
-            <p>While ExpensePRO strives to provide accurate financial tracking, users are responsible for reviewing their transactions and reporting any errors or discrepancies. ExpensePRO is not liable for financial decisions made based on information in the application.</p>
+            <h3 class="mt-4 h5 fw-bold">11. {% if request.LANGUAGE_CODE == 'pl' %}Dokładność danych finansowych{% else %}Financial Data Accuracy{% endif %}</h3>
+            <p>
+                {% if request.LANGUAGE_CODE == 'pl' %}
+                    Użytkownicy są odpowiedzialni za przeglądanie swoich transakcji. ExpensePRO nie ponosi odpowiedzialności za decyzje finansowe podjęte na podstawie informacji w aplikacji.
+                {% else %}
+                    Users are responsible for reviewing their transactions. ExpensePRO is not liable for financial decisions made based on information in the application.
+                {% endif %}
+            </p>
             
-            <h3 class="mt-4">12. Prohibited Activities</h3>
-            <p>Users agree not to use ExpensePRO to:</p>
+            <h3 class="mt-4 h5 fw-bold">12. {% if request.LANGUAGE_CODE == 'pl' %}Działania zabronione{% else %}Prohibited Activities{% endif %}</h3>
+            <p>{% if request.LANGUAGE_CODE == 'pl' %}Użytkownik zobowiązuje się nie używać ExpensePRO do:{% else %}Users agree not to use ExpensePRO to:{% endif %}</p>
             <ul>
-                <li>Engage in any form of harassment, abuse, or threatening behavior</li>
-                <li>Attempt to gain unauthorized access to the application or systems</li>
-                <li>Transmit any viruses, malware, or any other malicious code</li>
-                <li>Conduct any activity that violates applicable laws and regulations</li>
+                <li>{% if request.LANGUAGE_CODE == 'pl' %}Nękania, nadużyć lub zachowań groźnych{% else %}Engage in any form of harassment, abuse, or threatening behavior{% endif %}</li>
+                <li>{% if request.LANGUAGE_CODE == 'pl' %}Prób nieautoryzowanego dostępu do systemów{% else %}Attempt to gain unauthorized access to the application or systems{% endif %}</li>
+                <li>{% if request.LANGUAGE_CODE == 'pl' %}Przesyłania wirusów lub złośliwego kodu{% else %}Transmit any viruses, malware, or any other malicious code{% endif %}</li>
             </ul>
             
-            <h3 class="mt-4">13. Termination</h3>
-            <p>ExpensePRO reserves the right to terminate or suspend any user account at any time, with or without notice, for conduct that violates these Terms of Use or is otherwise harmful to the ExpensePRO community.</p>
+            <h3 class="mt-4 h5 fw-bold">13. {% if request.LANGUAGE_CODE == 'pl' %}Zamknięcie konta{% else %}Termination{% endif %}</h3>
+            <p>
+                {% if request.LANGUAGE_CODE == 'pl' %}
+                    ExpensePRO zastrzega sobie prawo do zawieszenia konta w dowolnym momencie za naruszenie niniejszego regulaminu lub działania szkodliwe dla społeczności.
+                {% else %}
+                    ExpensePRO reserves the right to terminate or suspend any user account at any time for conduct that violates these Terms of Use or is otherwise harmful to the community.
+                {% endif %}
+            </p>
             
-            <h3 class="mt-4">14. Contact Information</h3>
-            <p>If you have any questions about these Terms of Use, please contact us at <strong>support@expensepro.com</strong>.</p>
+            <h3 class="mt-4 h5 fw-bold">14. {% if request.LANGUAGE_CODE == 'pl' %}Informacje kontaktowe{% else %}Contact Information{% endif %}</h3>
+            <p>
+                {% if request.LANGUAGE_CODE == 'pl' %}
+                    Pytania dotyczące Regulaminu prosimy kierować na adres: 
+                {% else %}
+                    If you have any questions about these Terms of Use, please contact us at: 
+                {% endif %}
+                <a href="mailto:support@expensepro.com" class="fw-bold text-primary text-decoration-none">support@expensepro.com</a>
+            </p>
             
-            <p class="mt-5 text-muted"><small>Last Updated: April 2026</small></p>
+            <p class="mt-5 text-muted">
+                <small>
+                    {% if request.LANGUAGE_CODE == 'pl' %}Ostatnia aktualizacja: Kwiecień 2026{% else %}Last Updated: April 2026{% endif %}
+                </small>
+            </p>
         </div>
     </div>
 </div>

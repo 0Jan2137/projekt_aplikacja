@@ -32,7 +32,7 @@ class ExpenseForm(forms.Form):
     date = forms.DateField(
         label=_("Date"),
         initial=timezone.localdate,
-        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+        widget=forms.DateInput(format='%Y-%m-%d', attrs={"class": "form-control", "type": "date"}),
     )
 
 
@@ -69,5 +69,5 @@ class IncomeForm(forms.Form):
     date = forms.DateField(
         label=_("Date"),
         initial=timezone.localdate,
-        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+        widget=forms.DateInput(format='%Y-%m-%d', attrs={"class": "form-control", "type": "date"}),
     )

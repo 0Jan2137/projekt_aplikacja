@@ -6,29 +6,49 @@
 
             <div class="col-6">
                 <h5 class="fw-bold mb-3">ExpensePRO</h5>
-                <p class="text-secondary">We help turn raw numbers into financial peace of mind</p>
+                <p class="text-secondary">
+                    {% if request.LANGUAGE_CODE == 'pl' %}
+                        Pomagamy zamienić surowe liczby w finansowy spokój ducha
+                    {% else %}
+                        We help turn raw numbers into financial peace of mind
+                    {% endif %}
+                </p>
             </div>
 
             <div class="col-2 ms-auto text-end">
-                <h5 class="fw-bold mb-3">Navigation</h5>
+                <h5 class="fw-bold mb-3">
+                    {% if request.LANGUAGE_CODE == 'pl' %}Nawigacja{% else %}Navigation{% endif %}
+                </h5>
                 <ul class="list-unstyled">
                     <li><a href="{% url 'home' %}" class="text-secondary text-decoration-none">Dashboard</a></li>
-                    <li><a href="#" class="text-secondary text-decoration-none">History</a></li>
+                    <li><a href="#" class="text-secondary text-decoration-none">
+                        {% if request.LANGUAGE_CODE == 'pl' %}Historia{% else %}History{% endif %}
+                    </a></li>
                 </ul>
             </div>
 
             <div class="col-2 text-end">
-                <h5 class="fw-bold mb-3">Privacy</h5>
+                <h5 class="fw-bold mb-3">
+                    {% if request.LANGUAGE_CODE == 'pl' %}Prywatność{% else %}Privacy{% endif %}
+                </h5>
                 <ul class="list-unstyled">
-                    <li><a href="{% url 'terms_of_use' %}" class="text-secondary text-decoration-none">Terms of Use</a></li>
-                    <li><a href="{% url 'privacy_policy' %}" class="text-secondary text-decoration-none">Privacy Policy</a></li>
+                    <li><a href="{% url 'terms_of_use' %}" class="text-secondary text-decoration-none">
+                        {% if request.LANGUAGE_CODE == 'pl' %}Warunki użytkowania{% else %}Terms of Use{% endif %}
+                    </a></li>
+                    <li><a href="{% url 'privacy_policy' %}" class="text-secondary text-decoration-none">
+                        {% if request.LANGUAGE_CODE == 'pl' %}Polityka prywatności{% else %}Privacy Policy{% endif %}
+                    </a></li>
                 </ul>
             </div>
 
             <div class="col-2 text-end">
-                <h5 class="fw-bold mb-3">Contact</h5>
+                <h5 class="fw-bold mb-3">
+                    {% if request.LANGUAGE_CODE == 'pl' %}Kontakt{% else %}Contact{% endif %}
+                </h5>
                 <ul class="list-unstyled">
-                    <li><a href="mailto:support@expensepro.com" class="text-secondary text-decoration-none">Email</a></li>
+                    <li><a href="mailto:support@expensepro.com" class="text-secondary text-decoration-none">
+                        {% if request.LANGUAGE_CODE == 'pl' %}E-mail{% else %}Email{% endif %}
+                    </a></li>
                 </ul>
             </div>
 
@@ -37,7 +57,14 @@
 
     <div class="border-top border-secondary pt-2">
         <div class="container-fluid px-4 d-flex justify-content-end">
-            <p class="mb-0 text-secondary small">&copy; 2026 ExpensePRO. Record reality, build knowledge</p>
+            <p class="mb-0 text-secondary small">
+                &copy; 2026 ExpensePRO. 
+                {% if request.LANGUAGE_CODE == 'pl' %}
+                    Rejestruj rzeczywistość, buduj wiedzę
+                {% else %}
+                    Record reality, build knowledge
+                {% endif %}
+            </p>
         </div>
     </div>
 

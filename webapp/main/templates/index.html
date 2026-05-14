@@ -24,10 +24,22 @@
 
     // Wyśrodkowany tekst dla pustego konta
     if (labels.length === 0) {
-        ctx.font = "16px sans-serif";
+        const canvas = document.getElementById('dailySpendingChart');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+
+        const msg = canvas.getAttribute('data-empty-msg') || "Dodaj pierwszą transakcję...";
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.font = "16px 'Inter', sans-serif";
         ctx.textAlign = "center";
-        ctx.fillStyle = "#666";
-        ctx.fillText("Dodaj pierwszą transakcję, aby zobaczyć wykres", ctx.canvas.width / 2, ctx.canvas.height / 2);
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "#6c757d";
+        
+        ctx.fillText(msg, canvas.width / 2, canvas.height / 2);
         return;
     }
 
@@ -189,7 +201,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="card-body">
                     <h2 class="h5 mb-3">{% trans "Daily Spending Trends" %}</h2>
                     <canvas id="dailySpendingChart" class="w-100"
-                        style="min-height: 200px; max-height: 600px;"></canvas>
+                        style="min-height: 200px; max-height: 600px;"
+                        data-empty-msg="{% if request.LANGUAGE_CODE == 'pl' %}Dodaj pierwszą transakcję, aby zobaczyć wykres{% else %}Add your first transaction to see the chart{% endif %}"></canvas>
                 </div>
             </div>
 
@@ -235,7 +248,15 @@ document.addEventListener("DOMContentLoaded", () => {
                             </div>
                         </div>
                         {% empty %}
-                        <p class="text-muted">No recent transactions found.</p>
+                        <div class="py-4 text-center">
+                            <p class="text-muted mb-0">
+                                {% if request.LANGUAGE_CODE == 'pl' %}
+                                    Nie znaleziono żadnych transakcji.
+                                {% else %}
+                                    No recent transactions found.
+                                {% endif %}
+                            </p>
+                        </div>
                         {% endfor %}
                     </div>
                 </div>
