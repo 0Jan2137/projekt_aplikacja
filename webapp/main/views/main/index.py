@@ -52,12 +52,17 @@ def _build_index_context(request, expense_form=None, income_form=None, active_ta
             dict(Expense.CATEGORY_CHOICES).get(category_code, '—')
         )
 
-    recent_transactions = (
-        Expense.objects
-        .filter(user=request.user)
-        .filter(date__range=(today - timezone.timedelta(days=30), today))
-        .order_by('date')
+  
+    thirty_days_ago = today - timezone.timedelta(days=30)
+    expenses = list(Expense.objects.filter(user=request.user, date__gte=thirty_days_ago))
+    incomes = list(Income.objects.filter(user=request.user, date__gte=thirty_days_ago))
+    all_recent = sorted(
+        expenses + incomes, 
+        key=lambda x: x.date, 
+        reverse=True
     )
+    recent_transactions = all_recent[:10]
+    
 
     return {
         'total_spent': monthly_total,
@@ -107,7 +112,13 @@ def post_income(request):
 
 @login_required
 def history(request):
-    transactions = Expense.objects.filter(user=request.user).order_by('-date')
+    expenses = list(Expense.objects.filter(user=request.user))
+    incomes = list(Income.objects.filter(user=request.user))
+    transactions = sorted(
+        expenses + incomes, 
+        key=lambda x: x.date, 
+        reverse=True
+    )
     return render(request, "history.html", {'transactions': transactions})
 
 @login_required

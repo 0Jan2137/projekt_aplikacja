@@ -223,16 +223,21 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="row align-items-center py-3 border-bottom transaction-row"
                             data-val="{{ transaction.amount }}">
                             <div class="col-5">
-                                <h4 class="h6 mb-1">{{ transaction.get_category_display }}</h4>
-                                <p class="mb-0 text-muted">{{ transaction.description }}</p>
+                                <h4 class="h6 mb-1">
+                                    {% if transaction.category %}
+                                        {{ transaction.get_category_display }}
+                                    {% else %}
+                                        {{ transaction.source }}
+                                    {% endif %}
+                                </h4>
+                                <p class="mb-0 text-muted">{{ transaction.description|default:"" }}</p>
                             </div>
                             <div class="col-3 text-center" data-val="{{ transaction.date|date:'Y-m-d' }}">
-                                <p class="mb-0 text-muted">{{ transaction.date }}</p>
+                                <p class="mb-0 text-muted">{{ transaction.date|date:"d.m.Y" }}</p>
                             </div>
                             <div class="col-4 text-end">
-                                <p
-                                    class="mb-0 fw-bold {% if transaction.amount < 0 %}text-danger{% else %}text-success{% endif %}">
-                                    {{ transaction.amount|floatformat:2 }} PLN
+                                <p class="mb-0 fw-bold {% if transaction.category %}text-danger{% else %}text-success{% endif %}">
+                                    {% if transaction.category %}-{% else %}+{% endif %}{{ transaction.amount|floatformat:2 }} PLN
                                 </p>
                                 <!-- Przycisk usuwania -->
                                 {% if transaction.category %}

@@ -24,18 +24,23 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {# Здесь мы предполагаем, что из View приходят транзакции в переменной 'transactions' #}
                         {% for transaction in transactions %}
                         <tr>
                             <td>
-                                <div class="fw-bold">{{ transaction.get_category_display }}</div>
+                                <div class="fw-bold">
+                                    {% if transaction.category %}
+                                        {{ transaction.get_category_display }}
+                                    {% else %}
+                                        {{ transaction.source }}
+                                    {% endif %}
+                                </div>
                                 {% if transaction.description %}
                                     <div class="text-muted small">{{ transaction.description }}</div>
                                 {% endif %}
                             </td>
                             <td class="text-center text-muted">{{ transaction.date|date:"d.m.Y" }}</td>
                             <td class="text-end fw-bold {% if transaction.category %}text-danger{% else %}text-success{% endif %}">
-                                {% if transaction.category %}-{% endif %}{{ transaction.amount|floatformat:2 }} PLN
+                                {% if transaction.category %}-{% else %}+{% endif %}{{ transaction.amount }} PLN
                             </td>
                         </tr>
                         {% empty %}
