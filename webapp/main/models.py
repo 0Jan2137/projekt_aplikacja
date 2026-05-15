@@ -3,22 +3,21 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
+CATEGORY_FOOD = 'food'
+CATEGORY_TRANSPORT = 'transport'
+CATEGORY_GROCERIES = 'groceries'
+CATEGORY_BILLS = 'bills'
+CATEGORY_ENTERTAINMENT = 'entertainment'
 
+CATEGORY_CHOICES = (
+	(CATEGORY_FOOD, _('Food')),
+	(CATEGORY_TRANSPORT, _('Transport')),
+	(CATEGORY_GROCERIES, _('Groceries')),
+	(CATEGORY_BILLS, _('Bills')),
+	(CATEGORY_ENTERTAINMENT, _('Entertainment')),
+)
 
 class Expense(models.Model):
-	CATEGORY_FOOD = 'food'
-	CATEGORY_TRANSPORT = 'transport'
-	CATEGORY_GROCERIES = 'groceries'
-	CATEGORY_BILLS = 'bills'
-	CATEGORY_ENTERTAINMENT = 'entertainment'
-
-	CATEGORY_CHOICES = (
-    	(CATEGORY_FOOD, _('Food')),
-    	(CATEGORY_TRANSPORT, _('Transport')),
-    	(CATEGORY_GROCERIES, _('Groceries')),
-    	(CATEGORY_BILLS, _('Bills')),
-    	(CATEGORY_ENTERTAINMENT, _('Entertainment')),
-	)
 	amount = models.DecimalField(max_digits=10, decimal_places=2)
 	category = models.CharField(max_length=32, choices=CATEGORY_CHOICES)
 	description = models.CharField(max_length=255, blank=True)

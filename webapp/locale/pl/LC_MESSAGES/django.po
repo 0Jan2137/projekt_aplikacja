@@ -154,8 +154,8 @@ msgid "Top Category"
 msgstr "Największa kategoria wydatków"
 
 #: .\main\templates\index.html:238
-msgid "Daily Spending Trends"
-msgstr "Dzienne trendy wydatków"
+msgid "Budget Trend"
+msgstr "Trend"
 
 #: .\main\templates\index.html:247
 msgid "Recent Transactions"

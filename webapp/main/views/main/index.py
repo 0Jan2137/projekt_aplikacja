@@ -5,39 +5,47 @@ from django.db.models import Sum
 from django.utils import timezone
 from decimal import Decimal
 from django.utils.translation import gettext as _
-from main.models import Expense, Income
+from main.models import Expense, Income, CATEGORY_CHOICES
 from main.forms import ExpenseForm, IncomeForm
 from django.contrib.auth.decorators import login_required
 
-def _build_index_context(request, expense_form=None, income_form=None, active_tab='expense'):
+def _build_index_context(request, expense_form=None, income_form=None):
     if expense_form is None:
         expense_form = ExpenseForm(prefix='expense')
     if income_form is None:
         income_form = IncomeForm(prefix='income')
 
     today = timezone.localdate()
-    monthly_total = (
+    thirty_days_ago = today - timezone.timedelta(days=30)
+
+    monthly_expense = (
         Expense.objects
         .filter(user=request.user)
-        .filter(date__year=today.year, date__month=today.month)
+        .filter(date__gte=thirty_days_ago)
         .aggregate(total=Sum('amount'))['total']
         or Decimal('0.00')
     )
 
-    monthly_income = (
+    all_time_expenses = (
+        Expense.objects
+        .filter(user=request.user)
+        .aggregate(total=Sum('amount'))['total']
+        or Decimal('0.00')
+    )
+
+    all_time_incomes = (
         Income.objects
         .filter(user=request.user)
-        .filter(date__year=today.year, date__month=today.month)
         .aggregate(total=Sum('amount'))['total']
         or Decimal('0.00')
     )
 
-    budget_remaining = monthly_income - monthly_total
+    budget_remaining = all_time_incomes - all_time_expenses
 
     top_category = (
         Expense.objects
         .filter(user=request.user)
-        .filter(date__year=today.year, date__month=today.month)
+        .filter(date__gte=thirty_days_ago)
         .values('category')
         .annotate(total=Sum('amount'))
         .order_by('-total')
@@ -49,29 +57,33 @@ def _build_index_context(request, expense_form=None, income_form=None, active_ta
     if top_category:
         category_code = top_category['category']
         top_category_name = _(
-            dict(Expense.CATEGORY_CHOICES).get(category_code, '—')
+            dict(CATEGORY_CHOICES).get(category_code, '—')
         )
 
-  
-    thirty_days_ago = today - timezone.timedelta(days=30)
     expenses = list(Expense.objects.filter(user=request.user, date__gte=thirty_days_ago))
     incomes = list(Income.objects.filter(user=request.user, date__gte=thirty_days_ago))
-    all_recent = sorted(
-        expenses + incomes, 
-        key=lambda x: x.date, 
-        reverse=True
-    )
-    recent_transactions = all_recent[:10]
+    # expenses = [Expense(amount=abs(x.amount) * -1, date=x.date, user=x.user, category=x.category, id=x.pk) for x in expenses]
+    # incomes = [Income(amount=abs(x.amount), date=x.date, user=x.user, id=x.pk) for x in incomes]
+    # all_recent = sorted(
+    #     expenses + incomes, 
+    #     # list(expenses) + list(incomes),
+    #     key=lambda x: x.date, 
+    #     reverse=True
+    # )
     
+    # recent_transactions = all_recent
+    recent_transactions = {
+        "incomes": incomes,
+        "expenses": expenses
+    }
 
     return {
-        'total_spent': monthly_total,
+        'total_spent': monthly_expense,
         'budget_remaining': budget_remaining,
         'top_category_name': top_category_name,
         'recent_transactions': recent_transactions,
         'expense_form': expense_form,
         'income_form': income_form,
-        'active_tab': active_tab,
     }
 
 
@@ -93,7 +105,7 @@ def post_expense(request):
         return redirect('home')
 
     messages.error(request, _('Please fix the errors in the expense form.'))
-    context = _build_index_context(request, expense_form=expense_form, active_tab='expense')
+    context = _build_index_context(request, expense_form=expense_form)
     return render(request, 'index.html', context)
 
 @login_required
@@ -107,7 +119,7 @@ def post_income(request):
         return redirect('home')
 
     messages.error(request, _('Please fix the errors in the income form.'))
-    context = _build_index_context(request, income_form=income_form, active_tab='income')
+    context = _build_index_context(request, income_form=income_form)
     return render(request, 'index.html', context)
 
 @login_required

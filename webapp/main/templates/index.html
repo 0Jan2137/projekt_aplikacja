@@ -1,117 +1,198 @@
 {% extends 'layout/main.html' %}
 {% load i18n %}
+{% load humanize %}
 {% block extra_head %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{% comment %} 
+Below functions were implemented in frontend so that
+users' browsers bear the load of these operations and not our server and DB.
+{% endcomment %}
+
+{% comment %} helper functions {% endcomment %}
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const ctx = document.getElementById('dailySpendingChart').getContext('2d');
+    const ACTIVE_TAB_KEY = 'active-tab';
+    const SORT_DIRECTION_KEY = 'sort-direction';
 
-        // Zbieramy surowe fakty przesłane przez Django
-        const rawTransactions = [
-        {% for t in recent_transactions %}
-        { 
-            date: "{{ t.date|date:'d-m' }}", 
-            amount: parseFloat("{{ t.amount }}"),
-            is_expense: {% if t.category %}true{% else %}false{% endif %}
-        },
-        {% endfor %}
-        ];
-
-    // Interpretacja na froncie (grupowanie po dacie)
-    const grouped = rawTransactions.reduce((acc, curr) => {
-        if (curr.is_expense) {
-            acc[curr.date] = (acc[curr.date] || 0) + curr.amount;
-        }
-        return acc;
-    }, {});
-
-    const labels = Object.keys(grouped);
-    const dataValues = Object.values(grouped);
-
-    // Sortowanie etykiet chronologicznie (od najstarszej do najnowszej)
-    const sortedLabels = Object.keys(grouped).sort((a, b) => {
-        const [dayA, monthA] = a.split('-').map(Number);
-        const [dayB, monthB] = b.split('-').map(Number);
-        return new Date(2026, monthB - 1, dayA) - new Date(2026, monthB - 1, dayB);
-    });
-    const sortedValues = sortedLabels.map(label => grouped[label]);
-
-    // Wyśrodkowany tekst dla pustego konta
-    if (labels.length === 0) {
-        const canvas = document.getElementById('dailySpendingChart');
-        const ctx = canvas.getContext('2d');
-
-        canvas.width = canvas.clientWidth;
-        canvas.height = canvas.clientHeight;
-
-        const msg = canvas.getAttribute('data-empty-msg') || "Dodaj pierwszą transakcję...";
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        ctx.font = "16px 'Inter', sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillStyle = "#6c757d";
-        
-        ctx.fillText(msg, canvas.width / 2, canvas.height / 2);
-        return;
+    function saveState(key, obj) {
+        localStorage.setItem(key, JSON.stringify( obj ));
     }
 
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: sortedLabels,
-            datasets: [{
-                label: 'Daily Spending (PLN)',
-                data: sortedValues,
-                borderColor: '#3b82f6',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                borderWidth: 3,
-                fill: true,
-                tension: 0.3,
-                pointRadius: 4,
-                pointBackgroundColor: '#3b82f6'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function (value) { return value + ' PLN'; }
-                    }
-                }
-            },
-            plugins: {
-                legend: { display: false }
-            }
-        }
-    });
-    });
-</script>
-
-<script>
-    let directions = [true, true, true];
-    const SORT_STORAGE_KEY = 'recent-transactions-sort';
-
-    function saveSortState(colIdx, type, asc) {
-        localStorage.setItem(SORT_STORAGE_KEY, JSON.stringify({ colIdx, type, asc }));
-    }
-
-    function loadSortState() {
-        const saved = localStorage.getItem(SORT_STORAGE_KEY);
+    function loadState(key) {
+        const saved = localStorage.getItem(key);
         if (!saved) {
-            return { colIdx: 1, type: 'date', asc: false };
+            return null;
         }
 
         try {
             return JSON.parse(saved);
         } catch (error) {
-            return { colIdx: 1, type: 'date', asc: false };
+            return null;
         }
     }
+    
+    function setActiveTab(tabName) {
+        // Deactivate all tabs and panes
+        document.getElementById('expense-tab').classList.remove('active');
+        document.getElementById('income-tab').classList.remove('active');
+        document.getElementById('expense-content').classList.remove('show', 'active');
+        document.getElementById('income-content').classList.remove('show', 'active');
+        
+        // Activate the selected tab
+        if (tabName === 'income') {
+            document.getElementById('income-tab').classList.add('active');
+            document.getElementById('income-content').classList.add('show', 'active');
+        } else {
+            document.getElementById('expense-tab').classList.add('active');
+            document.getElementById('expense-content').classList.add('show', 'active');
+        }
+    }
+</script>
+
+{% comment %} chart {% endcomment %}
+<script>
+    const last30Days = []; 
+
+    for (let i = 30; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const dateString = `${day}-${month}`;
+        last30Days.push(dateString);
+    }
+
+    const groupItems = (items) => {
+        const grouped = []
+        for (let i = 0; i < last30Days.length; i++){
+            const totalForDay = items
+                .filter(t => t.date === last30Days[i])
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            let amnt = 0
+            if (i === 0) {
+                amnt = totalForDay
+            } else {
+                amnt = grouped[i-1].amount + totalForDay
+            }
+            grouped.push({ date: last30Days[i], amount: amnt})
+        } 
+        return grouped;
+    }
+    
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('dailySpendingChart').getContext('2d');
+
+        // Zbieramy surowe fakty przesłane przez Django
+        let rawIncomes = [];
+        let rawExpenses = [];
+        let budgetRemaining = parseFloat("{{ budget_remaining }}") || 0;
+        {% for t in recent_transactions.expenses %}
+            rawExpenses.push({ date: "{{ t.date|date:'d-m' }}", amount: -parseFloat("{{ t.amount }}"), type: "expense" });
+        {% endfor %}
+        {% for t in recent_transactions.incomes %}
+            rawIncomes.push({ date: "{{ t.date|date:'d-m' }}", amount: parseFloat("{{ t.amount }}"), type: "income" });
+        {% endfor %}
+        
+        let groupedIncomes = groupItems(rawIncomes.reverse())
+        let groupedExpenses = groupItems(rawExpenses.reverse())
+
+        // groupedIncomes and Expenses already sorted - index 0 is the smallest date
+        const groupedDiff = []
+        for (let i = 0; i < last30Days.length; i++) {
+            const diff = groupedIncomes[i].amount + groupedExpenses[i].amount; // Expenses są ujemne, więc dodajemy
+            groupedDiff.push({ date: last30Days[i], amount: diff });
+        }
+
+        let labels = last30Days
+
+        // Wyśrodkowany tekst dla pustego konta
+        if (labels.length === 0) {
+            const canvas = document.getElementById('dailySpendingChart');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = canvas.clientWidth;
+            canvas.height = canvas.clientHeight;
+
+            const msg = canvas.getAttribute('data-empty-msg') || "Dodaj pierwszą transakcję...";
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.font = "16px 'Inter', sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = "#6c757d";
+            
+            ctx.fillText(msg, canvas.width / 2, canvas.height / 2);
+            return;
+        }
+''
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels, // Zakładamy, że daty są takie same dla przychodów i wydatków
+                datasets: [
+                    {
+                        label: 'Daily stats (PLN)',
+                        data: groupedDiff.map(d => d.amount),
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 1,
+                        pointBackgroundColor: '#3b82f6'
+                    },
+                    {
+                        label: 'Budget remaining - Daily income (PLN)',
+                        data: groupedIncomes.map(d => d.amount),
+                        borderColor: '#08b441',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 1,
+                        pointBackgroundColor: '#08b441'
+                    },
+                                    {
+                        label: 'Daily expense (PLN)',
+                        data: groupedExpenses.map(d => d.amount),
+                        borderColor: '#cc2222',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 1,
+                        pointBackgroundColor: '#cc2222'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    x: {
+                        reverse: true
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function (value) { return value + ' PLN'; }
+                        },
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    });
+</script>
+
+{% comment %} List sorting {% endcomment %}
+<script>
+    let directions = [true, true, true];
+    const SORT_STORAGE_KEY = 'recent-transactions-sort';
 
     function sortTransactions(colIdx, type, asc=undefined) {
         const container = document.getElementById("transactions-container");
@@ -128,7 +209,11 @@
         });
 
         directions[colIdx] = !isAsc;
-        saveSortState(colIdx, type, isAsc);
+        saveState(SORT_DIRECTION_KEY, {
+            "colIdx": colIdx,
+            "type": type,
+            "isAsc": isAsc
+        });
         rows.forEach(row => container.appendChild(row));
 
         for (let i = 0; i < 3; i++) {
@@ -137,11 +222,25 @@
     }
 </script>
 
+{% comment %} Remembered states {% endcomment %}
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-    const savedSort = loadSortState();
-    sortTransactions(savedSort.colIdx, savedSort.type, savedSort.asc);
-});
+    document.addEventListener("DOMContentLoaded", () => {
+        const savedSort = loadState(SORT_DIRECTION_KEY);
+        if (savedSort) {
+            sortTransactions(savedSort.colIdx, savedSort.type, savedSort.isAsc);
+        }
+
+        const savedTab = loadState(ACTIVE_TAB_KEY) || 'expense';
+        setActiveTab(savedTab);
+        
+        // Add click handlers to tabs
+        document.getElementById('expense-tab').addEventListener('click', () => {
+            saveState(ACTIVE_TAB_KEY, 'expense');
+        });
+        document.getElementById('income-tab').addEventListener('click', () => {
+            saveState(ACTIVE_TAB_KEY, 'income');
+        });
+    });
 </script>
 
 {% endblock %}
@@ -156,24 +255,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     <ul class="nav nav-tabs mb-4" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link {% if active_tab == 'expense' %}active{% endif %}" id="expense-tab" data-bs-toggle="tab"
+                            <button class="nav-link" id="expense-tab" data-bs-toggle="tab"
                                 data-bs-target="#expense-content" type="button" role="tab"
                                 aria-controls="expense-content" aria-selected="true">{% trans "Expense" %}</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link {% if active_tab == 'income' %}active{% endif %}" id="income-tab" data-bs-toggle="tab"
+                            <button class="nav-link" id="income-tab" data-bs-toggle="tab"
                                 data-bs-target="#income-content" type="button" role="tab" aria-controls="income-content"
                                 aria-selected="false">{% trans "Income" %}</button>
                         </li>
                     </ul>
 
                     <div class="tab-content">
-                        <div class="tab-pane fade {% if active_tab == 'expense' %}show active{% endif %}" id="expense-content" role="tabpanel"
+                        <div class="tab-pane fade" id="expense-content" role="tabpanel"
                             aria-labelledby="expense-tab">
                             {% include 'forms/expense_form.html' with form=expense_form %}
                         </div>
 
-                        <div class="tab-pane fade {% if active_tab == 'income' %}show active{% endif %}" id="income-content" role="tabpanel" aria-labelledby="income-tab">
+                        <div class="tab-pane fade" id="income-content" role="tabpanel" aria-labelledby="income-tab">
                             {% include 'forms/income_form.html' with form=income_form %}
                         </div>
                     </div>
@@ -187,7 +286,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="card shadow-sm h-100">
                         <div class="card-body">
                             <p class="text-muted mb-2">{% trans "Total Spent This Month" %}</p>
-                            <h3 class="mb-0">{{ total_spent|floatformat:2 }} PLN</h3>
+                            <h3 class="mb-0">{{ total_spent|floatformat:0|intcomma }} PLN</h3>
                         </div>
                     </div>
                 </div>
@@ -195,7 +294,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <div class="card shadow-sm h-100">
                         <div class="card-body">
                             <p class="text-muted mb-2">{% trans "Budget Remaining" %}</p>
-                            <h3 class="mb-0">{{ budget_remaining|floatformat:2 }} PLN</h3>
+                            <h3 class="mb-0">{{ budget_remaining|floatformat:0|intcomma }} PLN</h3>
                         </div>
                     </div>
                 </div>
@@ -213,7 +312,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             <div class="card shadow-sm mt-4">
                 <div class="card-body">
-                    <h2 class="h5 mb-3">{% trans "Daily Spending Trends" %}</h2>
+                    <h2 class="h5 mb-3">{% trans "Budget Trend" %}</h2>
                     <canvas id="dailySpendingChart" class="w-100"
                         style="min-height: 200px; max-height: 600px;"
                         data-empty-msg="{% if request.LANGUAGE_CODE == 'pl' %}Dodaj pierwszą transakcję, aby zobaczyć wykres{% else %}Add your first transaction to see the chart{% endif %}"></canvas>
@@ -233,49 +332,51 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
 
                     <div id="transactions-container">
-                        {% for transaction in recent_transactions %}
-                        <div class="row align-items-center py-3 border-bottom transaction-row"
-                            data-val="{{ transaction.amount }}">
-                            <div class="col-5">
-                                <h4 class="h6 mb-1">
-                                    {% if transaction.category %}
-                                        {{ transaction.get_category_display }}
-                                    {% else %}
-                                        {{ transaction.source }}
-                                    {% endif %}
-                                </h4>
-                                <p class="mb-0 text-muted">{{ transaction.description|default:"" }}</p>
-                            </div>
-                            <div class="col-3 text-center" data-val="{{ transaction.date|date:'Y-m-d' }}">
-                                <p class="mb-0 text-muted">{{ transaction.date|date:"d.m.Y" }}</p>
-                            </div>
-                            <div class="col-4 text-end">
-                                <p class="mb-0 fw-bold {% if transaction.category %}text-danger{% else %}text-success{% endif %}">
-                                    {% if transaction.category %}-{% else %}+{% endif %}{{ transaction.amount|floatformat:2 }} PLN
-                                </p>
-                                <!-- Przycisk usuwania -->
-                                {% if transaction.category %}
-                                    <a href ={% url 'delete_expense' transaction.pk%} class="text-danger small" onclick="return confirm('{% trans "Delete this expense?" %}')" style="text-decoration: none;">
-                                        <i class ="bi bi-trash"></i> {% trans "Delete" %}
-                                    </a>
-                                {% else %}
-                                    <a href ={% url 'delete_income' transaction.pk%} class="text-danger small" onclick="return confirm('{% trans "Delete this income?" %}')" style="text-decoration: none;">
-                                        <i class ="bi bi-trash"></i> {% trans "Delete" %}
-                                    </a>
-                                {% endif %}
-                                  
-                            </div>
-                        </div>
+                        {% for k,v in recent_transactions.items %}
+                            {% for transaction in v %}
+                                <div class="row align-items-center py-3 border-bottom transaction-row"
+                                    data-val="{{ transaction.amount }}">
+                                    <div class="col-5">
+                                        <h4 class="h6 mb-1">
+                                            {% if transaction.category %}
+                                                {{ transaction.category }}
+                                            {% else %}
+                                                {{ transaction.source }}
+                                            {% endif %}
+                                        </h4>
+                                        <p class="mb-0 text-muted">{{ transaction.description|default:"" }}</p>
+                                    </div>
+                                    <div class="col-3 text-center" data-val="{{ transaction.date|date:'Y-m-d' }}">
+                                        <p class="mb-0 text-muted">{{ transaction.date|date:"d.m.Y" }}</p>
+                                    </div>
+                                    <div class="col-4 text-end">
+                                        <p class="mb-0 fw-bold {% if k == "expenses" %}text-danger{% else %}text-success{% endif %}">
+                                            {{ transaction.amount|floatformat:2 }} PLN
+                                        </p>
+                                        <!-- Przycisk usuwania -->
+                                        {% if k == "expenses" %}
+                                            <a href ={% url 'delete_expense' transaction.pk%} class="text-danger small" onclick="return confirm('{% trans "Delete this expense?" %}')" style="text-decoration: none;">
+                                                <i class ="bi bi-trash"></i> {% trans "Delete" %}
+                                            </a>
+                                        {% else %}
+                                            <a href ={% url 'delete_income' transaction.pk%} class="text-danger small" onclick="return confirm('{% trans "Delete this income?" %}')" style="text-decoration: none;">
+                                                <i class ="bi bi-trash"></i> {% trans "Delete" %}
+                                            </a>
+                                        {% endif %}
+                                        
+                                    </div>
+                                </div>
+                            {% endfor %}
                         {% empty %}
-                        <div class="py-4 text-center">
-                            <p class="text-muted mb-0">
-                                {% if request.LANGUAGE_CODE == 'pl' %}
-                                    Nie znaleziono żadnych transakcji.
-                                {% else %}
-                                    No recent transactions found.
-                                {% endif %}
-                            </p>
-                        </div>
+                            <div class="py-4 text-center">
+                                <p class="text-muted mb-0">
+                                    {% if request.LANGUAGE_CODE == 'pl' %}
+                                        Nie znaleziono żadnych transakcji.
+                                    {% else %}
+                                        No recent transactions found.
+                                    {% endif %}
+                                </p>
+                            </div>
                         {% endfor %}
                     </div>
                 </div>
