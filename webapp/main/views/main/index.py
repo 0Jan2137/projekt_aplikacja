@@ -16,10 +16,12 @@ def _build_index_context(request, expense_form=None, income_form=None, active_ta
         income_form = IncomeForm(prefix='income')
 
     today = timezone.localdate()
-    monthly_total = (
+    thirty_days_ago = today - timezone.timedelta(days=30)
+
+    monthly_expense = (
         Expense.objects
         .filter(user=request.user)
-        .filter(date__year=today.year, date__month=today.month)
+        .filter(date__gte=thirty_days_ago)
         .aggregate(total=Sum('amount'))['total']
         or Decimal('0.00')
     )
@@ -27,17 +29,17 @@ def _build_index_context(request, expense_form=None, income_form=None, active_ta
     monthly_income = (
         Income.objects
         .filter(user=request.user)
-        .filter(date__year=today.year, date__month=today.month)
+        .filter(date__gte=thirty_days_ago)
         .aggregate(total=Sum('amount'))['total']
         or Decimal('0.00')
     )
 
-    budget_remaining = monthly_income - monthly_total
+    budget_remaining = monthly_income - monthly_expense
 
     top_category = (
         Expense.objects
         .filter(user=request.user)
-        .filter(date__year=today.year, date__month=today.month)
+        .filter(date__gte=thirty_days_ago)
         .values('category')
         .annotate(total=Sum('amount'))
         .order_by('-total')
@@ -52,8 +54,6 @@ def _build_index_context(request, expense_form=None, income_form=None, active_ta
             dict(Expense.CATEGORY_CHOICES).get(category_code, '—')
         )
 
-  
-    thirty_days_ago = today - timezone.timedelta(days=30)
     expenses = list(Expense.objects.filter(user=request.user, date__gte=thirty_days_ago))
     incomes = list(Income.objects.filter(user=request.user, date__gte=thirty_days_ago))
     all_recent = sorted(
@@ -65,7 +65,7 @@ def _build_index_context(request, expense_form=None, income_form=None, active_ta
     
 
     return {
-        'total_spent': monthly_total,
+        'total_spent': monthly_expense,
         'budget_remaining': budget_remaining,
         'top_category_name': top_category_name,
         'recent_transactions': recent_transactions,
