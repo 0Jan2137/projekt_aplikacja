@@ -4,7 +4,7 @@ from django import forms
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from main.models import Expense
+from main.models import Expense, CATEGORY_CHOICES
 
 
 class ExpenseForm(forms.Form):
@@ -19,7 +19,7 @@ class ExpenseForm(forms.Form):
     )
     category = forms.ChoiceField(
         label=_("Category"),
-        choices=Expense.CATEGORY_CHOICES,
+        choices = CATEGORY_CHOICES,
         widget=forms.Select(attrs={"class": "form-select"}),
     )
     description = forms.CharField(

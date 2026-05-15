@@ -2,102 +2,159 @@
 {% load i18n %}
 {% block extra_head %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{% comment %} 
+Below functions were implemented in frontend so that
+users' browsers bear the load of these operations and not our server and DB.
+{% endcomment %}
+
+{% comment %} helper functions {% endcomment %}
+<script>
+    const ACTIVE_TAB_KEY = 'active-tab';
+    const SORT_DIRECTION_KEY = 'sort-direction';
+
+    function saveState(key, obj) {
+        localStorage.setItem(key, JSON.stringify( obj ));
+    }
+
+    function loadState(key) {
+        const saved = localStorage.getItem(key);
+        if (!saved) {
+            return null;
+        }
+
+        try {
+            return JSON.parse(saved);
+        } catch (error) {
+            return null;
+        }
+    }
+    
+    function setActiveTab(tabName) {
+        // Deactivate all tabs and panes
+        document.getElementById('expense-tab').classList.remove('active');
+        document.getElementById('income-tab').classList.remove('active');
+        document.getElementById('expense-content').classList.remove('show', 'active');
+        document.getElementById('income-content').classList.remove('show', 'active');
+        
+        // Activate the selected tab
+        if (tabName === 'income') {
+            document.getElementById('income-tab').classList.add('active');
+            document.getElementById('income-content').classList.add('show', 'active');
+        } else {
+            document.getElementById('expense-tab').classList.add('active');
+            document.getElementById('expense-content').classList.add('show', 'active');
+        }
+    }
+</script>
+
+{% comment %} chart {% endcomment %}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const ctx = document.getElementById('dailySpendingChart').getContext('2d');
 
         // Zbieramy surowe fakty przesłane przez Django
         const rawTransactions = [
-            {% for t in recent_transactions %}
-            { date: "{{ t.date|date:'d-m' }}", amount: parseFloat("{{ t.amount }}") },
-        {% endfor %}
+            {% for k,v in recent_transactions.items %}
+                {% for t in v %}
+                    { date: "{{ t.date|date:'d-m' }}", amount: parseFloat("{{ t.amount }}") },
+                {% endfor %}
+            {% endfor %}
         ];
 
-    // Interpretacja na froncie (grupowanie po dacie)
-    const grouped = rawTransactions.reduce((acc, curr) => {
-        acc[curr.date] = (acc[curr.date] || 0) + curr.amount;
-        return acc;
-    }, {});
+        // Interpretacja na froncie (grupowanie po dacie)
+        const grouped = rawTransactions.reduce((acc, curr) => {
+            acc[curr.date] = (acc[curr.date] || 0) + curr.amount;
+            return acc;
+        }, {});
 
-    const labels = Object.keys(grouped);
-    const dataValues = Object.values(grouped);
+        const labels = Object.keys(grouped);
+        const dataValues = Object.values(grouped);
 
-    // Wyśrodkowany tekst dla pustego konta
-    if (labels.length === 0) {
-        const canvas = document.getElementById('dailySpendingChart');
-        const ctx = canvas.getContext('2d');
+        // Wyśrodkowany tekst dla pustego konta
+        if (labels.length === 0) {
+            const canvas = document.getElementById('dailySpendingChart');
+            const ctx = canvas.getContext('2d');
 
-        canvas.width = canvas.clientWidth;
-        canvas.height = canvas.clientHeight;
+            canvas.width = canvas.clientWidth;
+            canvas.height = canvas.clientHeight;
 
-        const msg = canvas.getAttribute('data-empty-msg') || "Dodaj pierwszą transakcję...";
+            const msg = canvas.getAttribute('data-empty-msg') || "Dodaj pierwszą transakcję...";
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        ctx.font = "16px 'Inter', sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillStyle = "#6c757d";
-        
-        ctx.fillText(msg, canvas.width / 2, canvas.height / 2);
-        return;
-    }
-
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Daily Spending (PLN)',
-                data: dataValues,
-                borderColor: '#3b82f6',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                borderWidth: 3,
-                fill: true,
-                tension: 0.3,
-                pointRadius: 4,
-                pointBackgroundColor: '#3b82f6'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function (value) { return value + ' PLN'; }
-                    }
-                }
-            },
-            plugins: {
-                legend: { display: false }
-            }
+            ctx.font = "16px 'Inter', sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = "#6c757d";
+            
+            ctx.fillText(msg, canvas.width / 2, canvas.height / 2);
+            return;
         }
-    });
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Daily flow (PLN)',
+                        data: dataValues,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#3b82f6'
+                    },
+                    {
+                        label: 'Daily income (PLN)',
+                        data: dataValues,
+                        borderColor: '#08b441',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#08b441'
+                    },
+                                    {
+                        label: 'Daily expense (PLN)',
+                        data: dataValues,
+                        borderColor: '#cc2222',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#cc2222'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function (value) { return value + ' PLN'; }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
     });
 </script>
 
+{% comment %} List sorting {% endcomment %}
 <script>
     let directions = [true, true, true];
     const SORT_STORAGE_KEY = 'recent-transactions-sort';
-
-    function saveSortState(colIdx, type, asc) {
-        localStorage.setItem(SORT_STORAGE_KEY, JSON.stringify({ colIdx, type, asc }));
-    }
-
-    function loadSortState() {
-        const saved = localStorage.getItem(SORT_STORAGE_KEY);
-        if (!saved) {
-            return { colIdx: 1, type: 'date', asc: false };
-        }
-
-        try {
-            return JSON.parse(saved);
-        } catch (error) {
-            return { colIdx: 1, type: 'date', asc: false };
-        }
-    }
 
     function sortTransactions(colIdx, type, asc=undefined) {
         const container = document.getElementById("transactions-container");
@@ -114,7 +171,11 @@
         });
 
         directions[colIdx] = !isAsc;
-        saveSortState(colIdx, type, isAsc);
+        saveState(SORT_DIRECTION_KEY, {
+            "colIdx": colIdx,
+            "type": type,
+            "isAsc": isAsc
+        });
         rows.forEach(row => container.appendChild(row));
 
         for (let i = 0; i < 3; i++) {
@@ -123,11 +184,25 @@
     }
 </script>
 
+{% comment %} Remembered states {% endcomment %}
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-    const savedSort = loadSortState();
-    sortTransactions(savedSort.colIdx, savedSort.type, savedSort.asc);
-});
+    document.addEventListener("DOMContentLoaded", () => {
+        const savedSort = loadState(SORT_DIRECTION_KEY);
+        if (savedSort) {
+            sortTransactions(savedSort.colIdx, savedSort.type, savedSort.isAsc);
+        }
+
+        const savedTab = loadState(ACTIVE_TAB_KEY) || 'expense';
+        setActiveTab(savedTab);
+        
+        // Add click handlers to tabs
+        document.getElementById('expense-tab').addEventListener('click', () => {
+            saveState(ACTIVE_TAB_KEY, 'expense');
+        });
+        document.getElementById('income-tab').addEventListener('click', () => {
+            saveState(ACTIVE_TAB_KEY, 'income');
+        });
+    });
 </script>
 
 {% endblock %}
@@ -142,24 +217,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     <ul class="nav nav-tabs mb-4" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link {% if active_tab == 'expense' %}active{% endif %}" id="expense-tab" data-bs-toggle="tab"
+                            <button class="nav-link" id="expense-tab" data-bs-toggle="tab"
                                 data-bs-target="#expense-content" type="button" role="tab"
                                 aria-controls="expense-content" aria-selected="true">{% trans "Expense" %}</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link {% if active_tab == 'income' %}active{% endif %}" id="income-tab" data-bs-toggle="tab"
+                            <button class="nav-link" id="income-tab" data-bs-toggle="tab"
                                 data-bs-target="#income-content" type="button" role="tab" aria-controls="income-content"
                                 aria-selected="false">{% trans "Income" %}</button>
                         </li>
                     </ul>
 
                     <div class="tab-content">
-                        <div class="tab-pane fade {% if active_tab == 'expense' %}show active{% endif %}" id="expense-content" role="tabpanel"
+                        <div class="tab-pane fade" id="expense-content" role="tabpanel"
                             aria-labelledby="expense-tab">
                             {% include 'forms/expense_form.html' with form=expense_form %}
                         </div>
 
-                        <div class="tab-pane fade {% if active_tab == 'income' %}show active{% endif %}" id="income-content" role="tabpanel" aria-labelledby="income-tab">
+                        <div class="tab-pane fade" id="income-content" role="tabpanel" aria-labelledby="income-tab">
                             {% include 'forms/income_form.html' with form=income_form %}
                         </div>
                     </div>
@@ -219,49 +294,51 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
 
                     <div id="transactions-container">
-                        {% for transaction in recent_transactions %}
-                        <div class="row align-items-center py-3 border-bottom transaction-row"
-                            data-val="{{ transaction.amount }}">
-                            <div class="col-5">
-                                <h4 class="h6 mb-1">
-                                    {% if transaction.category %}
-                                        {{ transaction.get_category_display }}
-                                    {% else %}
-                                        {{ transaction.source }}
-                                    {% endif %}
-                                </h4>
-                                <p class="mb-0 text-muted">{{ transaction.description|default:"" }}</p>
-                            </div>
-                            <div class="col-3 text-center" data-val="{{ transaction.date|date:'Y-m-d' }}">
-                                <p class="mb-0 text-muted">{{ transaction.date|date:"d.m.Y" }}</p>
-                            </div>
-                            <div class="col-4 text-end">
-                                <p class="mb-0 fw-bold {% if transaction.category %}text-danger{% else %}text-success{% endif %}">
-                                    {% if transaction.category %}-{% else %}+{% endif %}{{ transaction.amount|floatformat:2 }} PLN
-                                </p>
-                                <!-- Przycisk usuwania -->
-                                {% if transaction.category %}
-                                    <a href ={% url 'delete_expense' transaction.pk%} class="text-danger small" onclick="return confirm('{% trans "Delete this expense?" %}')" style="text-decoration: none;">
-                                        <i class ="bi bi-trash"></i> {% trans "Delete" %}
-                                    </a>
-                                {% else %}
-                                    <a href ={% url 'delete_income' transaction.pk%} class="text-danger small" onclick="return confirm('{% trans "Delete this income?" %}')" style="text-decoration: none;">
-                                        <i class ="bi bi-trash"></i> {% trans "Delete" %}
-                                    </a>
-                                {% endif %}
-                                  
-                            </div>
-                        </div>
+                        {% for k,v in recent_transactions.items %}
+                            {% for transaction in v %}
+                                <div class="row align-items-center py-3 border-bottom transaction-row"
+                                    data-val="{{ transaction.amount }}">
+                                    <div class="col-5">
+                                        <h4 class="h6 mb-1">
+                                            {% if transaction.category %}
+                                                {{ transaction.category }}
+                                            {% else %}
+                                                {{ transaction.source }}
+                                            {% endif %}
+                                        </h4>
+                                        <p class="mb-0 text-muted">{{ transaction.description|default:"" }}</p>
+                                    </div>
+                                    <div class="col-3 text-center" data-val="{{ transaction.date|date:'Y-m-d' }}">
+                                        <p class="mb-0 text-muted">{{ transaction.date|date:"d.m.Y" }}</p>
+                                    </div>
+                                    <div class="col-4 text-end">
+                                        <p class="mb-0 fw-bold {% if k == "expenses" %}text-danger{% else %}text-success{% endif %}">
+                                            {{ transaction.amount|floatformat:2 }} PLN
+                                        </p>
+                                        <!-- Przycisk usuwania -->
+                                        {% if k == "expenses" %}
+                                            <a href ={% url 'delete_expense' transaction.pk%} class="text-danger small" onclick="return confirm('{% trans "Delete this expense?" %}')" style="text-decoration: none;">
+                                                <i class ="bi bi-trash"></i> {% trans "Delete" %}
+                                            </a>
+                                        {% else %}
+                                            <a href ={% url 'delete_income' transaction.pk%} class="text-danger small" onclick="return confirm('{% trans "Delete this income?" %}')" style="text-decoration: none;">
+                                                <i class ="bi bi-trash"></i> {% trans "Delete" %}
+                                            </a>
+                                        {% endif %}
+                                        
+                                    </div>
+                                </div>
+                            {% endfor %}
                         {% empty %}
-                        <div class="py-4 text-center">
-                            <p class="text-muted mb-0">
-                                {% if request.LANGUAGE_CODE == 'pl' %}
-                                    Nie znaleziono żadnych transakcji.
-                                {% else %}
-                                    No recent transactions found.
-                                {% endif %}
-                            </p>
-                        </div>
+                            <div class="py-4 text-center">
+                                <p class="text-muted mb-0">
+                                    {% if request.LANGUAGE_CODE == 'pl' %}
+                                        Nie znaleziono żadnych transakcji.
+                                    {% else %}
+                                        No recent transactions found.
+                                    {% endif %}
+                                </p>
+                            </div>
                         {% endfor %}
                     </div>
                 </div>
