@@ -8,19 +8,33 @@
 
         // Zbieramy surowe fakty przesłane przez Django
         const rawTransactions = [
-            {% for t in recent_transactions %}
-            { date: "{{ t.date|date:'d-m' }}", amount: parseFloat("{{ t.amount }}") },
+        {% for t in recent_transactions %}
+        { 
+            date: "{{ t.date|date:'d-m' }}", 
+            amount: parseFloat("{{ t.amount }}"),
+            is_expense: {% if t.category %}true{% else %}false{% endif %}
+        },
         {% endfor %}
         ];
 
     // Interpretacja na froncie (grupowanie po dacie)
     const grouped = rawTransactions.reduce((acc, curr) => {
-        acc[curr.date] = (acc[curr.date] || 0) + curr.amount;
+        if (curr.is_expense) {
+            acc[curr.date] = (acc[curr.date] || 0) + curr.amount;
+        }
         return acc;
     }, {});
 
     const labels = Object.keys(grouped);
     const dataValues = Object.values(grouped);
+
+    // Sortowanie etykiet chronologicznie (od najstarszej do najnowszej)
+    const sortedLabels = Object.keys(grouped).sort((a, b) => {
+        const [dayA, monthA] = a.split('-').map(Number);
+        const [dayB, monthB] = b.split('-').map(Number);
+        return new Date(2026, monthB - 1, dayA) - new Date(2026, monthB - 1, dayB);
+    });
+    const sortedValues = sortedLabels.map(label => grouped[label]);
 
     // Wyśrodkowany tekst dla pustego konta
     if (labels.length === 0) {
@@ -46,10 +60,10 @@
     new Chart(ctx, {
         type: 'line',
         data: {
-            labels: labels,
+            labels: sortedLabels,
             datasets: [{
                 label: 'Daily Spending (PLN)',
-                data: dataValues,
+                data: sortedValues,
                 borderColor: '#3b82f6',
                 backgroundColor: 'rgba(59, 130, 246, 0.1)',
                 borderWidth: 3,
