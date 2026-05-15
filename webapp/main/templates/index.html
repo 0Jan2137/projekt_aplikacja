@@ -1,5 +1,6 @@
 {% extends 'layout/main.html' %}
 {% load i18n %}
+{% load humanize %}
 {% block extra_head %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -50,26 +51,60 @@ users' browsers bear the load of these operations and not our server and DB.
 
 {% comment %} chart {% endcomment %}
 <script>
+    const last30Days = []; 
+
+    for (let i = 30; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const dateString = `${day}-${month}`;
+        last30Days.push(dateString);
+    }
+
+    const groupItems = (items) => {
+        const grouped = []
+        for (let i = 0; i < last30Days.length; i++){
+            const totalForDay = items
+                .filter(t => t.date === last30Days[i])
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            let amnt = 0
+            if (i === 0) {
+                amnt = totalForDay
+            } else {
+                amnt = grouped[i-1].amount + totalForDay
+            }
+            grouped.push({ date: last30Days[i], amount: amnt})
+        } 
+        return grouped;
+    }
+    
     document.addEventListener('DOMContentLoaded', function () {
         const ctx = document.getElementById('dailySpendingChart').getContext('2d');
 
         // Zbieramy surowe fakty przesłane przez Django
-        const rawTransactions = [
-            {% for k,v in recent_transactions.items %}
-                {% for t in v %}
-                    { date: "{{ t.date|date:'d-m' }}", amount: parseFloat("{{ t.amount }}") },
-                {% endfor %}
-            {% endfor %}
-        ];
+        let rawIncomes = [];
+        let rawExpenses = [];
+        let budgetRemaining = parseFloat("{{ budget_remaining }}") || 0;
+        {% for t in recent_transactions.expenses %}
+            rawExpenses.push({ date: "{{ t.date|date:'d-m' }}", amount: -parseFloat("{{ t.amount }}"), type: "expense" });
+        {% endfor %}
+        {% for t in recent_transactions.incomes %}
+            rawIncomes.push({ date: "{{ t.date|date:'d-m' }}", amount: parseFloat("{{ t.amount }}"), type: "income" });
+        {% endfor %}
+        
+        let groupedIncomes = groupItems(rawIncomes.reverse())
+        let groupedExpenses = groupItems(rawExpenses.reverse())
 
-        // Interpretacja na froncie (grupowanie po dacie)
-        const grouped = rawTransactions.reduce((acc, curr) => {
-            acc[curr.date] = (acc[curr.date] || 0) + curr.amount;
-            return acc;
-        }, {});
+        // groupedIncomes and Expenses already sorted - index 0 is the smallest date
+        const groupedDiff = []
+        for (let i = 0; i < last30Days.length; i++) {
+            const diff = groupedIncomes[i].amount + groupedExpenses[i].amount; // Expenses są ujemne, więc dodajemy
+            groupedDiff.push({ date: last30Days[i], amount: diff });
+        }
 
-        const labels = Object.keys(grouped);
-        const dataValues = Object.values(grouped);
+        let labels = last30Days
 
         // Wyśrodkowany tekst dla pustego konta
         if (labels.length === 0) {
@@ -91,43 +126,43 @@ users' browsers bear the load of these operations and not our server and DB.
             ctx.fillText(msg, canvas.width / 2, canvas.height / 2);
             return;
         }
-
+''
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: labels,
+                labels: labels, // Zakładamy, że daty są takie same dla przychodów i wydatków
                 datasets: [
                     {
-                        label: 'Daily flow (PLN)',
-                        data: dataValues,
+                        label: 'Daily stats (PLN)',
+                        data: groupedDiff.map(d => d.amount),
                         borderColor: '#3b82f6',
                         backgroundColor: 'rgba(59, 130, 246, 0.1)',
                         borderWidth: 3,
                         fill: true,
                         tension: 0.3,
-                        pointRadius: 4,
+                        pointRadius: 1,
                         pointBackgroundColor: '#3b82f6'
                     },
                     {
-                        label: 'Daily income (PLN)',
-                        data: dataValues,
+                        label: 'Budget remaining - Daily income (PLN)',
+                        data: groupedIncomes.map(d => d.amount),
                         borderColor: '#08b441',
                         backgroundColor: 'rgba(59, 130, 246, 0.1)',
                         borderWidth: 3,
                         fill: true,
                         tension: 0.3,
-                        pointRadius: 4,
+                        pointRadius: 1,
                         pointBackgroundColor: '#08b441'
                     },
                                     {
                         label: 'Daily expense (PLN)',
-                        data: dataValues,
+                        data: groupedExpenses.map(d => d.amount),
                         borderColor: '#cc2222',
                         backgroundColor: 'rgba(59, 130, 246, 0.1)',
                         borderWidth: 3,
                         fill: true,
                         tension: 0.3,
-                        pointRadius: 4,
+                        pointRadius: 1,
                         pointBackgroundColor: '#cc2222'
                     }
                 ]
@@ -136,11 +171,14 @@ users' browsers bear the load of these operations and not our server and DB.
                 responsive: true,
                 maintainAspectRatio: true,
                 scales: {
+                    x: {
+                        reverse: true
+                    },
                     y: {
                         beginAtZero: true,
                         ticks: {
                             callback: function (value) { return value + ' PLN'; }
-                        }
+                        },
                     }
                 },
                 plugins: {
@@ -248,7 +286,7 @@ users' browsers bear the load of these operations and not our server and DB.
                     <div class="card shadow-sm h-100">
                         <div class="card-body">
                             <p class="text-muted mb-2">{% trans "Total Spent This Month" %}</p>
-                            <h3 class="mb-0">{{ total_spent }} PLN</h3>
+                            <h3 class="mb-0">{{ total_spent|floatformat:0|intcomma }} PLN</h3>
                         </div>
                     </div>
                 </div>
@@ -256,7 +294,7 @@ users' browsers bear the load of these operations and not our server and DB.
                     <div class="card shadow-sm h-100">
                         <div class="card-body">
                             <p class="text-muted mb-2">{% trans "Budget Remaining" %}</p>
-                            <h3 class="mb-0">{{ budget_remaining }} PLN</h3>
+                            <h3 class="mb-0">{{ budget_remaining|floatformat:0|intcomma }} PLN</h3>
                         </div>
                     </div>
                 </div>
@@ -274,7 +312,7 @@ users' browsers bear the load of these operations and not our server and DB.
 
             <div class="card shadow-sm mt-4">
                 <div class="card-body">
-                    <h2 class="h5 mb-3">{% trans "Daily Spending Trends" %}</h2>
+                    <h2 class="h5 mb-3">{% trans "Budget Trend" %}</h2>
                     <canvas id="dailySpendingChart" class="w-100"
                         style="min-height: 200px; max-height: 600px;"
                         data-empty-msg="{% if request.LANGUAGE_CODE == 'pl' %}Dodaj pierwszą transakcję, aby zobaczyć wykres{% else %}Add your first transaction to see the chart{% endif %}"></canvas>
