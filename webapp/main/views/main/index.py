@@ -151,3 +151,17 @@ def terms_of_use(request):
 def privacy_policy(request):
     return render(request, 'footer/privacy-policy.html')
 
+@login_required
+def bulk_delete_transactions(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('selected_transactions')
+
+        for item in selected_ids:
+            transaction_type, pk = item.split('_')
+            if transaction_type == 'expenses':
+                Expense.objects.filter(pk=pk).delete()
+            elif transaction_type == 'incomes':
+                Income.objects.filter(pk=pk).delete()
+
+    return redirect('home')
+        

@@ -243,6 +243,22 @@ users' browsers bear the load of these operations and not our server and DB.
     });
 </script>
 
+{% comment %} Bulk delete transactions {% endcomment %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectAllCheckbox = document.getElementById('select-all-transactions');
+        
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function () {
+                const checkboxes = document.querySelectorAll('.transaction-checkbox');
+                checkboxes.forEach(cb => {
+                    cb.checked = this.checked;
+                });
+            });
+        }
+    });
+</script>
+
 {% endblock %}
 
 {% block content %}
@@ -321,12 +337,20 @@ users' browsers bear the load of these operations and not our server and DB.
 
             <div class="card shadow-sm mt-4">
                 <div class="card-body">
+                    <form action="{% url 'bulk_delete' %}" method="POST">
+                        {% csrf_token %}
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h2 class="h5 mb-0">{% trans "Recent Transactions" %}</h2>
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Czy na pewno chcesz usunąć zaznaczone transakcje?')">
+                            <i class="bi bi-trash"></i> {% trans "Delete selected" %}
+                        </button>
                     </div>
 
                     <div class="row fw-semibold text-secondary border-bottom pb-2 mb-3">
-                        <div class="col-5" onclick="sortTransactions(0, 'text')" style="cursor: pointer;">{% trans "Category / Desc" %} <span id="sort-0"></span></div>
+                        <div class="col-1 text-center">
+                            <input type="checkbox" id="select-all-transactions" class="form-check-input">
+                        </div>
+                        <div class="col-4" onclick="sortTransactions(0, 'text')" style="cursor: pointer;">{% trans "Category / Desc" %} <span id="sort-0"></span></div>
                         <div class="col-3 text-center" onclick="sortTransactions(1, 'date')" style="cursor: pointer;">{% trans "Date" %} <span id="sort-1"></span></div>
                         <div class="col-4 text-end" onclick="sortTransactions(2, 'number')" style="cursor: pointer;">{% trans "Amount" %} <span id="sort-2"></span></div>
                     </div>
@@ -336,7 +360,11 @@ users' browsers bear the load of these operations and not our server and DB.
                             {% for transaction in v %}
                                 <div class="row align-items-center py-3 border-bottom transaction-row"
                                     data-val="{{ transaction.amount }}">
-                                    <div class="col-5">
+                                    <div class="col-1 text-center">
+                                        <input type="checkbox" name="selected_transactions" value="{{ k }}_{{ transaction.pk }}" class="form-check-input transaction-checkbox">
+                                    </div>
+
+                                    <div class="col-4">
                                         <h4 class="h6 mb-1">
                                             {% if transaction.category %}
                                                 {{ transaction.category }}
@@ -366,7 +394,7 @@ users' browsers bear the load of these operations and not our server and DB.
                                         
                                     </div>
                                 </div>
-                            {% endfor %}
+                            {% endfor %} </form>
                         {% empty %}
                             <div class="py-4 text-center">
                                 <p class="text-muted mb-0">
