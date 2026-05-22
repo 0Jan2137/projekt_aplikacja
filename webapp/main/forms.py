@@ -20,7 +20,7 @@ class ExpenseForm(forms.Form):
     category = forms.ChoiceField(
         label=_("Category"),
         choices = CATEGORY_CHOICES,
-        widget=forms.Select(attrs={"class": "form-select"}),
+        widget=forms.Select(attrs={"class": "form-select category-select"}),
     )
     description = forms.CharField(
         label=_("Description (optional)"),
@@ -57,7 +57,7 @@ class IncomeForm(forms.Form):
     source = forms.ChoiceField(
         label=_("Source"),
         choices=SOURCE_CHOICES,
-        widget=forms.Select(attrs={"class": "form-select"}),
+        widget=forms.Select(attrs={"class": "form-select source-select"}),
     )
     description = forms.CharField(
         label=_("Description (optional)"),
