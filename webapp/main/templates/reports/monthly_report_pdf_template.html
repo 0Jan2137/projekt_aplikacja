@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ExpensePRO - Financial Report</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm 15mm;
+            @bottom-right {
+                content: "Page " counter(page);
+                font-family: system-ui, sans-serif;
+                font-size: 8pt;
+                color: #94a3b8;
+            }
+            @bottom-left {
+                content: "ExpensePRO Insights | Generated automatically";
+                font-family: system-ui, sans-serif;
+                font-size: 8pt;
+                color: #94a3b8;
+            }
+        }
+        
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #1e293b;
+            line-height: 1.5;
+            font-size: 10pt;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .header-table {
+            display: table;
+            width: 100%;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .header-cell {
+            display: table-cell;
+            vertical-align: middle;
+        }
+        
+        .summary-table {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+            margin-bottom: 30px;
+        }
+        
+        .summary-cell {
+            display: table-cell;
+            padding: 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+        }
+        
+        .summary-title {
+            font-size: 8pt;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+        
+        .summary-value {
+            font-size: 14pt;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+        
+        .chart-box {
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            background: #ffffff;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h3 {
+            color: #0f172a;
+            font-size: 11pt;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-left: 4px solid #2563eb;
+            padding-left: 8px;
+            page-break-after: avoid;
+        }
+        
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        table.data-table th {
+            background-color: #f1f5f9;
+            color: #475569;
+            font-weight: bold;
+            font-size: 9pt;
+            text-align: left;
+            padding: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        table.data-table td {
+            padding: 10px;
+            font-size: 9.5pt;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        table.data-table tr {
+            page-break-inside: avoid;
+        }
+        
+        table.data-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-table">
+        <div class="header-cell">
+            <h1 style="color: #2563eb; margin: 0; font-size: 24pt; font-weight: bold;">ExpensePRO</h1>
+            <p style="margin: 3px 0 0 0; color: #475569; font-size: 11pt;">Statement & Financial Analysis</p>
+        </div>
+        <div class="header-cell" style="text-align: right; color: #64748b; font-size: 9pt;">
+            <div><strong>Range:</strong> {{ start_date|date:"m.Y" }} – {{ end_date_display|date:"m.Y" }} ({{ duration }}M)</div>
+            <div><strong>Account User:</strong> {{ user.username }}</div>
+            <div><strong>Generated:</strong> {{ generated_at }}</div>
+        </div>
+    </div>
+
+    <div class="summary-table">
+        <div class="summary-cell">
+            <div class="summary-title">Total Incomes</div>
+            <div class="summary-value" style="color: #16a34a;">+{{ total_incomes|floatformat:2 }} PLN</div>
+        </div>
+        <div class="summary-cell" style="border-left: none; border-right: none;">
+            <div class="summary-title">Total Expenses</div>
+            <div class="summary-value" style="color: #dc2626;">-{{ total_expenses|floatformat:2 }} PLN</div>
+        </div>
+        <div class="summary-cell">
+            <div class="summary-title">Period Balance</div>
+            <div class="summary-value" style="color: #2563eb;">{{ balance|floatformat:2 }} PLN</div>
+        </div>
+    </div>
+
+    <div class="chart-box">
+        <h4 style="text-align: left; margin: 0 0 15px 0; font-size: 10pt; color: #475569; text-transform: uppercase;">
+            Cumulative Budget Trend Visualization
+        </h4>
+        <svg viewBox="0 0 600 150" width="100%" height="150" xmlns="http://www.w3.org/2000/svg">
+            <line x1="50" y1="20" x2="550" y2="20" stroke="#f1f5f9" stroke-width="1"/>
+            <line x1="50" y1="65" x2="550" y2="65" stroke="#e2e8f0" stroke-width="1"/>
+            <line x1="50" y1="110" x2="550" y2="110" stroke="#f1f5f9" stroke-width="1"/>
+
+            <path d="{{ svg_inc_path }}" fill="none" stroke="#08b441" stroke-width="2.5" stroke-linecap="round" />
+            <path d="{{ svg_exp_path }}" fill="none" stroke="#cc2222" stroke-width="2.5" stroke-linecap="round" />
+            <path d="{{ svg_diff_path }}" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" />
+
+            {% for label in x_labels %}
+                <text x="{{ label.x }}" y="135" font-family="sans-serif" font-size="8" fill="#94a3b8" text-anchor="middle">{{ label.text }}</text>
+                <line x1="{{ label.x }}" y1="110" x2="{{ label.x }}" y2="115" stroke="#cbd5e1" stroke-width="1" />
+            {% endfor %}
+        </svg>
+    </div>
+
+    <h3>Full Register of Financial Operations</h3>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width: 15%;">Date</th>
+                <th style="width: 60%;">Category / Source</th>
+                <th style="width: 25%; text-align: right;">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transactions_list %}
+            <tr>
+                <td>{{ transaction.date|date:"m/d/Y" }}</td>
+                <td>
+                    <strong>
+                        {% if transaction.report_type == 'expense' %}
+                            {{ transaction.category }}
+                        {% else %}
+                            {{ transaction.source }}
+                        {% endif %}
+                    </strong>
+                    {% if transaction.description %}- <span style="color: #64748b; font-size: 8.5pt;">{{ transaction.description }}</span>{% endif %}
+                </td>
+                <td style="text-align: right; font-weight: bold; color: {% if transaction.report_type == 'expense' %}#dc2626{% else %}#16a34a{% endif %};">
+                    {% if transaction.report_type == 'expense' %}-{% else %}+{% endif %}{{ transaction.amount|floatformat:2 }} PLN
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" style="text-align: center; color: #64748b; padding: 30px;">
+                    No recent transactions registered in this period.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
