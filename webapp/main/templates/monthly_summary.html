@@ -1,0 +1,37 @@
+{% extends 'layout/main.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">{% trans 'Monthly Summary' %}</h2>
+    
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{% trans 'Total Income' %}</h5>
+                    <p class="card-text fs-4">{{ total_income|default:"0.00 PLN" }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card text-white bg-danger mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{% trans 'Total Expenses' %}</h5>
+                    <p class="card-text fs-4">{{ total_expenses|default:"0.00 PLN" }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{% trans 'Net Balance' %}</h5>
+                    <p class="card-text fs-4">{{ net_balance|default:"0.00 PLN" }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
