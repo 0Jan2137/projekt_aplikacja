@@ -213,6 +213,13 @@
 
     <div class="a4-document-sheet">
         
+        {% comment %} 
+        #########################################
+        # IMHO looks better without this header #
+        #########################################
+        Account user is redundant, it's displayed already in the header
+        Range is ok, maybe move it later to other div
+        
         <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
             <div>
                 <h1 class="h2 text-primary fw-bold mb-0">ExpensePRO</h1>
@@ -221,7 +228,8 @@
                 <div><strong>{% trans "Range:" %}</strong> {{ start_date|date:"m.Y" }} – {{ end_date_display|date:"m.Y" }} ({{ duration }}M)</div>
                 <div><strong>{% trans "Account User:" %}</strong> {{ user.username }}</div>
             </div>
-        </div>
+        </div> 
+        {% endcomment %}
 
         <div class="doc-summary-box">
             <div class="doc-card">

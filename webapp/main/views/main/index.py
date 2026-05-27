@@ -5,6 +5,7 @@ from django.db.models import Sum
 from django.utils import timezone
 from decimal import Decimal
 from django.utils.translation import gettext as _
+from django.views.decorators.http import require_POST
 from main.models import Expense, Income, CATEGORY_CHOICES
 from main.forms import ExpenseForm, IncomeForm
 from django.contrib.auth.decorators import login_required
@@ -147,6 +148,37 @@ def delete_expense(request, pk):
 def delete_income(request, pk):
     income = get_object_or_404(Income, pk=pk, user=request.user)
     income.delete()
+    return redirect('home')
+
+@login_required
+@require_POST
+def delete_multiple_transactions(request):
+    selected_transactions = request.POST.getlist('selected_transactions')
+
+    expense_ids = []
+    income_ids = []
+
+    for value in selected_transactions:
+        try:
+            transaction_type, transaction_id = value.split(':', 1)
+            transaction_id = int(transaction_id)
+        except (ValueError, TypeError):
+            continue
+
+        if transaction_type == 'expenses':
+            expense_ids.append(transaction_id)
+        elif transaction_type == 'incomes':
+            income_ids.append(transaction_id)
+
+    if expense_ids:
+        Expense.objects.filter(user=request.user, pk__in=expense_ids).delete()
+    if income_ids:
+        Income.objects.filter(user=request.user, pk__in=income_ids).delete()
+
+    next_url = request.POST.get('next_url')
+    if next_url:
+        return redirect(next_url)
+
     return redirect('home')
 
 def terms_of_use(request):
