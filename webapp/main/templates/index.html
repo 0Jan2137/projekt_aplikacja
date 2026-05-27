@@ -4,8 +4,6 @@
 {% load static %}
 {% block extra_head %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src={% static 'js/LocalStorage.js' %}></script>
-<script src={% static 'js/Sort.js' %}></script>
 
 {% comment %} 
 Below functions were implemented in frontend so that
@@ -14,276 +12,262 @@ users' browsers bear the load of these operations and not our server and DB.
 
 {% comment %} helper functions {% endcomment %}
 <script>    
-    function setActiveTab(tabName) {
-        // Deactivate all tabs and panes
-        document.getElementById('expense-tab').classList.remove('active');
-        document.getElementById('income-tab').classList.remove('active');
-        document.getElementById('expense-content').classList.remove('show', 'active');
-        document.getElementById('income-content').classList.remove('show', 'active');
-        
-        // Activate the selected tab
-        if (tabName === 'income') {
-            document.getElementById('income-tab').classList.add('active');
-            document.getElementById('income-content').classList.add('show', 'active');
-        } else {
-            document.getElementById('expense-tab').classList.add('active');
-            document.getElementById('expense-content').classList.add('show', 'active');
-        }
-    }
+	function setActiveTab(tabName) {
+		// Deactivate all tabs and panes
+		document.getElementById('expense-tab').classList.remove('active');
+		document.getElementById('income-tab').classList.remove('active');
+		document.getElementById('expense-content').classList.remove('show', 'active');
+		document.getElementById('income-content').classList.remove('show', 'active');
+		
+		// Activate the selected tab
+		if (tabName === 'income') {
+			document.getElementById('income-tab').classList.add('active');
+			document.getElementById('income-content').classList.add('show', 'active');
+		} else {
+			document.getElementById('expense-tab').classList.add('active');
+			document.getElementById('expense-content').classList.add('show', 'active');
+		}
+	}
 </script>
 
 {% comment %} chart {% endcomment %}
 <script>
-    const last30Days = []; 
-
-    for (let i = 30; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
-        const day = String(d.getDate()).padStart(2, '0');
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const dateString = `${day}-${month}`;
-        last30Days.push(dateString);
-    }
-
-    const groupItems = (items) => {
-        const grouped = []
-        for (let i = 0; i < last30Days.length; i++){
-            const totalForDay = items
-                .filter(t => t.date === last30Days[i])
-                .reduce((sum, t) => sum + t.amount, 0);
-            
-            let amnt = 0
-            if (i === 0) {
-                amnt = totalForDay
-            } else {
-                amnt = grouped[i-1].amount + totalForDay
-            }
-            grouped.push({ date: last30Days[i], amount: amnt})
-        } 
-        return grouped;
-    }
-    
-    document.addEventListener('DOMContentLoaded', function () {
-        const ctx = document.getElementById('dailySpendingChart').getContext('2d');
-
-        // Zbieramy surowe fakty przesłane przez Django
-        let rawIncomes = [];
-        let rawExpenses = [];
-        let budgetRemaining = parseFloat("{{ budget_remaining }}") || 0;
-        {% for t in recent_transactions.expenses %}
-            rawExpenses.push({ date: "{{ t.date|date:'d-m' }}", amount: -parseFloat("{{ t.amount }}"), type: "expense" });
-        {% endfor %}
-        {% for t in recent_transactions.incomes %}
-            rawIncomes.push({ date: "{{ t.date|date:'d-m' }}", amount: parseFloat("{{ t.amount }}"), type: "income" });
-        {% endfor %}
-        
-        let groupedIncomes = groupItems(rawIncomes.reverse())
-        let groupedExpenses = groupItems(rawExpenses.reverse())
-
-        // groupedIncomes and Expenses already sorted - index 0 is the smallest date
-        const groupedDiff = []
-        for (let i = 0; i < last30Days.length; i++) {
-            const diff = groupedIncomes[i].amount + groupedExpenses[i].amount; // Expenses są ujemne, więc dodajemy
-            groupedDiff.push({ date: last30Days[i], amount: diff });
-        }
-
-        let labels = last30Days
-
-        if (labels.length === 0) {
-            const canvas = document.getElementById('dailySpendingChart');
-            const ctx = canvas.getContext('2d');
-
-            canvas.width = canvas.clientWidth;
-            canvas.height = canvas.clientHeight;
-
-            const msg = canvas.getAttribute('data-empty-msg') || "Dodaj pierwszą transakcję...";
-
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            ctx.font = "16px 'Inter', sans-serif";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.fillStyle = "#6c757d";
-            
-            ctx.fillText(msg, canvas.width / 2, canvas.height / 2);
-            return;
-        }
-
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: 'Daily stats (PLN)',
-                        data: groupedDiff.map(d => d.amount),
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.3,
-                        pointRadius: 1,
-                        pointBackgroundColor: '#3b82f6'
-                    },
-                    {
-                        label: 'Budget remaining - Daily income (PLN)',
-                        data: groupedIncomes.map(d => d.amount),
-                        borderColor: '#08b441',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.3,
-                        pointRadius: 1,
-                        pointBackgroundColor: '#08b441'
-                    },
-                    {
-                        label: 'Daily expense (PLN)',
-                        data: groupedExpenses.map(d => d.amount),
-                        borderColor: '#cc2222',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.3,
-                        pointRadius: 1,
-                        pointBackgroundColor: '#cc2222'
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                scales: {
-                    x: {
-                        reverse: true
-                    },
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function (value) { return value + ' PLN'; }
-                        },
-                    }
-                },
-                plugins: {
-                    legend: { display: true }
-                }
-            }
-        });
-    });
+	const last30Days = []; 
+	
+	for (let i = 30; i >= 0; i--) {
+		const d = new Date();
+		d.setDate(d.getDate() - i);
+		const day = String(d.getDate()).padStart(2, '0');
+		const month = String(d.getMonth() + 1).padStart(2, '0');
+		const dateString = `${day}-${month}`;
+		last30Days.push(dateString);
+	}
+	
+	const groupItems = (items) => {
+		const grouped = []
+		for (let i = 0; i < last30Days.length; i++){
+			const totalForDay = items
+			.filter(t => t.date === last30Days[i])
+			.reduce((sum, t) => sum + t.amount, 0);
+			
+			let amnt = 0
+			if (i === 0) {
+				amnt = totalForDay
+			} else {
+				amnt = grouped[i-1].amount + totalForDay
+			}
+			grouped.push({ date: last30Days[i], amount: amnt})
+		} 
+		return grouped;
+	}
+	
+	document.addEventListener('DOMContentLoaded', function () {
+		const ctx = document.getElementById('dailySpendingChart').getContext('2d');
+		
+		// Zbieramy surowe fakty przesłane przez Django
+		let rawIncomes = [];
+		let rawExpenses = [];
+		let budgetRemaining = parseFloat("{{ budget_remaining }}") || 0;
+		{% for t in recent_transactions.expenses %}
+		rawExpenses.push({ date: "{{ t.date|date:'d-m' }}", amount: -parseFloat("{{ t.amount }}"), type: "expense" });
+		{% endfor %}
+		{% for t in recent_transactions.incomes %}
+		rawIncomes.push({ date: "{{ t.date|date:'d-m' }}", amount: parseFloat("{{ t.amount }}"), type: "income" });
+		{% endfor %}
+		
+		let groupedIncomes = groupItems(rawIncomes.reverse())
+		let groupedExpenses = groupItems(rawExpenses.reverse())
+		
+		// groupedIncomes and Expenses already sorted - index 0 is the smallest date
+		const groupedDiff = []
+		for (let i = 0; i < last30Days.length; i++) {
+			const diff = groupedIncomes[i].amount + groupedExpenses[i].amount; // Expenses są ujemne, więc dodajemy
+			groupedDiff.push({ date: last30Days[i], amount: diff });
+		}
+		
+		let labels = last30Days
+		
+		if (labels.length === 0) {
+			const canvas = document.getElementById('dailySpendingChart');
+			const ctx = canvas.getContext('2d');
+			
+			canvas.width = canvas.clientWidth;
+			canvas.height = canvas.clientHeight;
+			
+			const msg = canvas.getAttribute('data-empty-msg') || "Dodaj pierwszą transakcję...";
+			
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			
+			ctx.font = "16px 'Inter', sans-serif";
+			ctx.textAlign = "center";
+			ctx.textBaseline = "middle";
+			ctx.fillStyle = "#6c757d";
+			
+			ctx.fillText(msg, canvas.width / 2, canvas.height / 2);
+			return;
+		}
+		
+		new Chart(ctx, {
+			type: 'line',
+			data: {
+				labels: labels,
+				datasets: [
+				{
+					label: 'Daily stats (PLN)',
+					data: groupedDiff.map(d => d.amount),
+					borderColor: '#3b82f6',
+					backgroundColor: 'rgba(59, 130, 246, 0.1)',
+					borderWidth: 3,
+					fill: true,
+					tension: 0.3,
+					pointRadius: 1,
+					pointBackgroundColor: '#3b82f6'
+				},
+				{
+					label: 'Budget remaining - Daily income (PLN)',
+					data: groupedIncomes.map(d => d.amount),
+					borderColor: '#08b441',
+					backgroundColor: 'rgba(59, 130, 246, 0.1)',
+					borderWidth: 3,
+					fill: true,
+					tension: 0.3,
+					pointRadius: 1,
+					pointBackgroundColor: '#08b441'
+				},
+				{
+					label: 'Daily expense (PLN)',
+					data: groupedExpenses.map(d => d.amount),
+					borderColor: '#cc2222',
+					backgroundColor: 'rgba(59, 130, 246, 0.1)',
+					borderWidth: 3,
+					fill: true,
+					tension: 0.3,
+					pointRadius: 1,
+					pointBackgroundColor: '#cc2222'
+				}
+				]
+			},
+			options: {
+				responsive: true,
+				maintainAspectRatio: true,
+				scales: {
+					x: {
+						reverse: true
+					},
+					y: {
+						beginAtZero: true,
+						ticks: {
+							callback: function (value) { return value + ' PLN'; }
+						},
+					}
+				},
+				plugins: {
+					legend: { display: true }
+				}
+			}
+		});
+	});
 </script>
 
 {% comment %} Remembered states {% endcomment %}
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const savedSort = loadState(SORT_DIRECTION_KEY);
-        if (savedSort) {
-            sortTransactions(savedSort.colIdx, savedSort.type, savedSort.isAsc);
-        }
-
-        const savedTab = loadState(ACTIVE_TAB_KEY) || 'expense';
-        setActiveTab(savedTab);
-        
-        // Add click handlers to tabs
-        document.getElementById('expense-tab').addEventListener('click', () => {
-            saveState(ACTIVE_TAB_KEY, 'expense');
-        });
-        document.getElementById('income-tab').addEventListener('click', () => {
-            saveState(ACTIVE_TAB_KEY, 'income');
-        });
-    });
+	document.addEventListener("DOMContentLoaded", () => {
+		const savedSort = loadState(SORT_DIRECTION_KEY);
+		if (savedSort) {
+			sortTransactions(savedSort.colIdx, savedSort.type, savedSort.isAsc);
+		}
+		
+		const savedTab = loadState(ACTIVE_TAB_KEY) || 'expense';
+		setActiveTab(savedTab);
+		
+		// Add click handlers to tabs
+		document.getElementById('expense-tab').addEventListener('click', () => {
+			saveState(ACTIVE_TAB_KEY, 'expense');
+		});
+		document.getElementById('income-tab').addEventListener('click', () => {
+			saveState(ACTIVE_TAB_KEY, 'income');
+		});
+	});
 </script>
 
 {% endblock %}
 
 {% block content %}
 <div class="container-fluid py-4">
-    <div class="row g-4">
-        <div class="col-12 col-lg-4 col-xl-3">
-            <div class="card shadow-sm align-self-start position-sticky" style="top: 1rem;">
-                <div class="card-body">
-                    <h2 class="h5 mb-4">{% trans "Quick Add" %}</h2>
-
-                    <ul class="nav nav-tabs mb-4" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="expense-tab" data-bs-toggle="tab"
-                                data-bs-target="#expense-content" type="button" role="tab"
-                                aria-controls="expense-content" aria-selected="true">{% trans "Expense" %}</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="income-tab" data-bs-toggle="tab"
-                                data-bs-target="#income-content" type="button" role="tab" aria-controls="income-content"
-                                aria-selected="false">{% trans "Income" %}</button>
-                        </li>
-                    </ul>
-
-                    <div class="tab-content">
-                        <div class="tab-pane fade" id="expense-content" role="tabpanel"
-                            aria-labelledby="expense-tab">
-                            {% include 'forms/expense_form.html' with form=expense_form %}
-                        </div>
-
-                        <div class="tab-pane fade" id="income-content" role="tabpanel" aria-labelledby="income-tab">
-                            {% include 'forms/income_form.html' with form=income_form %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-lg-8 col-xl-9">
-            <div class="row g-4">
-                <div class="col-12 col-md-4">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body">
-                            <p class="text-muted mb-2">{% trans "Total Spent Last Month" %}</p>
-                            <h3 class="mb-0">{{ total_spent|floatformat:0|intcomma }} PLN</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body">
-                            <p class="text-muted mb-2">{% trans "Budget Remaining" %}</p>
-                            <h3 class="mb-0">{{ budget_remaining|floatformat:0|intcomma }} PLN</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body">
-                            <p class="text-muted mb-2">{% trans "Top Category" %}</p>
-                            <h3 class="mb-0">
-                                {{ top_category_name }}
-                            </h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card shadow-sm mt-4">
-                <div class="card-body">
-                    <h2 class="h5 mb-3">{% trans "Budget Trend" %}</h2>
-                    <canvas id="dailySpendingChart" class="w-100"
-                        style="min-height: 200px; max-height: 600px;"
-                        data-empty-msg="{% if request.LANGUAGE_CODE == 'pl' %}Dodaj pierwszą transakcję, aby zobaczyć wykres{% else %}Add your first transaction to see the chart{% endif %}"></canvas>
-                </div>
-            </div>
-
-            <div class="card shadow-sm mt-4">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h2 class="h5 mb-0">{% trans "Recent Transactions" %}</h2>
-                    </div>
-
-                    <div class="row fw-semibold text-secondary border-bottom pb-2 mb-3">
-                        <div class="col-5" onclick="sortTransactions(0, 'text')" style="cursor: pointer;">{% trans "Category / Desc" %} <span id="sort-0"></span></div>
-                        <div class="col-3 text-center" onclick="sortTransactions(1, 'date')" style="cursor: pointer;">{% trans "Date" %} <span id="sort-1"></span></div>
-                        <div class="col-4 text-end" onclick="sortTransactions(2, 'number')" style="cursor: pointer;">{% trans "Amount" %} <span id="sort-2"></span></div>
-                    </div>
-
-                    {% include 'tables/transactions_table.html' with transactions=recent_transactions %}
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="row g-4">
+		<div class="col-12 col-lg-4 col-xl-3">
+			<div class="card shadow-sm align-self-start position-sticky" style="top: 1rem;">
+				<div class="card-body">
+					<h2 class="h5 mb-4">{% trans "Quick Add" %}</h2>
+					
+					<ul class="nav nav-tabs mb-4" role="tablist">
+						<li class="nav-item" role="presentation">
+							<button class="nav-link" id="expense-tab" data-bs-toggle="tab"
+							data-bs-target="#expense-content" type="button" role="tab"
+							aria-controls="expense-content" aria-selected="true">{% trans "Expense" %}</button>
+						</li>
+						<li class="nav-item" role="presentation">
+							<button class="nav-link" id="income-tab" data-bs-toggle="tab"
+							data-bs-target="#income-content" type="button" role="tab" aria-controls="income-content"
+							aria-selected="false">{% trans "Income" %}</button>
+						</li>
+					</ul>
+					
+					<div class="tab-content">
+						<div class="tab-pane fade" id="expense-content" role="tabpanel"
+						aria-labelledby="expense-tab">
+						{% include 'forms/expense_form.html' with form=expense_form %}
+					</div>
+					
+					<div class="tab-pane fade" id="income-content" role="tabpanel" aria-labelledby="income-tab">
+						{% include 'forms/income_form.html' with form=income_form %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="col-12 col-lg-8 col-xl-9">
+		<div class="row g-4">
+			<div class="col-12 col-md-4">
+				<div class="card shadow-sm h-100">
+					<div class="card-body">
+						<p class="text-muted mb-2">{% trans "Total Spent Last Month" %}</p>
+						<h3 class="mb-0">{{ total_spent|floatformat:0|intcomma }} PLN</h3>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card shadow-sm h-100">
+					<div class="card-body">
+						<p class="text-muted mb-2">{% trans "Budget Remaining" %}</p>
+						<h3 class="mb-0">{{ budget_remaining|floatformat:0|intcomma }} PLN</h3>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card shadow-sm h-100">
+					<div class="card-body">
+						<p class="text-muted mb-2">{% trans "Top Category" %}</p>
+						<h3 class="mb-0">
+							{{ top_category_name }}
+						</h3>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="card shadow-sm mt-4">
+			<div class="card-body">
+				<h2 class="h5 mb-3">{% trans "Budget Trend" %}</h2>
+				<canvas id="dailySpendingChart" class="w-100"
+				style="min-height: 200px; max-height: 600px;"
+				data-empty-msg="{% if request.LANGUAGE_CODE == 'pl' %}Dodaj pierwszą transakcję, aby zobaczyć wykres{% else %}Add your first transaction to see the chart{% endif %}"></canvas>
+			</div>
+		</div>
+		{% trans "Recent Transactions" as recent_transactions_title %}
+		{% include 'tables/transactions_table.html' with transactions=recent_transactions setMaxWidth=False title=recent_transactions_title %}
+	</div>
+</div>
 </div>
 {% endblock %}

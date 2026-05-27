@@ -22,8 +22,8 @@ def get_report_data(user, year, month, duration):
     expenses = Expense.objects.filter(user=user, date__gte=start_date, date__lt=end_date).order_by('date')
     incomes = Income.objects.filter(user=user, date__gte=start_date, date__lt=end_date).order_by('date')
     
-    total_expenses = expenses.aggregate(Sum('amount'))['amount__sum'] or 0.0
-    total_incomes = incomes.aggregate(Sum('amount'))['amount__sum'] or 0.0
+    total_expenses = float(expenses.aggregate(Sum('amount'))['amount__sum'] or 0.0)
+    total_incomes = float(incomes.aggregate(Sum('amount'))['amount__sum'] or 0.0)
     
     # Timeline generation for the chart
     date_list = []
@@ -33,15 +33,18 @@ def get_report_data(user, year, month, duration):
         curr_date += datetime.timedelta(days=1)
         
     #Merg and flag transactions for the unified UI table
-    all_transactions = []
+    all_expenses = []
     for e in expenses:
-        e.report_type = 'expense'
-        all_transactions.append(e)
+        all_expenses.append(e.amount)
+    
+    all_incomes = []
     for i in incomes:
-        i.report_type = 'income'
-        all_transactions.append(i)
+        all_incomes.append(i.amount)
         
-    all_transactions.sort(key=lambda t: t.date, reverse=True)
+    all_transactions = {
+        'expenses': expenses,
+        'incomes': incomes
+    }
     
     return {
         'start_date': start_date,
@@ -49,9 +52,9 @@ def get_report_data(user, year, month, duration):
         'duration': duration,
         'year': year,
         'month': month,
-        'total_expenses': float(total_expenses),
-        'total_incomes': float(total_incomes),
-        'balance': float(total_incomes - total_expenses),
+        'total_expenses': total_expenses,
+        'total_incomes': total_incomes,
+        'balance': total_incomes - total_expenses,
         'transactions_list': all_transactions,
         'chart_days': [d.strftime('%d-%m') for d in date_list],
         'raw_expenses_chart': expenses,

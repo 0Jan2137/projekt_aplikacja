@@ -4,6 +4,7 @@
 
 {% block extra_head %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
     /* 1. STYLIZACJA PODGLĄDU NA EKRANIE (MONITORZE) */
     .a4-document-sheet {
@@ -215,7 +216,6 @@
         <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
             <div>
                 <h1 class="h2 text-primary fw-bold mb-0">ExpensePRO</h1>
-                <p class="text-secondary small mb-0" style="letter-spacing: 0.5px; text-transform: uppercase;">{% trans "Official Financial Report" %}</p>
             </div>
             <div class="text-end text-secondary small">
                 <div><strong>{% trans "Range:" %}</strong> {{ start_date|date:"m.Y" }} – {{ end_date_display|date:"m.Y" }} ({{ duration }}M)</div>
@@ -248,44 +248,8 @@
         </div>
 
         <div>
-            <h3 class="h6 text-uppercase fw-bold text-secondary mb-3">{% trans "Full Transaction Register" %}</h3>
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead>
-                        <tr>
-                            <th style="width: 18%;">{% trans "Date" %}</th>
-                            <th style="width: 57%;">{% trans "Category / Source" %}</th>
-                            <th style="width: 25%;" class="text-end">{% trans "Amount" %}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for transaction in transactions_list %}
-                        <tr>
-                            <td class="text-secondary small">{{ transaction.date|date:"m/d/Y" }}</td>
-                            <td>
-                                <span class="fw-bold text-dark">
-                                    {% if transaction.report_type == 'expense' %}
-                                        {{ transaction.category }}
-                                    {% else %}
-                                        {{ transaction.source }}
-                                    {% endif %}
-                                </span>
-                                {% if transaction.description %}<br><small class="text-muted">{{ transaction.description }}</small>{% endif %}
-                            </td>
-                            <td class="text-end fw-bold {% if transaction.report_type == 'expense' %}text-danger{% else %}text-success{% endif %}">
-                                {% if transaction.report_type == 'expense' %}-{% else %}+{% endif %}{{ transaction.amount|floatformat:2|intcomma }} PLN
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="3" class="text-center text-muted py-4">
-                                {% trans "No recent transactions found for this period." %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+            {% trans "Transaction Register" as recent_transactions_title %}
+            {% include 'tables/transactions_table.html' with transactions=transactions_list title=recent_transactions_title %}
         </div>
         
     </div>

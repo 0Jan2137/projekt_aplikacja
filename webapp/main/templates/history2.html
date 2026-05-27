@@ -2,26 +2,7 @@
 {% load i18n %}
 {% load static %}
 
-{% block extra_head %}
-<script src="{% static 'js/LocalStorage.js' %}"></script>
-<script src="{% static 'js/Sort.js' %}"></script>
-{% endblock %}
-
 {% block content %}
-<div class="card shadow-sm mt-4" style="max-width: 800px; margin: auto;">
-    <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="h5 mb-0">{% trans "Recent Transactions" %}</h2>
-        </div>
-
-        <div class="row fw-semibold text-secondary border-bottom pb-2 mb-3">
-            <div class="col-5" onclick="sortTransactions(0, 'text')" style="cursor: pointer;">{% trans "Category / Desc" %} <span id="sort-0"></span></div>
-            <div class="col-3 text-center" onclick="sortTransactions(1, 'date')" style="cursor: pointer;">{% trans "Date" %} <span id="sort-1"></span></div>
-            <div class="col-4 text-end" onclick="sortTransactions(2, 'number')" style="cursor: pointer;">{% trans "Amount" %} <span id="sort-2"></span></div>
-        </div>
-
-        {% include 'tables/transactions_table.html' %}
-
-    </div>
-</div>
+{% trans "Transaction History" as transaction_history_title %}
+{% include 'tables/transactions_table.html' with title=transaction_history_title %}
 {% endblock %}

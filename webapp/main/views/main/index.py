@@ -26,21 +26,21 @@ def _build_index_context(request, expense_form=None, income_form=None):
         or Decimal('0.00')
     )
 
-    all_time_expenses = (
+    all_time_expense = (
         Expense.objects
         .filter(user=request.user)
         .aggregate(total=Sum('amount'))['total']
         or Decimal('0.00')
     )
 
-    all_time_incomes = (
+    all_time_income = (
         Income.objects
         .filter(user=request.user)
         .aggregate(total=Sum('amount'))['total']
         or Decimal('0.00')
     )
 
-    budget_remaining = all_time_incomes - all_time_expenses
+    budget_remaining = all_time_income - all_time_expense
 
     top_category = (
         Expense.objects
