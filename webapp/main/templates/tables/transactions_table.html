@@ -1,0 +1,49 @@
+{% load i18n %}
+<div id="transactions-container">
+    {% for k,v in transactions.items %}
+        {% for transaction in v %}
+            <div class="row align-items-center py-3 border-bottom transaction-row"
+                data-val="{{ transaction.amount }}">
+                <div class="col-5">
+                    <h4 class="h6 mb-1">
+                        {% if transaction.category %}
+                            {{ transaction.category }}
+                        {% else %}
+                            {{ transaction.source }}
+                        {% endif %}
+                    </h4>
+                    <p class="mb-0 text-muted">{{ transaction.description|default:"" }}</p>
+                </div>
+                <div class="col-3 text-center" data-val="{{ transaction.date|date:'Y-m-d' }}">
+                    <p class="mb-0 text-muted">{{ transaction.date|date:"d.m.Y" }}</p>
+                </div>
+                <div class="col-4 text-end">
+                    <p class="mb-0 fw-bold {% if k == "expenses" %}text-danger{% else %}text-success{% endif %}">
+                        {{ transaction.amount|floatformat:2 }} PLN
+                    </p>
+                    <!-- Przycisk usuwania -->
+                    {% if k == "expenses" %}
+                        <a href ={% url 'delete_expense' transaction.pk%} class="text-danger small" onclick="return confirm('{% trans "Delete this expense?" %}')" style="text-decoration: none;">
+                            <i class ="bi bi-trash"></i> {% trans "Delete" %}
+                        </a>
+                    {% else %}
+                        <a href ={% url 'delete_income' transaction.pk%} class="text-danger small" onclick="return confirm('{% trans "Delete this income?" %}')" style="text-decoration: none;">
+                            <i class ="bi bi-trash"></i> {% trans "Delete" %}
+                        </a>
+                    {% endif %}
+                    
+                </div>
+            </div>
+        {% endfor %}
+    {% empty %}
+        <div class="py-4 text-center">
+            <p class="text-muted mb-0">
+                {% if request.LANGUAGE_CODE == 'pl' %}
+                    Nie znaleziono żadnych transakcji.
+                {% else %}
+                    No recent transactions found.
+                {% endif %}
+            </p>
+        </div>
+    {% endfor %}
+</div>

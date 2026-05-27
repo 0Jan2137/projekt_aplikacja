@@ -1,3 +1,5 @@
+// Sorting - requires table component present in tables/transactions_table.html
+
 let directions = [true, true, true];
 const SORT_STORAGE_KEY = 'recent-transactions-sort';
 

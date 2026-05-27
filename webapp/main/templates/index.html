@@ -1,8 +1,11 @@
 {% extends 'layout/main.html' %}
 {% load i18n %}
 {% load humanize %}
+{% load static %}
 {% block extra_head %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src={% static 'js/LocalStorage.js' %}></script>
+<script src={% static 'js/Sort.js' %}></script>
 
 {% comment %} 
 Below functions were implemented in frontend so that
@@ -10,13 +13,7 @@ users' browsers bear the load of these operations and not our server and DB.
 {% endcomment %}
 
 {% comment %} helper functions {% endcomment %}
-
-
-
-<script>
-    const ACTIVE_TAB_KEY = 'active-tab';
-    const SORT_DIRECTION_KEY = 'sort-direction';
-    
+<script>    
     function setActiveTab(tabName) {
         // Deactivate all tabs and panes
         document.getElementById('expense-tab').classList.remove('active');
@@ -92,7 +89,6 @@ users' browsers bear the load of these operations and not our server and DB.
 
         let labels = last30Days
 
-        // Wyśrodkowany tekst dla pustego konta
         if (labels.length === 0) {
             const canvas = document.getElementById('dailySpendingChart');
             const ctx = canvas.getContext('2d');
@@ -112,11 +108,11 @@ users' browsers bear the load of these operations and not our server and DB.
             ctx.fillText(msg, canvas.width / 2, canvas.height / 2);
             return;
         }
-''
+
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: labels, // Zakładamy, że daty są takie same dla przychodów i wydatków
+                labels: labels,
                 datasets: [
                     {
                         label: 'Daily stats (PLN)',
@@ -140,7 +136,7 @@ users' browsers bear the load of these operations and not our server and DB.
                         pointRadius: 1,
                         pointBackgroundColor: '#08b441'
                     },
-                                    {
+                    {
                         label: 'Daily expense (PLN)',
                         data: groupedExpenses.map(d => d.amount),
                         borderColor: '#cc2222',
@@ -168,44 +164,11 @@ users' browsers bear the load of these operations and not our server and DB.
                     }
                 },
                 plugins: {
-                    legend: { display: false }
+                    legend: { display: true }
                 }
             }
         });
     });
-</script>
-
-{% comment %} List sorting {% endcomment %}
-<script>
-    let directions = [true, true, true];
-    const SORT_STORAGE_KEY = 'recent-transactions-sort';
-
-    function sortTransactions(colIdx, type, asc=undefined) {
-        const container = document.getElementById("transactions-container");
-        const rows = Array.from(container.getElementsByClassName("transaction-row"));
-        const isAsc = asc !== undefined ? asc : directions[colIdx];
-
-        rows.sort((a, b) => {
-            let valA = a.children[colIdx].getAttribute("data-val") || a.children[colIdx].innerText;
-            let valB = b.children[colIdx].getAttribute("data-val") || b.children[colIdx].innerText;
-
-            if (type === 'number') return isAsc ? parseFloat(valA) - parseFloat(valB) : parseFloat(valB) - parseFloat(valA);
-            if (type === 'date') return isAsc ? new Date(valA) - new Date(valB) : new Date(valB) - new Date(valA);
-            return isAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
-        });
-
-        directions[colIdx] = !isAsc;
-        saveState(SORT_DIRECTION_KEY, {
-            "colIdx": colIdx,
-            "type": type,
-            "isAsc": isAsc
-        });
-        rows.forEach(row => container.appendChild(row));
-
-        for (let i = 0; i < 3; i++) {
-            document.getElementById(`sort-${i}`).innerHTML = (i === colIdx) ? (isAsc ? "↑" : "↓") : "";
-        }
-    }
 </script>
 
 {% comment %} Remembered states {% endcomment %}
@@ -317,54 +280,7 @@ users' browsers bear the load of these operations and not our server and DB.
                         <div class="col-4 text-end" onclick="sortTransactions(2, 'number')" style="cursor: pointer;">{% trans "Amount" %} <span id="sort-2"></span></div>
                     </div>
 
-                    <div id="transactions-container">
-                        {% for k,v in recent_transactions.items %}
-                            {% for transaction in v %}
-                                <div class="row align-items-center py-3 border-bottom transaction-row"
-                                    data-val="{{ transaction.amount }}">
-                                    <div class="col-5">
-                                        <h4 class="h6 mb-1">
-                                            {% if transaction.category %}
-                                                {{ transaction.category }}
-                                            {% else %}
-                                                {{ transaction.source }}
-                                            {% endif %}
-                                        </h4>
-                                        <p class="mb-0 text-muted">{{ transaction.description|default:"" }}</p>
-                                    </div>
-                                    <div class="col-3 text-center" data-val="{{ transaction.date|date:'Y-m-d' }}">
-                                        <p class="mb-0 text-muted">{{ transaction.date|date:"d.m.Y" }}</p>
-                                    </div>
-                                    <div class="col-4 text-end">
-                                        <p class="mb-0 fw-bold {% if k == "expenses" %}text-danger{% else %}text-success{% endif %}">
-                                            {{ transaction.amount|floatformat:2 }} PLN
-                                        </p>
-                                        <!-- Przycisk usuwania -->
-                                        {% if k == "expenses" %}
-                                            <a href ={% url 'delete_expense' transaction.pk%} class="text-danger small" onclick="return confirm('{% trans "Delete this expense?" %}')" style="text-decoration: none;">
-                                                <i class ="bi bi-trash"></i> {% trans "Delete" %}
-                                            </a>
-                                        {% else %}
-                                            <a href ={% url 'delete_income' transaction.pk%} class="text-danger small" onclick="return confirm('{% trans "Delete this income?" %}')" style="text-decoration: none;">
-                                                <i class ="bi bi-trash"></i> {% trans "Delete" %}
-                                            </a>
-                                        {% endif %}
-                                        
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        {% empty %}
-                            <div class="py-4 text-center">
-                                <p class="text-muted mb-0">
-                                    {% if request.LANGUAGE_CODE == 'pl' %}
-                                        Nie znaleziono żadnych transakcji.
-                                    {% else %}
-                                        No recent transactions found.
-                                    {% endif %}
-                                </p>
-                            </div>
-                        {% endfor %}
-                    </div>
+                    {% include 'tables/transactions_table.html' with transactions=recent_transactions %}
                 </div>
             </div>
         </div>
