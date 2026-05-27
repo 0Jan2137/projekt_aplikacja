@@ -126,12 +126,16 @@ def post_income(request):
 def history(request):
     expenses = list(Expense.objects.filter(user=request.user))
     incomes = list(Income.objects.filter(user=request.user))
-    transactions = sorted(
-        expenses + incomes, 
-        key=lambda x: x.date, 
-        reverse=True
-    )
-    return render(request, "history.html", {'transactions': transactions})
+    # transactions = sorted(
+    #     expenses + incomes, 
+    #     key=lambda x: x.date, 
+    #     reverse=True
+    # )
+    transactions = {
+        "incomes": incomes,
+        "expenses": expenses
+    }
+    return render(request, "history2.html", {'transactions': transactions})
 
 @login_required
 def delete_expense(request, pk):
