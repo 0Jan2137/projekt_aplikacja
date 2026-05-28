@@ -1,0 +1,8 @@
+{% extends 'layout/main.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block content %}
+{% trans "Transaction History" as transaction_history_title %}
+{% include 'tables/transactions_table.html' with title=transaction_history_title %}
+{% endblock %}

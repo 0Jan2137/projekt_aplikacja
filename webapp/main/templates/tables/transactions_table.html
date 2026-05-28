@@ -1,0 +1,131 @@
+{% load i18n %}
+{% load static %}
+<script src={% static 'js/Sort.js' %}></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const bulkDeleteForm = document.getElementById('bulk-delete-form');
+    const toggleButton = document.getElementById('bulk-delete-toggle');
+    
+    if (!bulkDeleteForm || !toggleButton) {
+      return;
+    }
+    
+    let isSelectionMode = false;
+    
+    const setSelectionMode = (enabled) => {
+      isSelectionMode = enabled;
+      
+      document.querySelectorAll('.bulk-delete-column').forEach((element) => {
+        element.classList.toggle('d-none', !enabled);
+      });
+      
+      document.querySelectorAll('.bulk-delete-checkbox').forEach((checkbox) => {
+        if (!enabled) {
+          checkbox.checked = false;
+        }
+      });
+
+      document.querySelectorAll('.bulk-main-col').forEach((element) => {
+        element.classList.toggle('col-5', !enabled);
+        element.classList.toggle('col-4', enabled);
+      });
+      
+      toggleButton.textContent = enabled
+      ? '{% trans "Delete" %}'
+      : '{% trans "Delete multiple" %}';
+    };
+    
+    toggleButton.addEventListener('click', () => {
+      if (!isSelectionMode) {
+        setSelectionMode(true);
+        return;
+      }
+      
+      const checkedCount = bulkDeleteForm.querySelectorAll('.bulk-delete-checkbox:checked').length;
+      if (checkedCount === 0) {
+        setSelectionMode(false);
+        return;
+      }
+      
+      bulkDeleteForm.submit();
+    });
+  });
+</script>
+
+<div class="card shadow-sm mt-4" {% if setMaxWidth == False %}{% else %}style="max-width: 800px; margin: auto;"{% endif %}>
+  <div class="card-body">
+    {% trans "Recent Transactions" as default_title %}
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="h5 mb-0">{{ title|default:default_title }}</h2>
+      <button type="button" id="bulk-delete-toggle" class="btn btn-danger p-1">{% trans "Delete multiple" %}</button>
+    </div>
+    
+    <div class="row fw-semibold text-secondary border-bottom pb-2 mb-3">
+      <div class="col-1 bulk-delete-column d-none"></div>
+      <div class="col-5 bulk-main-col user-select-none" onclick="sortTransactions(0, 'text')" style="cursor: pointer;">{% trans "Category / Desc" %} <span id="sort-0"></span></div>
+      <div class="col-3 text-center user-select-none" onclick="sortTransactions(1, 'date')" style="cursor: pointer;">{% trans "Date" %} <span id="sort-1"></span></div>
+      <div class="col-4 text-end user-select-none" onclick="sortTransactions(2, 'number')" style="cursor: pointer;">{% trans "Amount" %} <span id="sort-2"></span></div>
+    </div>
+    
+    <form method="post" action="{% url 'delete_multiple_transactions' %}" id="bulk-delete-form">
+      {% csrf_token %}
+      <input type="hidden" name="next_url" value="{{ request.path }}">
+      <div id="transactions-container">
+        {% for k,v in transactions.items %}
+        {% for transaction in v %}
+        
+        <div class="row align-items-center py-3 border-bottom transaction-row"
+        data-val="{{ transaction.amount }}">
+        
+        <div class="col-1 bulk-delete-column d-none d-flex justify-content-center align-items-center">
+          <input class="form-check-input bulk-delete-checkbox" type="checkbox" name="selected_transactions" value="{{ k }}:{{ transaction.pk }}">
+        </div>
+
+        <div class="col-5 bulk-main-col">
+          <h4 class="h6 mb-1">
+            {% if transaction.category %}
+            {{ transaction.category }}
+            {% else %}
+            {{ transaction.source }}
+            {% endif %}
+          </h4>
+          <p class="mb-0 text-muted">{{ transaction.description|default:"" }}</p>
+        </div>
+
+        <div class="col-3 text-center" data-val="{{ transaction.date|date:'Y-m-d' }}">
+          <p class="mb-0 text-muted">{{ transaction.date|date:"d.m.Y" }}</p>
+        </div>
+
+        <div class="col-4 text-end">
+          <p class="mb-0 fw-bold {% if k == "expenses" %}text-danger{% else %}text-success{% endif %}">
+            {{ transaction.amount|floatformat:2 }} PLN
+          </p>
+          <!-- Przycisk usuwania -->
+          {% if k == "expenses" %}
+          <a href ={% url 'delete_expense' transaction.pk%} class="text-danger small" onclick="return confirm('{% trans "Delete this expense?" %}')" style="text-decoration: none;">
+            <i class ="bi bi-trash"></i> {% trans "Delete" %}
+          </a>
+          {% else %}
+          <a href ={% url 'delete_income' transaction.pk%} class="text-danger small" onclick="return confirm('{% trans "Delete this income?" %}')" style="text-decoration: none;">
+            <i class ="bi bi-trash"></i> {% trans "Delete" %}
+          </a>
+          {% endif %}
+        </div>
+
+      </div>
+      {% endfor %}
+      {% empty %}
+      <div class="py-4 text-center">
+        <p class="text-muted mb-0">
+          {% if request.LANGUAGE_CODE == 'pl' %}
+          Nie znaleziono żadnych transakcji.
+          {% else %}
+          No recent transactions found.
+          {% endif %}
+        </p>
+      </div>
+      {% endfor %}
+    </div>
+  </form>
+</div>
+</div>

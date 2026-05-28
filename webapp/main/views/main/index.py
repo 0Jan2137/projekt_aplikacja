@@ -5,6 +5,7 @@ from django.db.models import Sum
 from django.utils import timezone
 from decimal import Decimal
 from django.utils.translation import gettext as _
+from django.views.decorators.http import require_POST
 from main.models import Expense, Income, CATEGORY_CHOICES
 from main.forms import ExpenseForm, IncomeForm
 from django.contrib.auth.decorators import login_required
@@ -26,21 +27,21 @@ def _build_index_context(request, expense_form=None, income_form=None):
         or Decimal('0.00')
     )
 
-    all_time_expenses = (
+    all_time_expense = (
         Expense.objects
         .filter(user=request.user)
         .aggregate(total=Sum('amount'))['total']
         or Decimal('0.00')
     )
 
-    all_time_incomes = (
+    all_time_income = (
         Income.objects
         .filter(user=request.user)
         .aggregate(total=Sum('amount'))['total']
         or Decimal('0.00')
     )
 
-    budget_remaining = all_time_incomes - all_time_expenses
+    budget_remaining = all_time_income - all_time_expense
 
     top_category = (
         Expense.objects
@@ -126,12 +127,16 @@ def post_income(request):
 def history(request):
     expenses = list(Expense.objects.filter(user=request.user))
     incomes = list(Income.objects.filter(user=request.user))
-    transactions = sorted(
-        expenses + incomes, 
-        key=lambda x: x.date, 
-        reverse=True
-    )
-    return render(request, "history.html", {'transactions': transactions})
+    # transactions = sorted(
+    #     expenses + incomes, 
+    #     key=lambda x: x.date, 
+    #     reverse=True
+    # )
+    transactions = {
+        "incomes": incomes,
+        "expenses": expenses
+    }
+    return render(request, "history2.html", {'transactions': transactions})
 
 @login_required
 def delete_expense(request, pk):
@@ -145,9 +150,54 @@ def delete_income(request, pk):
     income.delete()
     return redirect('home')
 
+@login_required
+@require_POST
+def delete_multiple_transactions(request):
+    selected_transactions = request.POST.getlist('selected_transactions')
+
+    expense_ids = []
+    income_ids = []
+
+    for value in selected_transactions:
+        try:
+            transaction_type, transaction_id = value.split(':', 1)
+            transaction_id = int(transaction_id)
+        except (ValueError, TypeError):
+            continue
+
+        if transaction_type == 'expenses':
+            expense_ids.append(transaction_id)
+        elif transaction_type == 'incomes':
+            income_ids.append(transaction_id)
+
+    if expense_ids:
+        Expense.objects.filter(user=request.user, pk__in=expense_ids).delete()
+    if income_ids:
+        Income.objects.filter(user=request.user, pk__in=income_ids).delete()
+
+    next_url = request.POST.get('next_url')
+    if next_url:
+        return redirect(next_url)
+
+    return redirect('home')
+
 def terms_of_use(request):
     return render(request, 'footer/terms-of-use.html')
 
 def privacy_policy(request):
     return render(request, 'footer/privacy-policy.html')
 
+@login_required
+def bulk_delete_transactions(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('selected_transactions')
+
+        for item in selected_ids:
+            transaction_type, pk = item.split('_')
+            if transaction_type == 'expenses':
+                Expense.objects.filter(pk=pk).delete()
+            elif transaction_type == 'incomes':
+                Income.objects.filter(pk=pk).delete()
+
+    return redirect('home')
+        

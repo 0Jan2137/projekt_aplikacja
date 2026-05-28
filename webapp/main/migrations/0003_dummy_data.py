@@ -60,7 +60,7 @@ def create_dummy_data(apps, schema_editor):
     incomes_to_create = []
 
     incomes_to_create.append(Income(
-        amount='5000000',
+        amount='1000000',
         source='Salary',
         description='Inheritance',
         date=epoch,
@@ -81,8 +81,8 @@ def create_dummy_data(apps, schema_editor):
         )
         expenses_to_create.append(expense)
     
-    for i in range(5000):
-        days_ago = random.randint(0, 500)
+    for i in range(500):
+        days_ago = random.randint(0, 60)
         entry_date = (now - timedelta(days=days_ago)).date()
         category, _ = random.choice(categories)
         
@@ -95,12 +95,12 @@ def create_dummy_data(apps, schema_editor):
         )
         expenses_to_create.append(expense)
 
-    for i in range(10):
-        days_ago = random.randint(0, 60)
+    for i in range(5):
+        days_ago = random.randint(0, 30)
         entry_date = (now - timedelta(days=days_ago)).date()
         
         income = Income(
-            amount=round(random.uniform(1000, 6000), 2),
+            amount=round(random.uniform(100, 2000), 2),
             source=random.choice(income_sources),
             description=f'Income entry {i+1}',
             date=entry_date,
