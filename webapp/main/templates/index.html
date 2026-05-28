@@ -4,13 +4,6 @@
 {% load static %}
 {% block extra_head %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-{% comment %} 
-Below functions were implemented in frontend so that
-users' browsers bear the load of these operations and not our server and DB.
-{% endcomment %}
-
-{% comment %} helper functions {% endcomment %}
 <script>    
 	function setActiveTab(tabName) {
 		// Deactivate all tabs and panes

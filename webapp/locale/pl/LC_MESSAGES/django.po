@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-21 16:08+0200\n"
+"POT-Creation-Date: 2026-05-28 12:21+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,198 +15,329 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
-"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
-"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
+"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
+"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 
-#: .\main\forms.py:12 .\main\forms.py:49 .\main\templates\index.html:360
+#: main/forms.py:12 main/forms.py:49 main/templates/history.html:27
+#: main/templates/tables/transactions_table.html:67
 msgid "Amount"
 msgstr "Kwota"
 
-#: .\main\forms.py:21
+#: main/forms.py:21
 msgid "Category"
 msgstr "Kategoria"
 
-#: .\main\forms.py:26 .\main\forms.py:63
+#: main/forms.py:26 main/forms.py:63
 msgid "Description (optional)"
 msgstr "Opis (opcjonalnie)"
 
-#: .\main\forms.py:29 .\main\forms.py:66
+#: main/forms.py:29 main/forms.py:66
 msgid "Enter description"
 msgstr "Dodaj opis"
 
-#: .\main\forms.py:33 .\main\forms.py:70 .\main\templates\index.html:359
+#: main/forms.py:33 main/forms.py:70 main/templates/history.html:26
+#: main/templates/tables/transactions_table.html:66
 msgid "Date"
 msgstr "Data"
 
-#: .\main\forms.py:41
+#: main/forms.py:41
 msgid "Salary"
 msgstr "Wynagrodzenie"
 
-#: .\main\forms.py:42
+#: main/forms.py:42
 msgid "Freelance"
 msgstr "Freelance"
 
-#: .\main\forms.py:43
+#: main/forms.py:43
 msgid "Investment"
 msgstr "Inwestycje"
 
-#: .\main\forms.py:44
+#: main/forms.py:44
 msgid "Bonus"
 msgstr "Premia"
 
-#: .\main\forms.py:45
+#: main/forms.py:45
 msgid "Other"
 msgstr "Inne"
 
-#: .\main\forms.py:58
+#: main/forms.py:58
 msgid "Source"
 msgstr "Źródło"
 
-#: .\main\models.py:13
+#: main/models.py:13
 msgid "Food"
 msgstr "Jedzenie"
 
-#: .\main\models.py:14
+#: main/models.py:14
 msgid "Transport"
 msgstr "Transport"
 
-#: .\main\models.py:15
+#: main/models.py:15
 msgid "Groceries"
 msgstr "Zakupy"
 
-#: .\main\models.py:16
+#: main/models.py:16
 msgid "Bills"
 msgstr "Rachunki"
 
-#: .\main\models.py:17
+#: main/models.py:17
 msgid "Entertainment"
 msgstr "Rozrywka"
 
-#: .\main\templates\auth\login.html:7 .\main\templates\auth\login.html:24
+#: main/templates/auth/login.html:7 main/templates/auth/login.html:24
 msgid "Log in"
 msgstr "Zaloguj się"
 
-#: .\main\templates\auth\login.html:15 .\main\templates\auth\register.html:15
+#: main/templates/auth/login.html:15 main/templates/auth/register.html:15
 msgid "Username"
 msgstr "Nazwa użytkownika"
 
-#: .\main\templates\auth\login.html:20 .\main\templates\auth\register.html:25
+#: main/templates/auth/login.html:20 main/templates/auth/register.html:25
 msgid "Password"
 msgstr "Hasło"
 
-#: .\main\templates\auth\login.html:29
+#: main/templates/auth/login.html:29
 msgid "Don't have an account?"
 msgstr "Nie masz konta?"
 
-#: .\main\templates\auth\login.html:29
+#: main/templates/auth/login.html:29
 msgid "Register here"
 msgstr "Zarejestruj się"
 
-#: .\main\templates\auth\register.html:7 .\main\templates\auth\register.html:29
+#: main/templates/auth/register.html:7 main/templates/auth/register.html:29
 msgid "Register"
 msgstr "Zarejestruj się"
 
-#: .\main\templates\auth\register.html:20
+#: main/templates/auth/register.html:20
 msgid "Email"
 msgstr "Email"
 
-#: .\main\templates\auth\register.html:34
+#: main/templates/auth/register.html:34
 msgid "Already have an account?"
 msgstr "Masz już konto?"
 
-#: .\main\templates\auth\register.html:34
+#: main/templates/auth/register.html:34
 msgid "Login here"
 msgstr "Zaloguj się"
 
-#: .\main\templates\forms\expense_form.html:49
+#: main/templates/forms/expense_form.html:49
 msgid "Add Expense"
 msgstr "Dodaj wydatek"
 
-#: .\main\templates\forms\income_form.html:49
+#: main/templates/forms/income_form.html:49
 msgid "Add Income"
 msgstr "Dodaj przychód"
 
-#: .\main\templates\index.html:275
+#: main/templates/history.html:10 main/templates/history2.html:6
+#, fuzzy
+#| msgid "Recent Transactions"
+msgid "Transaction History"
+msgstr "Ostatnie transakcje"
+
+#: main/templates/history.html:15
+#, fuzzy
+#| msgid "Dashboard"
+msgid "Back to Dashboard"
+msgstr "Panel"
+
+#: main/templates/history.html:25
+#, fuzzy
+#| msgid "Category / Desc"
+msgid "Category / Description"
+msgstr "Kategoria"
+
+#: main/templates/history.html:57
+msgid "No transactions to display."
+msgstr "Brak transakcji do wyświetlenia"
+
+#: main/templates/index.html:204
 msgid "Quick Add"
 msgstr "Szybkie dodawanie"
 
-#: .\main\templates\index.html:281
+#: main/templates/index.html:210
 msgid "Expense"
 msgstr "Wydatek"
 
-#: .\main\templates\index.html:286
+#: main/templates/index.html:215
 msgid "Income"
 msgstr "Przychód"
 
-#: .\main\templates\index.html:309
+#: main/templates/index.html:238
 msgid "Total Spent Last Month"
 msgstr "Łączne wydatki z ostatniego miesiąca"
 
-#: .\main\templates\index.html:317
+#: main/templates/index.html:246
 msgid "Budget Remaining"
 msgstr "Pozostały budżet"
 
-#: .\main\templates\index.html:325
+#: main/templates/index.html:254
 msgid "Top Category"
 msgstr "Największa kategoria wydatków"
 
-#: .\main\templates\index.html:336
+#: main/templates/index.html:265
 msgid "Budget Trend"
 msgstr "Trend"
 
-#: .\main\templates\index.html:348
+#: main/templates/index.html:271
+#: main/templates/tables/transactions_table.html:57
 msgid "Recent Transactions"
 msgstr "Ostatnie transakcje"
 
-#: .\main\templates\index.html:350
-msgid "Delete selected"
-msgstr "Usuń zaznaczone"
-
-#: .\main\templates\index.html:358
-msgid "Category / Desc"
-msgstr "Kategoria"
-
-#: .\main\templates\index.html:391
-msgid "Delete this expense?"
-msgstr ""
-
-#: .\main\templates\index.html:392 .\main\templates\index.html:396
-msgid "Delete"
-msgstr ""
-
-#: .\main\templates\index.html:395
-msgid "Delete this income?"
-msgstr ""
-
-#: .\main\templates\layout\main.html:28
+#: main/templates/layout/main.html:172
 msgid "Dashboard"
 msgstr "Panel"
 
-#: .\main\templates\layout\main.html:31
+#: main/templates/layout/main.html:175
 msgid "History"
 msgstr "Historia"
 
-#: .\main\templates\layout\main.html:52
+#: main/templates/layout/main.html:178
+msgid "Reports"
+msgstr "Raporty"
+
+#: main/templates/layout/main.html:202
 #, python-format
 msgid "Welcome, %(username)s!"
 msgstr "Witaj, %(username)s!"
 
-#: .\main\templates\layout\main.html:56
+#: main/templates/layout/main.html:206
 msgid "Logout"
 msgstr "Wyloguj się"
 
-#: .\main\templates\layout\main.html:58
+#: main/templates/layout/main.html:208
 msgid "Login"
 msgstr "Zaloguj się"
 
-#: .\main\views\main\index.py:107
-msgid "Please fix the errors in the expense form."
-msgstr ""
+#: main/templates/reports/report_preview.html:150
+msgid "Cumulative Balance"
+msgstr "Łączny bilans"
 
-#: .\main\views\main\index.py:121
+#: main/templates/reports/report_preview.html:182
+msgid "January"
+msgstr "Styczeń"
+
+#: main/templates/reports/report_preview.html:183
+msgid "February"
+msgstr "Luty"
+
+#: main/templates/reports/report_preview.html:184
+msgid "March"
+msgstr "Marzec"
+
+#: main/templates/reports/report_preview.html:185
+msgid "April"
+msgstr "Kwiecień"
+
+#: main/templates/reports/report_preview.html:186
+msgid "May"
+msgstr "Maj"
+
+#: main/templates/reports/report_preview.html:187
+msgid "June"
+msgstr "Czerwiec"
+
+#: main/templates/reports/report_preview.html:188
+msgid "July"
+msgstr "Lipiec"
+
+#: main/templates/reports/report_preview.html:189
+msgid "August"
+msgstr "Sierpień"
+
+#: main/templates/reports/report_preview.html:190
+msgid "September"
+msgstr "Wrzesień"
+
+#: main/templates/reports/report_preview.html:191
+msgid "October"
+msgstr "Piździernik"
+
+#: main/templates/reports/report_preview.html:192
+msgid "November"
+msgstr "Listopad"
+
+#: main/templates/reports/report_preview.html:193
+msgid "December"
+msgstr "Grudzień"
+
+#: main/templates/reports/report_preview.html:201
+msgid "Month"
+msgstr "Miesiąc"
+
+#: main/templates/reports/report_preview.html:202
+#: main/templates/reports/report_preview.html:203
+#: main/templates/reports/report_preview.html:204
+#: main/templates/reports/report_preview.html:205
+msgid "Months"
+msgstr "Miesiące"
+
+#: main/templates/reports/report_preview.html:209
+msgid "Filter"
+msgstr "Filtruj"
+
+#: main/templates/reports/report_preview.html:237
+#, fuzzy
+#| msgid "Income"
+msgid "Total Incomes"
+msgstr "Przychód"
+
+#: main/templates/reports/report_preview.html:241
+#, fuzzy
+#| msgid "Expense"
+msgid "Total Expenses"
+msgstr "Wydatek"
+
+#: main/templates/reports/report_preview.html:245
+#, fuzzy
+#| msgid "Freelance"
+msgid "Net Balance"
+msgstr "Freelance"
+
+#: main/templates/reports/report_preview.html:253
+#, fuzzy
+#| msgid "Budget Trend"
+msgid "Cumulative Budget Trend"
+msgstr "Trend"
+
+#: main/templates/reports/report_preview.html:260
+#, fuzzy
+#| msgid "Recent Transactions"
+msgid "Transaction Register"
+msgstr "Ostatnie transakcje"
+
+#: main/templates/tables/transactions_table.html:34
+#: main/templates/tables/transactions_table.html:106
+#: main/templates/tables/transactions_table.html:110
+msgid "Delete"
+msgstr "Usuń"
+
+#: main/templates/tables/transactions_table.html:35
+#: main/templates/tables/transactions_table.html:60
+#, fuzzy
+#| msgid "Delete selected"
+msgid "Delete multiple"
+msgstr "Usuń zaznaczone"
+
+#: main/templates/tables/transactions_table.html:65
+msgid "Category / Desc"
+msgstr "Kategoria"
+
+#: main/templates/tables/transactions_table.html:105
+msgid "Delete this expense?"
+msgstr "Usunąć ten wydatek?"
+
+#: main/templates/tables/transactions_table.html:109
+msgid "Delete this income?"
+msgstr "Usunąć ten przychód?"
+
+#: main/views/main/index.py:108
+msgid "Please fix the errors in the expense form."
+msgstr "Popraw błędy w formularzu wydatków"
+
+#: main/views/main/index.py:122
 msgid "Please fix the errors in the income form."
-msgstr ""
+msgstr "Popraw błędy w formularzu przychodów"
 
 #~ msgid "Are you sure you want to delete selected transactions?"
 #~ msgstr "Czy na pewno chcesz usunąć zaznaczone transakcje?"
