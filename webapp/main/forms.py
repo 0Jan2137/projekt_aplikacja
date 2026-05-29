@@ -3,7 +3,7 @@ from decimal import Decimal
 from django import forms
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-
+from django.contrib.auth.models import User
 from main.models import Expense, CATEGORY_CHOICES
 
 
@@ -71,3 +71,8 @@ class IncomeForm(forms.Form):
         initial=timezone.localdate,
         widget=forms.DateInput(format='%Y-%m-%d', attrs={"class": "form-control", "type": "date"}),
     )
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email']
