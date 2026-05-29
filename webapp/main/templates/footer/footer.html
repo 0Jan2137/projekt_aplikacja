@@ -24,6 +24,9 @@
                     <li><a href="{% url 'history' %}" class="text-secondary text-decoration-none">
                         {% if request.LANGUAGE_CODE == 'pl' %}Historia{% else %}History{% endif %}
                     </a></li>
+                    <li><a href="{% url 'report_preview' %}" class="text-secondary text-decoration-none">
+                    {% if request.LANGUAGE_CODE == 'pl' %}Raporty{% else %}Reports{% endif %}
+                    </a></li>
                 </ul>
             </div>
 
