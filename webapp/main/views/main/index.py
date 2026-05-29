@@ -7,7 +7,7 @@ from decimal import Decimal
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 from main.models import Expense, Income, CATEGORY_CHOICES
-from main.forms import ExpenseForm, IncomeForm
+from main.forms import ExpenseForm, IncomeForm, UserProfileForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
@@ -211,7 +211,7 @@ def profile_view(request):
     return render(request, 'auth/profile.html', context)
 
 @login_required
-def change_password(request):
+def change_password_view(request):
     if request.method == 'POST':
         form = PasswordChangeForm(user=request.user, data=request.POST)
 
@@ -226,5 +226,18 @@ def change_password(request):
         form = PasswordChangeForm(user=request.user)
 
     return render(request, 'auth/change_password.html', {'form': form})
+
+@login_required
+def edit_profile_view(request):
+    if request.method == 'POST':
+        form = UserProfileForm(data=request.POST, instance=request.user)
+        if form.is_valid():
+            user = form.save()
+            messages.success(request, 'Dane zostały poprawnie zmienione!')
+            return redirect('profile_view')
+    else:
+        form = UserProfileForm(instance=request.user)
+
+    return render(request, 'auth/edit_profile.html', {'form': form})
 
     

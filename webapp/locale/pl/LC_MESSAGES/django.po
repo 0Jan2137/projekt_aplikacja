@@ -360,3 +360,12 @@ msgstr "Zaktualizuj hasło"
 
 msgid "Cancel"
 msgstr "Anuluj"
+
+msgid "Account Details"
+msgstr "Szczegóły konta"
+
+msgid "Update your account profile information and email address."
+msgstr "Zaktualizuj informacje profilowe i adres e-mail swojego konta."
+
+msgid "Save Changes"
+msgstr "Zapisz zmiany"
