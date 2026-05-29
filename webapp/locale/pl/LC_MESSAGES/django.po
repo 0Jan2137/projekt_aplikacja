@@ -351,3 +351,15 @@ msgstr "Edytuj Profil"
 
 msgid "Change Password"
 msgstr "Zmień hasło"
+
+msgid "Invalid credentials"
+msgstr "Nieprawidłowe dane logowania"
+
+msgid "Invalid email format"
+msgstr "Nieprawidłowy format adresu e-mail"
+
+msgid "Cumulative Balance"
+msgstr "Skumulowane saldo"
+
+msgid "Account Details"
+msgstr "Szczegóły konta"

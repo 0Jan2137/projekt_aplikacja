@@ -142,12 +142,18 @@ def history(request):
 def delete_expense(request, pk):
     expense = get_object_or_404(Expense, pk=pk, user=request.user)
     expense.delete()
+    previous_url = request.META.get('HTTP_REFERER')
+    if previous_url:
+        return redirect(previous_url)
     return redirect('home')
 
 @login_required
 def delete_income(request, pk):
     income = get_object_or_404(Income, pk=pk, user=request.user)
     income.delete()
+    previous_url = request.META.get('HTTP_REFERER')
+    if previous_url:
+        return redirect(previous_url)
     return redirect('home')
 
 @login_required
@@ -199,6 +205,9 @@ def bulk_delete_transactions(request):
             elif transaction_type == 'incomes':
                 Income.objects.filter(pk=pk).delete()
 
+    previous_url = request.META.get('HTTP_REFERER')
+    if previous_url:
+        return redirect(previous_url)
     return redirect('home')
 
 @login_required

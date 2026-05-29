@@ -7,15 +7,15 @@
 
 <style>
     /* 1. STYLIZACJA PODGLĄDU NA EKRANIE (MONITORZE) */
-    .a4-document-sheet {
-        background: #ffffff;
+   .a4-document-sheet {
+        background-color: var(--bs-body-bg);
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--bs-border-color);
         max-width: 840px;
         margin: 2rem auto;
         padding: 3rem 2.5rem;
         border-radius: 4px;
-        color: #1e293b;
+        color: var(--bs-body-color);
     }
 
     .a4-document-sheet .table-responsive {
@@ -28,9 +28,9 @@
     }
 
     .a4-document-sheet .table th {
-        background-color: #f8fafc !important;
-        border-bottom: 2px solid #e2e8f0 !important;
-        color: #475569;
+        background-color: var(--bs-tertiary-bg) !important;
+        border-bottom: 2px solid var(--bs-border-color) !important;
+        color: var(--bs-body-color);
     }
 
     .doc-summary-box {
@@ -42,8 +42,8 @@
     .doc-card {
         flex: 1;
         padding: 1rem;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
+        background-color: var(--bs-tertiary-bg);
+        border: 1px solid var(--bs-border-color);
         border-radius: 6px;
     }
 
@@ -51,7 +51,7 @@
         font-size: 8pt;
         text-transform: uppercase;
         font-weight: 700;
-        color: #64748b;
+        color: var(--bs-secondary-color);
         letter-spacing: 0.5px;
     }
 
@@ -175,7 +175,7 @@
 {% block content %}
 <div class="container py-4">
     
-    <div class="p-3 bg-light border rounded mb-4 filter-toolbar">
+    <div class="p-3 bg-body-tertiary border rounded mb-4 filter-toolbar">
         <form method="GET" action="{% url 'report_preview' %}" class="row g-2 align-items-center m-0">
             <div class="col-sm-4 col-md-3">
                 <select name="month" class="form-select form-select-sm">
