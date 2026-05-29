@@ -324,3 +324,30 @@ msgstr "Popraw błędy w formularzu przychodów"
 
 #~ msgid "Are you sure you want to delete selected transactions?"
 #~ msgstr "Czy na pewno chcesz usunąć zaznaczone transakcje?"
+
+msgid "My profile"
+msgstr "Mój profil"
+
+msgid "Settings"
+msgstr "Ustawienia"
+
+msgid "Theme"
+msgstr "Motyw"
+
+msgid "Language"
+msgstr "Język"
+
+msgid "Active Account"
+msgstr "Konto Aktywne"
+
+msgid "Email Address"
+msgstr "Adres E-mail"
+
+msgid "Date Joined"
+msgstr "Data dołączenia"
+
+msgid "Edit Profile"
+msgstr "Edytuj Profil"
+
+msgid "Change Password"
+msgstr "Zmień hasło"

@@ -200,4 +200,11 @@ def bulk_delete_transactions(request):
                 Income.objects.filter(pk=pk).delete()
 
     return redirect('home')
-        
+
+@login_required
+def profile_view(request):
+    context = {
+        'user': request.user,
+    }
+    return render(request, 'profile.html', context)
+    
