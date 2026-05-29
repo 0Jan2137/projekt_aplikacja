@@ -351,3 +351,12 @@ msgstr "Edytuj Profil"
 
 msgid "Change Password"
 msgstr "Zmień hasło"
+
+msgid "Ensure your account is using a long, random password to stay secure."
+msgstr "Upewnij się, że Twoje konto używa długiego, losowego hasła, aby pozostać bezpiecznym."
+
+msgid "Update Password"
+msgstr "Zaktualizuj hasło"
+
+msgid "Cancel"
+msgstr "Anuluj"

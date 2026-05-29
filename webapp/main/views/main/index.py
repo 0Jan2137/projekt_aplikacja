@@ -9,6 +9,8 @@ from django.views.decorators.http import require_POST
 from main.models import Expense, Income, CATEGORY_CHOICES
 from main.forms import ExpenseForm, IncomeForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 
 def _build_index_context(request, expense_form=None, income_form=None):
     if expense_form is None:
@@ -206,5 +208,23 @@ def profile_view(request):
     context = {
         'user': request.user,
     }
-    return render(request, 'profile.html', context)
+    return render(request, 'auth/profile.html', context)
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user) # Aktualizacja sesji, żeby Django nie wylogowywało użytkownika po zmianie hasła
+            messages.success(request, 'Twoje hasło zostało pomyślnie zmienione!')
+            return redirect('profile_view')
+        else:
+            messages.error(request, "Popraw błędy w formularzu")
+    else:
+        form = PasswordChangeForm(user=request.user)
+
+    return render(request, 'auth/change_password.html', {'form': form})
+
     
