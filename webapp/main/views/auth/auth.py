@@ -42,7 +42,17 @@ def register(request):
             messages.error(request, _('Invalid email format'))
             return redirect(request.path)
         
-        user = User.objects.create_user(request.POST['username'], email, request.POST['password'])
+        password = request.POST['password']
+        if len(password) < 8:
+            messages.error(request, _('The password must be at least 8 characters long.'))
+            return redirect(request.path)
+
+        user = username=request.POST['username']
+        if User.objects.filter(user).exists():
+            messages.error(request, _('Username already taken'))
+            return redirect(request.path)
+        
+        user = User.objects.create_user(user, email, password)
         login(request, user)
         return redirect('home')
     

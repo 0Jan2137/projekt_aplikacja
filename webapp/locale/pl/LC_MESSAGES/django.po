@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-30 09:20+0200\n"
+"POT-Creation-Date: 2026-05-30 07:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,7 +20,7 @@ msgstr ""
 "%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 
 #: main/forms.py:13 main/forms.py:50 main/templates/history.html:27
-#: main/templates/tables/transactions_table.html:67
+#: main/templates/tables/transactions_table.html:66
 msgid "Amount"
 msgstr "Kwota"
 
@@ -37,7 +37,7 @@ msgid "Enter description"
 msgstr "Dodaj opis"
 
 #: main/forms.py:34 main/forms.py:71 main/templates/history.html:26
-#: main/templates/tables/transactions_table.html:66
+#: main/templates/tables/transactions_table.html:65
 msgid "Date"
 msgstr "Data"
 
@@ -74,7 +74,9 @@ msgstr "Nowe hasło musi mieć co najmniej %(min_length)s znaków."
 msgid ""
 "The new password must contain at least one letter and at least one digit or "
 "special character."
-msgstr "Nowe hasło musi zawierać co najmniej jedną literę i co najmniej jedną cyfrę lub znak specjalny."
+msgstr ""
+"Nowe hasło musi zawierać co najmniej jedną literę i co najmniej jedną cyfrę "
+"lub znak specjalny."
 
 #: main/models.py:13
 msgid "Food"
@@ -103,7 +105,8 @@ msgstr "Zmień hasło"
 
 #: main/templates/auth/change_password.html:12
 msgid "Ensure your account is using a long, random password to stay secure."
-msgstr "Upewnij się, że Twoje konto używa długiego, losowego hasła, aby pozostać "
+msgstr ""
+"Upewnij się, że Twoje konto używa długiego, losowego hasła, aby pozostać "
 "bezpiecznym."
 
 #: main/templates/auth/change_password.html:47
@@ -204,6 +207,18 @@ msgstr "Kategoria / Opis"
 msgid "No transactions to display."
 msgstr "Brak transakcji do wyświetlenia"
 
+#: main/templates/index.html:110
+msgid "Bilans (PLN)"
+msgstr "Bilans (PLN)"
+
+#: main/templates/index.html:121
+msgid "Income (PLN)"
+msgstr "Przychód (PLN)"
+
+#: main/templates/index.html:132
+msgid "Expense (PLN)"
+msgstr "Wydatki (PLN)"
+
 #: main/templates/index.html:196
 msgid "Quick Add"
 msgstr "Szybkie dodawanie"
@@ -269,96 +284,96 @@ msgstr "Wyloguj się"
 msgid "Login"
 msgstr "Zaloguj się"
 
-#: main/templates/reports/report_preview.html:146
+#: main/templates/reports/report_preview.html:82
 msgid "Cumulative Balance"
 msgstr "Łączny bilans"
 
-#: main/templates/reports/report_preview.html:178
+#: main/templates/reports/report_preview.html:114
 msgid "January"
 msgstr "Styczeń"
 
-#: main/templates/reports/report_preview.html:179
+#: main/templates/reports/report_preview.html:115
 msgid "February"
 msgstr "Luty"
 
-#: main/templates/reports/report_preview.html:180
+#: main/templates/reports/report_preview.html:116
 msgid "March"
 msgstr "Marzec"
 
-#: main/templates/reports/report_preview.html:181
+#: main/templates/reports/report_preview.html:117
 msgid "April"
 msgstr "Kwiecień"
 
-#: main/templates/reports/report_preview.html:182
+#: main/templates/reports/report_preview.html:118
 msgid "May"
 msgstr "Maj"
 
-#: main/templates/reports/report_preview.html:183
+#: main/templates/reports/report_preview.html:119
 msgid "June"
 msgstr "Czerwiec"
 
-#: main/templates/reports/report_preview.html:184
+#: main/templates/reports/report_preview.html:120
 msgid "July"
 msgstr "Lipiec"
 
-#: main/templates/reports/report_preview.html:185
+#: main/templates/reports/report_preview.html:121
 msgid "August"
 msgstr "Sierpień"
 
-#: main/templates/reports/report_preview.html:186
+#: main/templates/reports/report_preview.html:122
 msgid "September"
 msgstr "Wrzesień"
 
-#: main/templates/reports/report_preview.html:187
+#: main/templates/reports/report_preview.html:123
 msgid "October"
 msgstr "Piździernik"
 
-#: main/templates/reports/report_preview.html:188
+#: main/templates/reports/report_preview.html:124
 msgid "November"
 msgstr "Listopad"
 
-#: main/templates/reports/report_preview.html:189
+#: main/templates/reports/report_preview.html:125
 msgid "December"
 msgstr "Grudzień"
 
-#: main/templates/reports/report_preview.html:197
+#: main/templates/reports/report_preview.html:133
 msgid "Month"
 msgstr "Miesiąc"
 
-#: main/templates/reports/report_preview.html:198
-#: main/templates/reports/report_preview.html:199
-#: main/templates/reports/report_preview.html:200
-#: main/templates/reports/report_preview.html:201
+#: main/templates/reports/report_preview.html:134
+#: main/templates/reports/report_preview.html:135
+#: main/templates/reports/report_preview.html:136
+#: main/templates/reports/report_preview.html:137
 msgid "Months"
 msgstr "Miesiące"
 
-#: main/templates/reports/report_preview.html:205
+#: main/templates/reports/report_preview.html:141
 msgid "Filter"
 msgstr "Filtruj"
 
-#: main/templates/reports/report_preview.html:233
+#: main/templates/reports/report_preview.html:169
 msgid "Total Incomes"
 msgstr "Całkowity Przychód"
 
-#: main/templates/reports/report_preview.html:237
+#: main/templates/reports/report_preview.html:173
 msgid "Total Expenses"
 msgstr "Całkowite wydatki"
 
-#: main/templates/reports/report_preview.html:241
+#: main/templates/reports/report_preview.html:177
 msgid "Net Balance"
 msgstr "Bilans netto"
 
-#: main/templates/reports/report_preview.html:249
+#: main/templates/reports/report_preview.html:185
 msgid "Cumulative Budget Trend"
 msgstr "Trend"
 
-#: main/templates/reports/report_preview.html:256
+#: main/templates/reports/report_preview.html:192
 msgid "Transaction Register"
 msgstr "Rejestr transakcji"
 
 #: main/templates/tables/transactions_table.html:34
-#: main/templates/tables/transactions_table.html:106
-#: main/templates/tables/transactions_table.html:110
+#: main/templates/tables/transactions_table.html:105
+#: main/templates/tables/transactions_table.html:109
 msgid "Delete"
 msgstr "Usuń"
 
@@ -367,15 +382,15 @@ msgstr "Usuń"
 msgid "Delete multiple"
 msgstr "Usuń zaznaczone"
 
-#: main/templates/tables/transactions_table.html:65
+#: main/templates/tables/transactions_table.html:64
 msgid "Category / Desc"
 msgstr "Kategoria"
 
-#: main/templates/tables/transactions_table.html:105
+#: main/templates/tables/transactions_table.html:104
 msgid "Delete this expense?"
 msgstr "Usunąć ten wydatek?"
 
-#: main/templates/tables/transactions_table.html:109
+#: main/templates/tables/transactions_table.html:108
 msgid "Delete this income?"
 msgstr "Usunąć ten przychód?"
 
@@ -386,6 +401,16 @@ msgstr "Nieprawidłowe dane logowania"
 #: main/views/auth/auth.py:42
 msgid "Invalid email format"
 msgstr "Nieprawidłowy format adresu e-mail"
+
+#: main/views/auth/auth.py:47
+#, fuzzy
+#| msgid "The new password must be at least %(min_length)s characters long."
+msgid "The password must be at least 8 characters long."
+msgstr "Nowe hasło musi mieć co najmniej %(min_length)s znaków."
+
+#: main/views/auth/auth.py:52
+msgid "Username already taken"
+msgstr "Nazwa użytkownika już istnieje"
 
 #: main/views/main/index.py:110
 msgid "Please fix the errors in the expense form."

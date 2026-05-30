@@ -6,84 +6,23 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-    /* 1. STYLIZACJA PODGLĄDU NA EKRANIE (MONITORZE) */
-   .a4-document-sheet {
-        background-color: var(--bs-body-bg);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        border: 1px solid var(--bs-border-color);
-        max-width: 840px;
-        margin: 2rem auto;
-        padding: 3rem 2.5rem;
-        border-radius: 4px;
-        color: var(--bs-body-color);
-    }
-
-    .a4-document-sheet .table-responsive {
-        max-height: none !important;
-        overflow-y: visible !important;
-    }
-
-    .a4-document-sheet .table {
-        margin-bottom: 0;
-    }
-
-    .a4-document-sheet .table th {
-        background-color: var(--bs-tertiary-bg) !important;
-        border-bottom: 2px solid var(--bs-border-color) !important;
-        color: var(--bs-body-color);
-    }
-
-    .doc-summary-box {
-        display: flex;
-        gap: 1rem;
-        margin-bottom: 2.5rem;
-    }
-
-    .doc-card {
-        flex: 1;
-        padding: 1rem;
-        background-color: var(--bs-tertiary-bg);
-        border: 1px solid var(--bs-border-color);
-        border-radius: 6px;
-    }
-
-    .doc-card-title {
-        font-size: 8pt;
-        text-transform: uppercase;
-        font-weight: 700;
-        color: var(--bs-secondary-color);
-        letter-spacing: 0.5px;
-    }
-
-    .doc-card-value {
-        font-size: 14pt;
-        font-weight: 700;
-        margin-top: 4px;
-    }
-
-    /* 2. MAGICZNE REGUŁY DLA NATYWNEGO DRUKU (Ctrl+P / PPM -> Drukuj) */
+    /* Print styles */
     @media print {
-        /* Ukrywamy nagłówek strony, menu (navbar), boczny panel i formularz filtrowania */
         header, nav, .filter-toolbar, footer, .btn, .navbar, #mainNavbar {
             display: none !important;
         }
-
-        /* Resetujemy marginesy systemowe i tło przeglądarki */
         body, html, main {
             background: #ffffff !important;
             color: #000000 !important;
             margin: 0 !important;
             padding: 0 !important;
         }
-
         .container {
             max-width: 100% !important;
             width: 100% !important;
             margin: 0 !important;
             padding: 0 !important;
         }
-
-        /* Zamieniamy kartkę z ekranu na płaski, idealny format do druku na papierze */
         .a4-document-sheet {
             box-shadow: none !important;
             border: none !important;
@@ -93,12 +32,9 @@
             width: 100% !important;
             background: transparent !important;
         }
-
-        /* Blokujemy łamanie wierszy tabeli w połowie tekstu na przełomie stron */
         tr {
             page-break-inside: avoid !important;
         }
-
     }
 </style>
 
@@ -207,7 +143,7 @@
         </form>
     </div>
 
-    <div class="a4-document-sheet">
+    <div class="a4-document-sheet shadow-lg border rounded mx-auto p-5" style="max-width: 840px;">
         
         {% comment %} 
         #########################################
@@ -227,18 +163,18 @@
         </div> 
         {% endcomment %}
 
-        <div class="doc-summary-box">
-            <div class="doc-card">
-                <div class="doc-card-title">{% trans "Total Incomes" %}</div>
-                <div class="doc-card-value text-success">+{{ total_incomes|floatformat:2|intcomma }} PLN</div>
+        <div class="d-flex gap-4 mb-5">
+            <div class="card p-3 flex-fill">
+                <div class="text-uppercase fw-bold text-secondary" style="font-size: 0.5rem;">{% trans "Total Incomes" %}</div>
+                <div class="fs-5 fw-bold text-success mt-2">+{{ total_incomes|floatformat:2|intcomma }} PLN</div>
             </div>
-            <div class="doc-card">
-                <div class="doc-card-title">{% trans "Total Expenses" %}</div>
-                <div class="doc-card-value text-danger">-{{ total_expenses|floatformat:2|intcomma }} PLN</div>
+            <div class="card p-3 flex-fill">
+                <div class="text-uppercase fw-bold text-secondary" style="font-size: 0.5rem;">{% trans "Total Expenses" %}</div>
+                <div class="fs-5 fw-bold text-danger mt-2">-{{ total_expenses|floatformat:2|intcomma }} PLN</div>
             </div>
-            <div class="doc-card">
-                <div class="doc-card-title">{% trans "Net Balance" %}</div>
-                <div class="doc-card-value {% if balance >= 0 %}text-primary{% else %}text-danger{% endif %}">
+            <div class="card p-3 flex-fill">
+                <div class="text-uppercase fw-bold text-secondary" style="font-size: 0.5rem;">{% trans "Net Balance" %}</div>
+                <div class="fs-5 fw-bold {% if balance >= 0 %}text-primary{% else %}text-danger{% endif %} mt-2">
                     {{ balance|floatformat:2|intcomma }} PLN
                 </div>
             </div>
@@ -255,7 +191,6 @@
             {% trans "Transaction Register" as recent_transactions_title %}
             {% include 'tables/transactions_table.html' with transactions=transactions_list title=recent_transactions_title %}
         </div>
-        
     </div>
 </div>
 {% endblock %}
