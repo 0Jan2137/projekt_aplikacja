@@ -1,313 +1,56 @@
-/* --- BAZOWE USTAWIENIA (KOLORY I CZCIONKI) --- */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-}
+/* ========================================
+   BOOTSTRAP 5 - MINIMAL CUSTOM OVERRIDES
+   ======================================== */
 
+/* Base body styling */
 body {
-    background-color: #f4f7f6; /* Jasnoszare tło z Figmy */
-    color: #333;
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* --- WSPÓLNE STYLE DLA KART (BIAŁE TŁO, CIEŃ) --- */
-.card, .chart-section, .recent-transactions {
-    background-color: #ffffff;
-    border-radius: 12px;
-    padding: 25px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); /* Delikatny nowoczesny cień */
-}
-
-h2 {
-    font-size: 20px;
-    margin-bottom: 20px;
-    color: #1a1a1a;
-}
-
-/* --- GŁÓWNY UKŁAD (SPLIT LAYOUT) --- */
-.dashboard-wrapper {
-    display: grid;
-    grid-template-columns: 320px 1fr; /* Lewa kolumna stała 320px, prawa zajmuje resztę */
-    gap: 30px;
-    max-width: 95%;
-    margin: 0 auto;
-}
-
-/* --- STICKY QUICK ADD PANEL --- */
-.sidebar-quick-add {
-    position: sticky;
-    top: 10px; /* Dajemy 80px zamiast 20px, żeby zrobić miejsce na nowy czarny navbar, który dodał Maciek */
-    align-self: start; /* To jest kluczowe w CSS Grid, inaczej panel rozciągnie się na całą wysokość i nie będzie się "ślizgał" */
-}
-
-/* --- LEWA KOLUMNA (QUICK ADD FORM) --- */
-.sidebar-quick-add form {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.sidebar-quick-add label {
-    font-size: 14px;
-    font-weight: 600;
-    color: #555;
-    margin-top: 5px;
-}
-
-.sidebar-quick-add input, 
-.sidebar-quick-add select {
-    padding: 12px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 15px;
-    outline: none;
-    transition: border-color 0.3s;
-}
-
-.sidebar-quick-add input:focus, 
-.sidebar-quick-add select:focus {
-    border-color: #3b82f6; /* Niebieski akcent przy kliknięciu */
-}
-
-/* Przycisk "Add Expense" */
-.sidebar-quick-add button {
-    margin-top: 15px;
-    padding: 14px;
-    background-color: #1d4ed8; /* Wyraźny niebieski z Figmy */
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.sidebar-quick-add button:hover {
-    background-color: #1e40af;
-}
-
-/* --- PRAWA KOLUMNA (MAIN DASHBOARD) --- */
-.main-dashboard-content {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-}
-
-/* KARTY PODSUMOWUJĄCE (GÓRA) */
-.top-stats-cards {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 równe karty w rzędzie */
-    gap: 20px;
-}
-
-.card p {
-    font-size: 14px;
-    color: #6b7280;
-    margin-bottom: 8px;
-}
-
-.card h3 {
-    font-size: 24px;
-    color: #111827;
-}
-
-/* WYKRES (MIEJSCE NA CANVAS) */
-.chart-section {
-    min-height: 300px; /* Minimalna wysokość, żeby to dobrze wyglądało zanim dodadzą skrypt */
-}
-
+/* Chart container sizing */
 #dailySpendingChart {
     width: 100%;
-    height: 100%;
+    height: auto;
+    min-height: 250px;
 }
 
-/* LISTA OSTATNICH TRANSAKCJI */
-.transaction-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 0;
-    border-bottom: 1px solid #f3f4f6; /* Liniowy podział między wierszami */
+/* Theme toggle button */
+#theme-toggle {
+    font-size: 1rem;
+    cursor: pointer;
 }
 
-/* Usuwamy linię pod ostatnią transakcją */
-.transaction-row:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
+/* Link hover effects */
+a {
+    transition: color 0.2s ease;
 }
 
-.transaction-details h4 {
-    font-size: 16px;
-    color: #1f2937;
-    margin-bottom: 4px;
-}
-
-.transaction-details p, .transaction-date p {
-    font-size: 14px;
-    color: #6b7280;
-}
-/* --- ŚRODKOWANIE DATY W TRANSAKCJACH --- */
-.transaction-date {
-    flex: 1; /* Zajmuje całą dostępną wolną przestrzeń pomiędzy nazwą a kwotą */
-    text-align: center; /* Wyśrodkowuje sam tekst daty */
-}
-
-.transaction-details {
-    flex: 1; /* Zajmuje dokładnie 33% szerokości kontenera */
-}
-
-.transaction-amount {
-    flex: 1; /* Zajmuje dokładnie 33% szerokości kontenera */
-    text-align: right; /* Wyrównanie do prawej krawędzi dla lepszej czytelności */
-}
-
-/* Podstawowy styl dla kwoty */
-.transaction-amount p {
-    font-size: 16px;
-    font-weight: bold;
-}
-
-/* Klasa dla wydatków (na minusie) */
-.transaction-amount p.expense {
-    color: #dc2626; /* Czerwony */
-}
-
-/* Klasa dla wpływów/zwrotów (na plusie) */
-.transaction-amount p.income {
-    color: #16a34a; /* Ładny, wyraźny zielony */
-}
-
-/* Reset i tło headera */
-.main-header {
-    background-color: #24292e; /* Ciemny szary, jak na GitHubie */
-    margin-bottom: 15px;
-    padding: 10px;
-    color: white;
-}
-
-/* GŁÓWNY MECHANIZM: Flexbox */
-.navbar-container {
-    display: flex;
-    justify-content: space-between; /* To rozpycha .nav-left i .nav-right na końce */
-    align-items: center;
-    max-width: 100%;
-    margin: 0 auto; /* Centruje cały pasek na środku ekranu */
-    padding: 0 20px;
-}
-
-/* Stylizacja lewej strony */
-.nav-left {
-    display: flex;
-    gap: 20px; /* Odstępy między linkami */
-    align-items: center;
-}
-
-.nav-logo {
-    font-weight: bold;
-    font-size: 1.2rem;
-    text-decoration: none;
-    color: white;
-    margin-right: 10px;
-}
-
-/* Stylizacja prawej strony */
-.nav-right {
-    display: flex;
-    align-items: center; /* TA LINIJKA ŚRODKUJE PIONOWO */
-    gap: 15px;
-    margin-left: auto;
-}
-
-/* Wspólny styl dla linków */
-.nav-item, .auth-btn {
-    text-decoration: none;
-    color: #adb5bd;
-    transition: color 0.2s;
-}
-
-.nav-item:hover {
-    color: white;
-}
-
-/* Styl "przycisku" dla Logowania/Wylogowania */
-.auth-btn {
-    border: 1px solid #444;
-    padding: 5px 15px;
-    border-radius: 6px;
-    color: white;
-    background-color: #2f363d;
-}
-
-.auth-btn:hover {
-    background-color: #444d56;
-}
-
-.main-footer {
-    background-color: #24292e;
-    color: #adb5bd;
-    padding: 40px 0 20px 0;
-    margin-top: 50px;
-    border-top: 1px solid #444d56;
-}
-
-.footer-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    padding: 0 20px;
-}
-
-.footer-section h4 {
-    color: #ffffff;
-    margin-bottom: 15px;
-    font-size: 1.1rem;
-}
-
-.footer-section p {
-    font-size: 0.9rem;
-    line-height: 1.5;
-    max-width: 350px;
-}
-
-.footer-links {
-    display: flex;
-    gap: 40px;
-    flex-wrap: wrap;
-}
-
-.footer-section ul {
-    list-style: none;
-    padding: 0;
-}
-
-.footer-section ul li {
-    margin-bottom: 8px;
-}
-
-.footer-section ul li a {
-    color: #adb5bd;
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.2s;
-}
-
-.footer-section ul li a:hover {
-    color: #ffffff;
-}
-
-.footer-section ul li a[href^="mailto:"]:hover {
+a:hover {
     text-decoration: underline;
-    color: #3b82f6;
 }
 
-.footer-bottom {
-    text-align: center;
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid #30363d;
-    font-size: 0.8rem;
+/* Card hover effect */
+.card {
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Form styling enhancements */
+.form-control:focus,
+.form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Button styles */
+.btn-primary {
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
 }

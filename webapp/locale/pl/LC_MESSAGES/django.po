@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-28 12:40+0000\n"
+"POT-Creation-Date: 2026-05-30 09:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,51 +19,62 @@ msgstr ""
 "%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
 "%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 
-#: main/forms.py:12 main/forms.py:49 main/templates/history.html:27
+#: main/forms.py:13 main/forms.py:50 main/templates/history.html:27
 #: main/templates/tables/transactions_table.html:67
 msgid "Amount"
 msgstr "Kwota"
 
-#: main/forms.py:21
+#: main/forms.py:22
 msgid "Category"
 msgstr "Kategoria"
 
-#: main/forms.py:26 main/forms.py:63
+#: main/forms.py:27 main/forms.py:64
 msgid "Description (optional)"
 msgstr "Opis (opcjonalnie)"
 
-#: main/forms.py:29 main/forms.py:66
+#: main/forms.py:30 main/forms.py:67
 msgid "Enter description"
 msgstr "Dodaj opis"
 
-#: main/forms.py:33 main/forms.py:70 main/templates/history.html:26
+#: main/forms.py:34 main/forms.py:71 main/templates/history.html:26
 #: main/templates/tables/transactions_table.html:66
 msgid "Date"
 msgstr "Data"
 
-#: main/forms.py:41
+#: main/forms.py:42
 msgid "Salary"
 msgstr "Wynagrodzenie"
 
-#: main/forms.py:42
+#: main/forms.py:43
 msgid "Freelance"
 msgstr "Freelance"
 
-#: main/forms.py:43
+#: main/forms.py:44
 msgid "Investment"
 msgstr "Inwestycje"
 
-#: main/forms.py:44
+#: main/forms.py:45
 msgid "Bonus"
 msgstr "Premia"
 
-#: main/forms.py:45
+#: main/forms.py:46
 msgid "Other"
 msgstr "Inne"
 
-#: main/forms.py:58
+#: main/forms.py:59
 msgid "Source"
 msgstr "Źródło"
+
+#: main/forms.py:91
+#, python-format
+msgid "The new password must be at least %(min_length)s characters long."
+msgstr "Nowe hasło musi mieć co najmniej %(min_length)s znaków."
+
+#: main/forms.py:98
+msgid ""
+"The new password must contain at least one letter and at least one digit or "
+"special character."
+msgstr "Nowe hasło musi zawierać co najmniej jedną literę i co najmniej jedną cyfrę lub znak specjalny."
 
 #: main/models.py:13
 msgid "Food"
@@ -85,11 +96,43 @@ msgstr "Rachunki"
 msgid "Entertainment"
 msgstr "Rozrywka"
 
+#: main/templates/auth/change_password.html:11
+#: main/templates/auth/profile.html:40
+msgid "Change Password"
+msgstr "Zmień hasło"
+
+#: main/templates/auth/change_password.html:12
+msgid "Ensure your account is using a long, random password to stay secure."
+msgstr "Upewnij się, że Twoje konto używa długiego, losowego hasła, aby pozostać "
+"bezpiecznym."
+
+#: main/templates/auth/change_password.html:47
+msgid "Update Password"
+msgstr "Zaktualizuj hasło"
+
+#: main/templates/auth/change_password.html:50
+#: main/templates/auth/edit_profile.html:51
+msgid "Cancel"
+msgstr "Anuluj"
+
+#: main/templates/auth/edit_profile.html:11 main/templates/auth/profile.html:39
+msgid "Edit Profile"
+msgstr "Edytuj Profil"
+
+#: main/templates/auth/edit_profile.html:12
+msgid "Update your account profile information and email address."
+msgstr "Zaktualizuj informacje profilowe i adres e-mail swojego konta."
+
+#: main/templates/auth/edit_profile.html:48
+msgid "Save Changes"
+msgstr "Zapisz zmiany"
+
 #: main/templates/auth/login.html:7 main/templates/auth/login.html:24
 msgid "Log in"
 msgstr "Zaloguj się"
 
-#: main/templates/auth/login.html:15 main/templates/auth/register.html:15
+#: main/templates/auth/login.html:15 main/templates/auth/profile.html:24
+#: main/templates/auth/register.html:15
 msgid "Username"
 msgstr "Nazwa użytkownika"
 
@@ -104,6 +147,22 @@ msgstr "Nie masz konta?"
 #: main/templates/auth/login.html:29
 msgid "Register here"
 msgstr "Zarejestruj się"
+
+#: main/templates/auth/profile.html:14
+msgid "Active Account"
+msgstr "Konto Aktywne"
+
+#: main/templates/auth/profile.html:21
+msgid "Account Details"
+msgstr "Szczegóły konta"
+
+#: main/templates/auth/profile.html:28
+msgid "Email Address"
+msgstr "Adres E-mail"
+
+#: main/templates/auth/profile.html:32
+msgid "Date Joined"
+msgstr "Data dołączenia"
 
 #: main/templates/auth/register.html:7 main/templates/auth/register.html:29
 msgid "Register"
@@ -178,116 +237,122 @@ msgstr "Trend"
 msgid "Recent Transactions"
 msgstr "Ostatnie transakcje"
 
-#: main/templates/layout/main.html:29
+#: main/templates/layout/main.html:31
 msgid "Dashboard"
 msgstr "Panel"
 
-#: main/templates/layout/main.html:32
+#: main/templates/layout/main.html:34
 msgid "History"
 msgstr "Historia"
 
-#: main/templates/layout/main.html:35
+#: main/templates/layout/main.html:37
 msgid "Reports"
 msgstr "Raporty"
 
-#: main/templates/layout/main.html:59
-#, python-format
-msgid "Welcome, %(username)s!"
-msgstr "Witaj, %(username)s!"
+#: main/templates/layout/main.html:62
+msgid "My profile"
+msgstr "Mój profil"
 
-#: main/templates/layout/main.html:63
+#: main/templates/layout/main.html:74
+msgid "Theme"
+msgstr "Motyw"
+
+#: main/templates/layout/main.html:84
+msgid "Language"
+msgstr "Język"
+
+#: main/templates/layout/main.html:104
 msgid "Logout"
 msgstr "Wyloguj się"
 
-#: main/templates/layout/main.html:65
+#: main/templates/layout/main.html:109
 msgid "Login"
 msgstr "Zaloguj się"
 
-#: main/templates/reports/report_preview.html:150
+#: main/templates/reports/report_preview.html:146
 msgid "Cumulative Balance"
 msgstr "Łączny bilans"
 
-#: main/templates/reports/report_preview.html:182
+#: main/templates/reports/report_preview.html:178
 msgid "January"
 msgstr "Styczeń"
 
-#: main/templates/reports/report_preview.html:183
+#: main/templates/reports/report_preview.html:179
 msgid "February"
 msgstr "Luty"
 
-#: main/templates/reports/report_preview.html:184
+#: main/templates/reports/report_preview.html:180
 msgid "March"
 msgstr "Marzec"
 
-#: main/templates/reports/report_preview.html:185
+#: main/templates/reports/report_preview.html:181
 msgid "April"
 msgstr "Kwiecień"
 
-#: main/templates/reports/report_preview.html:186
+#: main/templates/reports/report_preview.html:182
 msgid "May"
 msgstr "Maj"
 
-#: main/templates/reports/report_preview.html:187
+#: main/templates/reports/report_preview.html:183
 msgid "June"
 msgstr "Czerwiec"
 
-#: main/templates/reports/report_preview.html:188
+#: main/templates/reports/report_preview.html:184
 msgid "July"
 msgstr "Lipiec"
 
-#: main/templates/reports/report_preview.html:189
+#: main/templates/reports/report_preview.html:185
 msgid "August"
 msgstr "Sierpień"
 
-#: main/templates/reports/report_preview.html:190
+#: main/templates/reports/report_preview.html:186
 msgid "September"
 msgstr "Wrzesień"
 
-#: main/templates/reports/report_preview.html:191
+#: main/templates/reports/report_preview.html:187
 msgid "October"
 msgstr "Piździernik"
 
-#: main/templates/reports/report_preview.html:192
+#: main/templates/reports/report_preview.html:188
 msgid "November"
 msgstr "Listopad"
 
-#: main/templates/reports/report_preview.html:193
+#: main/templates/reports/report_preview.html:189
 msgid "December"
 msgstr "Grudzień"
 
-#: main/templates/reports/report_preview.html:201
+#: main/templates/reports/report_preview.html:197
 msgid "Month"
 msgstr "Miesiąc"
 
-#: main/templates/reports/report_preview.html:202
-#: main/templates/reports/report_preview.html:203
-#: main/templates/reports/report_preview.html:204
-#: main/templates/reports/report_preview.html:205
+#: main/templates/reports/report_preview.html:198
+#: main/templates/reports/report_preview.html:199
+#: main/templates/reports/report_preview.html:200
+#: main/templates/reports/report_preview.html:201
 msgid "Months"
 msgstr "Miesiące"
 
-#: main/templates/reports/report_preview.html:209
+#: main/templates/reports/report_preview.html:205
 msgid "Filter"
 msgstr "Filtruj"
 
-#: main/templates/reports/report_preview.html:237
+#: main/templates/reports/report_preview.html:233
 msgid "Total Incomes"
 msgstr "Całkowity Przychód"
 
-#: main/templates/reports/report_preview.html:241
+#: main/templates/reports/report_preview.html:237
 msgid "Total Expenses"
 msgstr "Całkowite wydatki"
 
-#: main/templates/reports/report_preview.html:245
+#: main/templates/reports/report_preview.html:241
 msgid "Net Balance"
 msgstr "Bilans netto"
 
-#: main/templates/reports/report_preview.html:253
+#: main/templates/reports/report_preview.html:249
 msgid "Cumulative Budget Trend"
 msgstr "Trend"
 
-#: main/templates/reports/report_preview.html:260
-
+#: main/templates/reports/report_preview.html:256
 msgid "Transaction Register"
 msgstr "Rejestr transakcji"
 
@@ -314,69 +379,27 @@ msgstr "Usunąć ten wydatek?"
 msgid "Delete this income?"
 msgstr "Usunąć ten przychód?"
 
-#: main/views/main/index.py:108
+#: main/views/auth/auth.py:25
+msgid "Invalid credentials"
+msgstr "Nieprawidłowe dane logowania"
+
+#: main/views/auth/auth.py:42
+msgid "Invalid email format"
+msgstr "Nieprawidłowy format adresu e-mail"
+
+#: main/views/main/index.py:110
 msgid "Please fix the errors in the expense form."
 msgstr "Popraw błędy w formularzu wydatków"
 
-#: main/views/main/index.py:122
+#: main/views/main/index.py:124
 msgid "Please fix the errors in the income form."
 msgstr "Popraw błędy w formularzu przychodów"
+
+#~ msgid "Welcome, %(username)s!"
+#~ msgstr "Witaj, %(username)s!"
 
 #~ msgid "Are you sure you want to delete selected transactions?"
 #~ msgstr "Czy na pewno chcesz usunąć zaznaczone transakcje?"
 
-msgid "My profile"
-msgstr "Mój profil"
-
-msgid "Settings"
-msgstr "Ustawienia"
-
-msgid "Theme"
-msgstr "Motyw"
-
-msgid "Language"
-msgstr "Język"
-
-msgid "Active Account"
-msgstr "Konto Aktywne"
-
-msgid "Email Address"
-msgstr "Adres E-mail"
-
-msgid "Date Joined"
-msgstr "Data dołączenia"
-
-msgid "Edit Profile"
-msgstr "Edytuj Profil"
-
-msgid "Change Password"
-msgstr "Zmień hasło"
-
-msgid "Ensure your account is using a long, random password to stay secure."
-msgstr "Upewnij się, że Twoje konto używa długiego, losowego hasła, aby pozostać bezpiecznym."
-
-msgid "Update Password"
-msgstr "Zaktualizuj hasło"
-
-msgid "Cancel"
-msgstr "Anuluj"
-
-msgid "Account Details"
-msgstr "Szczegóły konta"
-
-msgid "Update your account profile information and email address."
-msgstr "Zaktualizuj informacje profilowe i adres e-mail swojego konta."
-
-msgid "Save Changes"
-msgstr "Zapisz zmiany"
-msgid "Invalid credentials"
-msgstr "Nieprawidłowe dane logowania"
-
-msgid "Invalid email format"
-msgstr "Nieprawidłowy format adresu e-mail"
-
-msgid "Cumulative Balance"
-msgstr "Skumulowane saldo"
-
-msgid "Account Details"
-msgstr "Szczegóły konta"
+#~ msgid "Settings"
+#~ msgstr "Ustawienia"

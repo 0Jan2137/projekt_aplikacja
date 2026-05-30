@@ -8,10 +8,11 @@ function sortTransactions(colIdx, type, asc=undefined) {
     const rows = Array.from(container.getElementsByClassName("transaction-row"));
     const isAsc = asc !== undefined ? asc : directions[colIdx];
 
-    rows.sort((a, b) => {
-        let valA = a.children[colIdx].getAttribute("data-val") || a.children[colIdx].innerText;
-        let valB = b.children[colIdx].getAttribute("data-val") || b.children[colIdx].innerText;
-
+    var rows2 = rows.sort((a, b) => {
+        // Account for the hidden bulk-delete-column at index 0
+        let colElement = colIdx + 1;
+        let valA = a.children[colElement].getAttribute("data-val") || a.children[colElement].innerText.trim();
+        let valB = b.children[colElement].getAttribute("data-val") || b.children[colElement].innerText.trim();
         if (type === 'number') return isAsc ? parseFloat(valA) - parseFloat(valB) : parseFloat(valB) - parseFloat(valA);
         if (type === 'date') return isAsc ? new Date(valA) - new Date(valB) : new Date(valB) - new Date(valA);
         return isAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
@@ -24,6 +25,8 @@ function sortTransactions(colIdx, type, asc=undefined) {
         "isAsc": isAsc
     });
     rows.forEach(row => container.appendChild(row));
+    console.log(rows)
+    console.log(rows2)
 
     for (let i = 0; i < 3; i++) {
         document.getElementById(`sort-${i}`).innerHTML = (i === colIdx) ? (isAsc ? "↑" : "↓") : "";

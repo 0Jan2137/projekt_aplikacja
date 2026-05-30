@@ -1,21 +1,28 @@
+/* ========================================
+   BOOTSTRAP 5 - FOOTER OVERRIDES
+   ======================================== */
+
 body {
     background-color: #f8f9fa;
-    font-family: 'Georgia', serif;
-    line-height: 1.6;
 }
+
+footer {
+    margin-top: auto;
+}
+
+/* Terms/Privacy policy page specific styling */
 .terms-container {
-    max-width: 700px;
-    background-color: #ffffff;
-    padding: 3rem;
-    margin-top: 3rem;
-    margin-bottom: 3rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    max-width: 800px;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
 }
+
+/* Text color utilities */
 .d1 {
-    color: #2c3e50;
+    color: #212529;
     font-weight: 500;
 }
+
 .c1 {
     color: #d63384;
     font-family: 'Courier New', Courier, monospace;

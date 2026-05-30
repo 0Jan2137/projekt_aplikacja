@@ -59,7 +59,6 @@
       <h2 class="h5 mb-0">{{ title|default:default_title }}</h2>
       <button type="button" id="bulk-delete-toggle" class="btn btn-danger p-1">{% trans "Delete multiple" %}</button>
     </div>
-    
     <div class="row fw-semibold text-secondary border-bottom pb-2 mb-3">
       <div class="col-1 bulk-delete-column d-none"></div>
       <div class="col-5 bulk-main-col user-select-none" onclick="sortTransactions(0, 'text')" style="cursor: pointer;">{% trans "Category / Desc" %} <span id="sort-0"></span></div>
