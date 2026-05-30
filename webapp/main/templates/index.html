@@ -106,7 +106,7 @@
 				labels: labels,
 				datasets: [
 				{
-					label: 'Daily stats (PLN)',
+					label: '{% trans "Daily stats (PLN)" %}',
 					data: groupedDiff.map(d => d.amount),
 					borderColor: '#3b82f6',
 					backgroundColor: 'rgba(59, 130, 246, 0.1)',
@@ -117,7 +117,7 @@
 					pointBackgroundColor: '#3b82f6'
 				},
 				{
-					label: 'Budget remaining - Daily income (PLN)',
+					label: '{% trans "Budget remaining - Daily income (PLN)" %}',
 					data: groupedIncomes.map(d => d.amount),
 					borderColor: '#08b441',
 					backgroundColor: 'rgba(59, 130, 246, 0.1)',
@@ -128,7 +128,7 @@
 					pointBackgroundColor: '#08b441'
 				},
 				{
-					label: 'Daily expense (PLN)',
+					label: '{% trans "Daily expense (PLN)" %}',
 					data: groupedExpenses.map(d => d.amount),
 					borderColor: '#cc2222',
 					backgroundColor: 'rgba(59, 130, 246, 0.1)',
