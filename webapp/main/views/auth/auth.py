@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages #to show message back for errors
 from django.contrib.auth.decorators import login_required
+from django.utils.translation import gettext as _
 import re
 
 # Using the Django authentication system (Django Documentation)
@@ -21,7 +22,7 @@ def login_user(request):
              
              return redirect('home')
          else:
-             messages.error(request, 'Invalid credentials')
+             messages.error(request, _('Invalid credentials'))
              return redirect('login_user')
          
     if request.GET.get('next'):
@@ -34,7 +35,14 @@ def register(request):
          return redirect('home')
     
     if request.method == 'POST':
-        user = User.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'])
+        email = request.POST['email']
+
+        regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        if not re.match(regex, email):
+            messages.error(request, _('Invalid email format'))
+            return redirect(request.path)
+        
+        user = User.objects.create_user(request.POST['username'], email, request.POST['password'])
         login(request, user)
         return redirect('home')
     

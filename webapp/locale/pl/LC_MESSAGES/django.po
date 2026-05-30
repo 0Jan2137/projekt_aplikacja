@@ -369,3 +369,14 @@ msgstr "Zaktualizuj informacje profilowe i adres e-mail swojego konta."
 
 msgid "Save Changes"
 msgstr "Zapisz zmiany"
+msgid "Invalid credentials"
+msgstr "Nieprawidłowe dane logowania"
+
+msgid "Invalid email format"
+msgstr "Nieprawidłowy format adresu e-mail"
+
+msgid "Cumulative Balance"
+msgstr "Skumulowane saldo"
+
+msgid "Account Details"
+msgstr "Szczegóły konta"
