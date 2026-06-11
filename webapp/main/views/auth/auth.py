@@ -14,7 +14,9 @@ def login_user(request):
         return redirect('home')
      
     if request.method == 'POST':
-         user = authenticate(username=request.POST['username'], password=request.POST['password'])
+         username = request.POST['username']
+         password = request.POST['password']
+         user = authenticate(username=username, password=password)
          if user is not None:
              login(request, user)
              if request.session.get('next'):
@@ -23,7 +25,7 @@ def login_user(request):
              return redirect('home')
          else:
              messages.error(request, _('Invalid credentials'))
-             return redirect('login_user')
+             return render(request, 'auth/login.html', {'username': username})
          
     if request.GET.get('next'):
         request.session['next'] = request.GET['next']
@@ -36,23 +38,35 @@ def register(request):
     
     if request.method == 'POST':
         email = request.POST['email']
+        username = request.POST['username']
+        password = request.POST['password']
 
         regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         if not re.match(regex, email):
             messages.error(request, _('Invalid email format'))
-            return redirect(request.path)
+            return render(request, 'auth/register.html', {
+                'username': username,
+                'email': email,
+                'password': password
+            })
         
-        password = request.POST['password']
         if len(password) < 8:
             messages.error(request, _('The password must be at least 8 characters long.'))
-            return redirect(request.path)
+            return render(request, 'auth/register.html', {
+                'username': username,
+                'email': email,
+                'password': password
+            })
 
-        user = username=request.POST['username']
-        if User.objects.filter(user).exists():
+        if User.objects.filter(username=username).exists():
             messages.error(request, _('Username already taken'))
-            return redirect(request.path)
+            return render(request, 'auth/register.html', {
+                'username': username,
+                'email': email,
+                'password': password
+            })
         
-        user = User.objects.create_user(user, email, password)
+        user = User.objects.create_user(username, email, password)
         login(request, user)
         return redirect('home')
     
