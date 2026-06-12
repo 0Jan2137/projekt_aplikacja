@@ -1,25 +1,52 @@
-# Django blueprint app
-PyCharm will prepare the virtual environment for project automatically. For non-PyCharm users (for example VSCode) look an instructions below how to do this manually
+# All-in-one - Windows
+```
+python -m venv .venv
+.venv\Scripts\Activate
+python -m pip install -r requirements.txt
+cd webapp
+python manage.py migrate
+python manage.py runserver
+```
 
-## How to run local server
-Get to the `webapp` directory: `cd webapp` and run `python3 manage.py runserver` from webapp folder
+# All-in-one - Linux
+```
+python -m venv .venv
+chmod +x .venv/bin/activate
+. .venv/bin/activatepython -m pip install -r requirements.txt
+cd webapp
+python manage.py migrate
+python manage.py runserver
+```
 
-*In some enviroments it could be not `python3` but `python`* 
+# One-by-one
 
+### Set up a virtual environment:
+```
+python -m venv .venv
+```
 
-### How to set up a virtual environment:
+### Switch to a virtual environment in a terminal
+Windows:
+```
+.venv\Scripts\Activate
+```
+Linux/WSL:
+```
+chmod +x .venv/bin/activate
+. .venv/bin/activate
+```
 
-`python3 -m venv .venv` and then select new environment in a VSCode (bottom-right corner)
+### Install all dependencies in an env
+```
+python -m pip install -r requirements.txt
+```
 
-### How to switch to a virtual environment in a terminal
+### Run local server
+```
+cd webapp
+python manage.py migrate
+python manage.py runserver
+```
 
-Run `.venv\Scripts\Activate`. Then you will see (.venv) on the left from a CLI prompt
-
-### How to install all dependencies in an env
-
-`pip3 install -r requirements.txt`
-
-### How Quit the server :
-Quit the server with CTRL-C in command line
-
-## Happy coding!
+### Credentials
+`admin:admin`
