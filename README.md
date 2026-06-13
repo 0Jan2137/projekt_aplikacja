@@ -4,7 +4,7 @@ git clone https://github.com/0Jan2137/projekt_aplikacja.git
 python -m venv .venv
 .venv\Scripts\Activate
 python -m pip install -r requirements.txt
-cd prokekt_aplikacja\webapp
+cd projekt_aplikacja\webapp
 python manage.py migrate
 python manage.py runserver
 ```
